@@ -10,4 +10,5 @@
         <maven.compiler.release>24</maven.compiler.release>
         <exec.mainClass>com.mycompany.youdownloaddefinitivo.YouDownloadDefinitivo</exec.mainClass>
     </properties>
+    <name>YourDownload</name>
 </project>
