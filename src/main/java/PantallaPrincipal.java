@@ -53,8 +53,22 @@ public class PantallaPrincipal extends javax.swing.JFrame {
         jPanelGuardado = new javax.swing.JPanel();
         jLabelGuardar = new javax.swing.JLabel();
         jButtonRutaGuardado = new javax.swing.JButton();
+        jPanelProgreso = new javax.swing.JPanel();
+        jLabelProgreso = new javax.swing.JLabel();
+        jProgressBarra = new javax.swing.JProgressBar();
+        jPanelConsola = new javax.swing.JPanel();
+        jScrollPaneConsola = new javax.swing.JScrollPane();
+        jTextArea1 = new javax.swing.JTextArea();
+        jMenuBar = new javax.swing.JMenuBar();
+        jMenuFile = new javax.swing.JMenu();
+        jMenuItemExit = new javax.swing.JMenuItem();
+        jMenuEdit = new javax.swing.JMenu();
+        jMenuItemPreferences = new javax.swing.JMenuItem();
+        jMenuHelp = new javax.swing.JMenu();
+        jMenuItemAbout = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("YouDownload");
         setPreferredSize(new java.awt.Dimension(800, 600));
         setResizable(false);
         getContentPane().setLayout(null);
@@ -78,7 +92,7 @@ public class PantallaPrincipal extends javax.swing.JFrame {
         jTextFieldUrl.setBounds(110, 0, 400, 22);
 
         getContentPane().add(jPanelWeb);
-        jPanelWeb.setBounds(10, 50, 470, 20);
+        jPanelWeb.setBounds(10, 50, 530, 30);
 
         jPanelCalidad.setLayout(null);
 
@@ -144,7 +158,7 @@ public class PantallaPrincipal extends javax.swing.JFrame {
 
         jLabelGuardar.setText("Destination folder:");
         jPanelGuardado.add(jLabelGuardar);
-        jLabelGuardar.setBounds(0, 0, 990, 20);
+        jLabelGuardar.setBounds(0, 0, 890, 20);
 
         jButtonRutaGuardado.setText("Choose save location");
         jButtonRutaGuardado.addActionListener(new java.awt.event.ActionListener() {
@@ -156,7 +170,63 @@ public class PantallaPrincipal extends javax.swing.JFrame {
         jButtonRutaGuardado.setBounds(110, 0, 150, 20);
 
         getContentPane().add(jPanelGuardado);
-        jPanelGuardado.setBounds(10, 170, 1000, 20);
+        jPanelGuardado.setBounds(10, 170, 930, 20);
+
+        jPanelProgreso.setLayout(null);
+
+        jLabelProgreso.setText("Completed:");
+        jPanelProgreso.add(jLabelProgreso);
+        jLabelProgreso.setBounds(0, 0, 70, 30);
+        jPanelProgreso.add(jProgressBarra);
+        jProgressBarra.setBounds(110, 10, 240, 10);
+
+        getContentPane().add(jPanelProgreso);
+        jPanelProgreso.setBounds(10, 210, 350, 30);
+
+        jPanelConsola.setLayout(null);
+
+        jTextArea1.setColumns(20);
+        jTextArea1.setRows(5);
+        jScrollPaneConsola.setViewportView(jTextArea1);
+
+        jPanelConsola.add(jScrollPaneConsola);
+        jScrollPaneConsola.setBounds(0, 0, 770, 260);
+
+        getContentPane().add(jPanelConsola);
+        jPanelConsola.setBounds(10, 250, 780, 330);
+
+        jMenuFile.setText("File");
+
+        jMenuItemExit.setText("Exit");
+        jMenuItemExit.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItemExitActionPerformed(evt);
+            }
+        });
+        jMenuFile.add(jMenuItemExit);
+
+        jMenuBar.add(jMenuFile);
+
+        jMenuEdit.setText("Edit");
+
+        jMenuItemPreferences.setText("Preferences");
+        jMenuEdit.add(jMenuItemPreferences);
+
+        jMenuBar.add(jMenuEdit);
+
+        jMenuHelp.setText("Help");
+
+        jMenuItemAbout.setText("About");
+        jMenuItemAbout.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItemAboutActionPerformed(evt);
+            }
+        });
+        jMenuHelp.add(jMenuItemAbout);
+
+        jMenuBar.add(jMenuHelp);
+
+        setJMenuBar(jMenuBar);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -196,6 +266,14 @@ public class PantallaPrincipal extends javax.swing.JFrame {
 
     }//GEN-LAST:event_jButtonRutaGuardadoActionPerformed
 
+    private void jMenuItemExitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemExitActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jMenuItemExitActionPerformed
+
+    private void jMenuItemAboutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemAboutActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jMenuItemAboutActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -229,17 +307,30 @@ public class PantallaPrincipal extends javax.swing.JFrame {
     private javax.swing.JLabel jLabelCalidad;
     private javax.swing.JLabel jLabelFormato;
     private javax.swing.JLabel jLabelGuardar;
+    private javax.swing.JLabel jLabelProgreso;
     private javax.swing.JLabel jLabelSubtitulos;
     private javax.swing.JLabel jLabelUrl;
     private javax.swing.JLabel jLabelWelcome;
+    private javax.swing.JMenuBar jMenuBar;
+    private javax.swing.JMenu jMenuEdit;
+    private javax.swing.JMenu jMenuFile;
+    private javax.swing.JMenu jMenuHelp;
+    private javax.swing.JMenuItem jMenuItemAbout;
+    private javax.swing.JMenuItem jMenuItemExit;
+    private javax.swing.JMenuItem jMenuItemPreferences;
     private javax.swing.JPanel jPanelCalidad;
+    private javax.swing.JPanel jPanelConsola;
     private javax.swing.JPanel jPanelFormato;
     private javax.swing.JPanel jPanelGuardado;
+    private javax.swing.JPanel jPanelProgreso;
     private javax.swing.JPanel jPanelSubtitulos;
     private javax.swing.JPanel jPanelWeb;
+    private javax.swing.JProgressBar jProgressBarra;
     private javax.swing.JRadioButton jRadioButton1080;
     private javax.swing.JRadioButton jRadioButton480;
     private javax.swing.JRadioButton jRadioButton720;
+    private javax.swing.JScrollPane jScrollPaneConsola;
+    private javax.swing.JTextArea jTextArea1;
     private javax.swing.JTextField jTextFieldUrl;
     // End of variables declaration//GEN-END:variables
 }
