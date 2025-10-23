@@ -210,6 +210,11 @@ public class PantallaPrincipal extends javax.swing.JFrame {
         jMenuEdit.setText("Edit");
 
         jMenuItemPreferences.setText("Preferences");
+        jMenuItemPreferences.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItemPreferencesActionPerformed(evt);
+            }
+        });
         jMenuEdit.add(jMenuItemPreferences);
 
         jMenuBar.add(jMenuEdit);
@@ -273,6 +278,14 @@ public class PantallaPrincipal extends javax.swing.JFrame {
     private void jMenuItemAboutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemAboutActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_jMenuItemAboutActionPerformed
+
+    private void jMenuItemPreferencesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemPreferencesActionPerformed
+        // Dentro del JFrame principal
+    setContentPane(new PanelPreferencias()); // PanelPreferencias es el JPanel que diseñaste
+    revalidate(); // Recalcula el layout
+    repaint();    // Redibuja la ventana
+
+    }//GEN-LAST:event_jMenuItemPreferencesActionPerformed
 
     /**
      * @param args the command line arguments
