@@ -1,3 +1,9 @@
+
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
+import javax.swing.JFileChooser;
+
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
@@ -38,6 +44,15 @@ public class PantallaPrincipal extends javax.swing.JFrame {
         jRadioButton1080 = new javax.swing.JRadioButton();
         jRadioButton720 = new javax.swing.JRadioButton();
         jRadioButton480 = new javax.swing.JRadioButton();
+        jPanelSubtitulos = new javax.swing.JPanel();
+        jLabelSubtitulos = new javax.swing.JLabel();
+        jCheckBoxSubtitulosSi = new javax.swing.JCheckBox();
+        jPanelFormato = new javax.swing.JPanel();
+        jLabelFormato = new javax.swing.JLabel();
+        jComboBoxFormato = new javax.swing.JComboBox<>();
+        jPanelGuardado = new javax.swing.JPanel();
+        jLabelGuardar = new javax.swing.JLabel();
+        jButtonRutaGuardado = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setPreferredSize(new java.awt.Dimension(800, 600));
@@ -60,14 +75,14 @@ public class PantallaPrincipal extends javax.swing.JFrame {
             }
         });
         jPanelWeb.add(jTextFieldUrl);
-        jTextFieldUrl.setBounds(50, 0, 400, 22);
+        jTextFieldUrl.setBounds(110, 0, 400, 22);
 
         getContentPane().add(jPanelWeb);
-        jPanelWeb.setBounds(10, 40, 470, 30);
+        jPanelWeb.setBounds(10, 50, 470, 20);
 
         jPanelCalidad.setLayout(null);
 
-        jLabelCalidad.setText("Output resolution:");
+        jLabelCalidad.setText("Output Resolution:");
         jPanelCalidad.add(jLabelCalidad);
         jLabelCalidad.setBounds(0, 0, 100, 16);
 
@@ -79,20 +94,69 @@ public class PantallaPrincipal extends javax.swing.JFrame {
             }
         });
         jPanelCalidad.add(jRadioButton1080);
-        jRadioButton1080.setBounds(100, 0, 60, 21);
+        jRadioButton1080.setBounds(110, 0, 60, 21);
 
         buttonGroupCalidad.add(jRadioButton720);
         jRadioButton720.setText("720p");
         jPanelCalidad.add(jRadioButton720);
-        jRadioButton720.setBounds(160, 0, 50, 21);
+        jRadioButton720.setBounds(170, 0, 50, 21);
 
         buttonGroupCalidad.add(jRadioButton480);
         jRadioButton480.setText("480p");
         jPanelCalidad.add(jRadioButton480);
-        jRadioButton480.setBounds(210, 0, 50, 21);
+        jRadioButton480.setBounds(220, 0, 50, 21);
 
         getContentPane().add(jPanelCalidad);
-        jPanelCalidad.setBounds(10, 70, 270, 20);
+        jPanelCalidad.setBounds(10, 90, 270, 20);
+
+        jPanelSubtitulos.setLayout(null);
+
+        jLabelSubtitulos.setText("Download Subtitles:");
+        jPanelSubtitulos.add(jLabelSubtitulos);
+        jLabelSubtitulos.setBounds(0, 0, 110, 20);
+
+        jCheckBoxSubtitulosSi.setText("Yes");
+        jCheckBoxSubtitulosSi.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jCheckBoxSubtitulosSiActionPerformed(evt);
+            }
+        });
+        jPanelSubtitulos.add(jCheckBoxSubtitulosSi);
+        jCheckBoxSubtitulosSi.setBounds(120, 0, 84, 20);
+
+        getContentPane().add(jPanelSubtitulos);
+        jPanelSubtitulos.setBounds(320, 90, 230, 30);
+
+        jPanelFormato.setLayout(null);
+
+        jLabelFormato.setText("Output Format:");
+        jPanelFormato.add(jLabelFormato);
+        jLabelFormato.setBounds(0, 0, 90, 20);
+
+        jComboBoxFormato.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { ".avi", ".mp4", ".mp3" }));
+        jPanelFormato.add(jComboBoxFormato);
+        jComboBoxFormato.setBounds(110, 0, 72, 22);
+
+        getContentPane().add(jPanelFormato);
+        jPanelFormato.setBounds(10, 130, 190, 30);
+
+        jPanelGuardado.setLayout(null);
+
+        jLabelGuardar.setText("Destination folder:");
+        jPanelGuardado.add(jLabelGuardar);
+        jLabelGuardar.setBounds(0, 0, 990, 20);
+
+        jButtonRutaGuardado.setText("Choose save location");
+        jButtonRutaGuardado.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonRutaGuardadoActionPerformed(evt);
+            }
+        });
+        jPanelGuardado.add(jButtonRutaGuardado);
+        jButtonRutaGuardado.setBounds(110, 0, 150, 20);
+
+        getContentPane().add(jPanelGuardado);
+        jPanelGuardado.setBounds(10, 170, 1000, 20);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -104,6 +168,33 @@ public class PantallaPrincipal extends javax.swing.JFrame {
     private void jRadioButton1080ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButton1080ActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_jRadioButton1080ActionPerformed
+
+    private void jCheckBoxSubtitulosSiActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBoxSubtitulosSiActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jCheckBoxSubtitulosSiActionPerformed
+
+    private void jButtonRutaGuardadoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonRutaGuardadoActionPerformed
+       // Dentro del evento del botón
+    JFileChooser selectorRuta = new JFileChooser();
+    selectorRuta.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY); // Solo carpetas
+
+    int resultado = selectorRuta.showOpenDialog(null); // Mostrar ventana
+
+    if (resultado == JFileChooser.APPROVE_OPTION) {
+        File carpeta = selectorRuta.getSelectedFile();
+        String ruta = carpeta.getAbsolutePath();
+
+    // Mostrar mensaje en consola
+    System.out.println("Saved at: " + ruta);
+    
+    // También puedes mostrarlo en un JLabel o JTextField
+    jLabelGuardar.setText("Saved at: " + ruta);
+    
+    jButtonRutaGuardado.setVisible(false);
+}
+
+
+    }//GEN-LAST:event_jButtonRutaGuardadoActionPerformed
 
     /**
      * @param args the command line arguments
@@ -132,10 +223,19 @@ public class PantallaPrincipal extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup buttonGroupCalidad;
+    private javax.swing.JButton jButtonRutaGuardado;
+    private javax.swing.JCheckBox jCheckBoxSubtitulosSi;
+    private javax.swing.JComboBox<String> jComboBoxFormato;
     private javax.swing.JLabel jLabelCalidad;
+    private javax.swing.JLabel jLabelFormato;
+    private javax.swing.JLabel jLabelGuardar;
+    private javax.swing.JLabel jLabelSubtitulos;
     private javax.swing.JLabel jLabelUrl;
     private javax.swing.JLabel jLabelWelcome;
     private javax.swing.JPanel jPanelCalidad;
+    private javax.swing.JPanel jPanelFormato;
+    private javax.swing.JPanel jPanelGuardado;
+    private javax.swing.JPanel jPanelSubtitulos;
     private javax.swing.JPanel jPanelWeb;
     private javax.swing.JRadioButton jRadioButton1080;
     private javax.swing.JRadioButton jRadioButton480;
