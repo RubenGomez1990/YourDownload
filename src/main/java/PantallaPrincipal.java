@@ -59,6 +59,8 @@ public class PantallaPrincipal extends javax.swing.JFrame {
         jPanelConsola = new javax.swing.JPanel();
         jScrollPaneConsola = new javax.swing.JScrollPane();
         jTextArea1 = new javax.swing.JTextArea();
+        jPanel1 = new javax.swing.JPanel();
+        jButton1 = new javax.swing.JButton();
         jMenuBar = new javax.swing.JMenuBar();
         jMenuFile = new javax.swing.JMenu();
         jMenuItemExit = new javax.swing.JMenuItem();
@@ -69,8 +71,7 @@ public class PantallaPrincipal extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("YourDownload");
-        setPreferredSize(new java.awt.Dimension(800, 600));
-        setResizable(false);
+        setPreferredSize(new java.awt.Dimension(735, 560));
         getContentPane().setLayout(null);
 
         jLabelWelcome.setText("Welcome! Download videos with no barriers!");
@@ -92,7 +93,7 @@ public class PantallaPrincipal extends javax.swing.JFrame {
         jTextFieldUrl.setBounds(110, 0, 400, 22);
 
         getContentPane().add(jPanelWeb);
-        jPanelWeb.setBounds(10, 50, 530, 30);
+        jPanelWeb.setBounds(10, 50, 510, 30);
 
         jPanelCalidad.setLayout(null);
 
@@ -139,7 +140,7 @@ public class PantallaPrincipal extends javax.swing.JFrame {
         jCheckBoxSubtitulosSi.setBounds(120, 0, 84, 20);
 
         getContentPane().add(jPanelSubtitulos);
-        jPanelSubtitulos.setBounds(320, 90, 230, 30);
+        jPanelSubtitulos.setBounds(320, 90, 170, 30);
 
         jPanelFormato.setLayout(null);
 
@@ -190,10 +191,24 @@ public class PantallaPrincipal extends javax.swing.JFrame {
         jScrollPaneConsola.setViewportView(jTextArea1);
 
         jPanelConsola.add(jScrollPaneConsola);
-        jScrollPaneConsola.setBounds(0, 0, 770, 260);
+        jScrollPaneConsola.setBounds(0, 0, 700, 260);
 
         getContentPane().add(jPanelConsola);
         jPanelConsola.setBounds(10, 250, 780, 330);
+
+        jPanel1.setLayout(null);
+
+        jButton1.setText("Download!");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+        jPanel1.add(jButton1);
+        jButton1.setBounds(0, 0, 170, 60);
+
+        getContentPane().add(jPanel1);
+        jPanel1.setBounds(540, 50, 170, 60);
 
         jMenuFile.setText("File");
 
@@ -287,6 +302,10 @@ public class PantallaPrincipal extends javax.swing.JFrame {
 
     }//GEN-LAST:event_jMenuItemPreferencesActionPerformed
 
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton1ActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -314,6 +333,7 @@ public class PantallaPrincipal extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup buttonGroupCalidad;
+    private javax.swing.JButton jButton1;
     private javax.swing.JButton jButtonRutaGuardado;
     private javax.swing.JCheckBox jCheckBoxSubtitulosSi;
     private javax.swing.JComboBox<String> jComboBoxFormato;
@@ -331,6 +351,7 @@ public class PantallaPrincipal extends javax.swing.JFrame {
     private javax.swing.JMenuItem jMenuItemAbout;
     private javax.swing.JMenuItem jMenuItemExit;
     private javax.swing.JMenuItem jMenuItemPreferences;
+    private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanelCalidad;
     private javax.swing.JPanel jPanelConsola;
     private javax.swing.JPanel jPanelFormato;
