@@ -16,6 +16,7 @@ public class PantallaPrincipal extends javax.swing.JFrame {
      */
     public PantallaPrincipal() {
         initComponents();
+        this.setLocationRelativeTo(null);
     }
 
     /**
@@ -27,21 +28,82 @@ public class PantallaPrincipal extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        buttonGroupCalidad = new javax.swing.ButtonGroup();
+        jLabelWelcome = new javax.swing.JLabel();
+        jPanelWeb = new javax.swing.JPanel();
+        jLabelUrl = new javax.swing.JLabel();
+        jTextFieldUrl = new javax.swing.JTextField();
+        jPanelCalidad = new javax.swing.JPanel();
+        jLabelCalidad = new javax.swing.JLabel();
+        jRadioButton1080 = new javax.swing.JRadioButton();
+        jRadioButton720 = new javax.swing.JRadioButton();
+        jRadioButton480 = new javax.swing.JRadioButton();
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 400, Short.MAX_VALUE)
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 300, Short.MAX_VALUE)
-        );
+        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setPreferredSize(new java.awt.Dimension(800, 600));
+        setResizable(false);
+        getContentPane().setLayout(null);
+
+        jLabelWelcome.setText("Welcome! Download videos with no barriers!");
+        getContentPane().add(jLabelWelcome);
+        jLabelWelcome.setBounds(10, 10, 240, 16);
+
+        jPanelWeb.setLayout(null);
+
+        jLabelUrl.setText("URL site:");
+        jPanelWeb.add(jLabelUrl);
+        jLabelUrl.setBounds(0, 0, 50, 20);
+
+        jTextFieldUrl.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jTextFieldUrlActionPerformed(evt);
+            }
+        });
+        jPanelWeb.add(jTextFieldUrl);
+        jTextFieldUrl.setBounds(50, 0, 400, 22);
+
+        getContentPane().add(jPanelWeb);
+        jPanelWeb.setBounds(10, 40, 470, 30);
+
+        jPanelCalidad.setLayout(null);
+
+        jLabelCalidad.setText("Output resolution:");
+        jPanelCalidad.add(jLabelCalidad);
+        jLabelCalidad.setBounds(0, 0, 100, 16);
+
+        buttonGroupCalidad.add(jRadioButton1080);
+        jRadioButton1080.setText("1080p");
+        jRadioButton1080.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jRadioButton1080ActionPerformed(evt);
+            }
+        });
+        jPanelCalidad.add(jRadioButton1080);
+        jRadioButton1080.setBounds(100, 0, 60, 21);
+
+        buttonGroupCalidad.add(jRadioButton720);
+        jRadioButton720.setText("720p");
+        jPanelCalidad.add(jRadioButton720);
+        jRadioButton720.setBounds(160, 0, 50, 21);
+
+        buttonGroupCalidad.add(jRadioButton480);
+        jRadioButton480.setText("480p");
+        jPanelCalidad.add(jRadioButton480);
+        jRadioButton480.setBounds(210, 0, 50, 21);
+
+        getContentPane().add(jPanelCalidad);
+        jPanelCalidad.setBounds(10, 70, 270, 20);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void jTextFieldUrlActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextFieldUrlActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jTextFieldUrlActionPerformed
+
+    private void jRadioButton1080ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButton1080ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jRadioButton1080ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -69,5 +131,15 @@ public class PantallaPrincipal extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.ButtonGroup buttonGroupCalidad;
+    private javax.swing.JLabel jLabelCalidad;
+    private javax.swing.JLabel jLabelUrl;
+    private javax.swing.JLabel jLabelWelcome;
+    private javax.swing.JPanel jPanelCalidad;
+    private javax.swing.JPanel jPanelWeb;
+    private javax.swing.JRadioButton jRadioButton1080;
+    private javax.swing.JRadioButton jRadioButton480;
+    private javax.swing.JRadioButton jRadioButton720;
+    private javax.swing.JTextField jTextFieldUrl;
     // End of variables declaration//GEN-END:variables
 }
