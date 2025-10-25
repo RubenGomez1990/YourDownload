@@ -102,7 +102,7 @@ public class PanelPreferencias extends javax.swing.JPanel {
         jPanelLimite.add(jLabelLimite);
         jLabelLimite.setBounds(0, 0, 130, 20);
 
-        jComboBoxLimite.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "1 MB/s", "10 MB/s", "100 MB/s", "Unlimited" }));
+        jComboBoxLimite.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Unlimited", "100 MB/s", "10 MB/s", "1 MB/s", " " }));
         jComboBoxLimite.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jComboBoxLimiteActionPerformed(evt);
@@ -164,6 +164,7 @@ public class PanelPreferencias extends javax.swing.JPanel {
     }//GEN-LAST:event_jCheckBoxPlaylistsActionPerformed
 
     private void jButtonVolverActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonVolverActionPerformed
+        
         pantallaPrincipal.setContentPane(panelOriginal);
         pantallaPrincipal.revalidate();
         pantallaPrincipal.repaint();

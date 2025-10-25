@@ -1,3 +1,9 @@
+
+import java.awt.Desktop;
+import java.io.File;
+import java.io.IOException;
+import javax.swing.JOptionPane;
+
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JDialog.java to edit this template
@@ -10,13 +16,14 @@
 public class DescargaCompletada extends javax.swing.JDialog {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(DescargaCompletada.class.getName());
-
+    private File archivoDescargado;
     /**
      * Creates new form DescargaCompletada
      */
-    public DescargaCompletada(java.awt.Frame parent, boolean modal) {
+    public DescargaCompletada(java.awt.Frame parent, boolean modal, File archivoDescargado) {
         super(parent, modal);
         initComponents();
+        this.archivoDescargado = archivoDescargado;
     }
 
     /**
@@ -29,8 +36,8 @@ public class DescargaCompletada extends javax.swing.JDialog {
     private void initComponents() {
 
         jLabelTerminada = new javax.swing.JLabel();
-        jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
+        jButtonReproducir = new javax.swing.JButton();
+        jButtonSalir = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Download Complete!");
@@ -40,32 +47,49 @@ public class DescargaCompletada extends javax.swing.JDialog {
         jLabelTerminada.setIcon(new javax.swing.ImageIcon("C:\\Users\\ruben\\Documents\\NetBeansProjects\\YouDownloadDefinitivo\\resources\\icons\\icons8-checkmark-120.png")); // NOI18N
         jLabelTerminada.setText("DOWNLOAD COMPLETED!");
         getContentPane().add(jLabelTerminada);
-        jLabelTerminada.setBounds(0, 20, 270, 120);
+        jLabelTerminada.setBounds(0, 20, 290, 120);
 
-        jButton1.setText("Play it!");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        jButtonReproducir.setText("Play it!");
+        jButtonReproducir.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                jButtonReproducirActionPerformed(evt);
             }
         });
-        getContentPane().add(jButton1);
-        jButton1.setBounds(60, 160, 75, 23);
+        getContentPane().add(jButtonReproducir);
+        jButtonReproducir.setBounds(60, 160, 75, 23);
 
-        jButton2.setText("Exit");
-        getContentPane().add(jButton2);
-        jButton2.setBounds(150, 160, 72, 23);
+        jButtonSalir.setText("Exit");
+        jButtonSalir.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonSalirActionPerformed(evt);
+            }
+        });
+        getContentPane().add(jButtonSalir);
+        jButtonSalir.setBounds(150, 160, 72, 23);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jButton1ActionPerformed
+    private void jButtonReproducirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonReproducirActionPerformed
+        if (archivoDescargado != null && archivoDescargado.exists()) {
+            try {
+            Desktop.getDesktop().open(archivoDescargado);
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(this, "No se pudo abrir el archivo: " + e.getMessage());
+        }
+        } else {
+            JOptionPane.showMessageDialog(this, "Archivo no encontrado.");
+        }
+    }//GEN-LAST:event_jButtonReproducirActionPerformed
+
+    private void jButtonSalirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSalirActionPerformed
+        dispose();
+    }//GEN-LAST:event_jButtonSalirActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
+    private javax.swing.JButton jButtonReproducir;
+    private javax.swing.JButton jButtonSalir;
     private javax.swing.JLabel jLabelTerminada;
     // End of variables declaration//GEN-END:variables
 }

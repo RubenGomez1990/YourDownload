@@ -27,6 +27,7 @@ public class PantallaPrincipal extends javax.swing.JFrame {
     private String rutaDestino = "";
     private JPanel panelOriginal;
     private String rutaBinarios = "";
+    private PanelPreferencias panelPreferencias;
   
 
     /**
@@ -166,7 +167,7 @@ public class PantallaPrincipal extends javax.swing.JFrame {
         jPanelFormato.add(jLabelFormato);
         jLabelFormato.setBounds(0, 0, 90, 20);
 
-        jComboBoxFormato.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { ".avi", ".mp4", ".mp3" }));
+        jComboBoxFormato.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { ".mp4", ".avi", ".mp3" }));
         jComboBoxFormato.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jComboBoxFormatoActionPerformed(evt);
@@ -325,11 +326,12 @@ public class PantallaPrincipal extends javax.swing.JFrame {
     }//GEN-LAST:event_jMenuItemExitActionPerformed
 
     private void jMenuItemAboutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemAboutActionPerformed
-        // TODO add your handling code here:
+        About dialog = new About(this, true); // 'this' es tu JFrame principal
+        dialog.setLocationRelativeTo(this); // Centrado respecto a la ventana principal
+        dialog.setVisible(true);
     }//GEN-LAST:event_jMenuItemAboutActionPerformed
 
     private void jMenuItemPreferencesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemPreferencesActionPerformed
-
     setContentPane(new PanelPreferencias(this, panelOriginal));
     revalidate();
     repaint();
@@ -361,6 +363,8 @@ public class PantallaPrincipal extends javax.swing.JFrame {
         final String formatoFinal = formatoSeleccionado; // Igualamos a formatoSeleccionado ya que el uso de Thread no permite el cambio de la variable que debe ser final.
         
         new Thread(() -> {
+            
+            final File[] archivoDescargado = new File [1];
             try {
                 
                 // Construir comando
@@ -392,13 +396,12 @@ public class PantallaPrincipal extends javax.swing.JFrame {
                     comando.add("-o");
                     comando.add(rutaDestino + File.separator + "%(title)s.%(ext)s");
                 }
-                
+
                 if (!rutaDestino.isEmpty()) {
                 comando.add("--paths");
                 comando.add("temp:" + rutaDestino);
                 }       
 
-                
                 comando.add(url);
 
                 if (descargarSubtitulos) {
@@ -409,17 +412,37 @@ public class PantallaPrincipal extends javax.swing.JFrame {
                     comando.add("srt");               // formato .srt
                 }
                 
-                System.out.println("Ruta binarios: " + rutaBinarios);
-                System.out.println("Comando: " + comando);
-
+                System.out.println("Comando final: " + String.join(" ", comando));
                 ProcessBuilder builder = new ProcessBuilder(comando); // Añadimos -f para que seleccione formato.
                 builder.redirectErrorStream(true);
                 Process process = builder.start();
+                
                 
                 BufferedReader reader = new BufferedReader (new InputStreamReader(process.getInputStream()));
                 String line;
                 while ((line = reader.readLine()) != null) {
                     final String outputLine = line;
+                    // Detectar ruta del archivo descargado
+                    if (outputLine.contains("Destination:")) {
+                        String ruta = outputLine.substring(outputLine.indexOf("Destination:") + 12).trim();
+                        archivoDescargado[0] = new File(ruta);
+                        System.out.println("Archivo detectado (Destination): " + ruta);
+                    } else if (outputLine.contains("Merging formats into")) {
+                        String ruta = outputLine.substring(outputLine.indexOf("Merging formats into") + 22).trim().replaceAll("\"", "");
+                        archivoDescargado[0] = new File(ruta);
+                        System.out.println("Archivo detectado (Merge): " + ruta);
+                    } else if (outputLine.contains("Deleting original file") && archivoDescargado[0] == null) {
+                        // En caso de que se haya convertido y el original se haya eliminado
+                        int start = outputLine.indexOf("Deleting original file") + 25;
+                        int end = outputLine.lastIndexOf("\"");
+                        if (start < end) {
+                            String ruta = outputLine.substring(start, end).trim().replaceAll("\"", "");
+                            archivoDescargado[0] = new File(ruta);
+                            System.out.println("Archivo detectado (Deleted original): " + ruta);
+                        }
+                    }   
+
+                    
                     SwingUtilities.invokeLater(() -> {
                         jTextAreaConsola.append (outputLine + "\n");
                         jTextAreaConsola.setCaretPosition(jTextAreaConsola.getDocument().getLength());
@@ -430,10 +453,17 @@ public class PantallaPrincipal extends javax.swing.JFrame {
             } catch (Exception e){
                 SwingUtilities.invokeLater(() -> jTextAreaConsola.append("Error: " + e.getMessage() + "\n"));
             } finally {
-                SwingUtilities.invokeLater(() -> jButtonDescarga.setEnabled(true));
-            }
+                SwingUtilities.invokeLater(() -> {
+                jButtonDescarga.setEnabled(true);
+
+                // Mostrar el JDialog DescargaCompletada
+                DescargaCompletada dialog = new DescargaCompletada(null, true, archivoDescargado[0]);
+                dialog.setSize(300, 250);               // Tamaño adecuado
+                dialog.setLocationRelativeTo(null);     // Centrado en pantalla
+                dialog.setVisible(true);                // Mostrar el diálogo
+            });
+        }
         }).start();
-        
     }//GEN-LAST:event_jButtonDescargaActionPerformed
 
     private void jComboBoxFormatoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBoxFormatoActionPerformed
