@@ -10,8 +10,8 @@ Looked at google/reddit https://www.reddit.com/r/youtubedl/comments/15oyh34/ytdl
 I had a problem with my version of yt-dlp. Used yt-dlp -U to update it. Now it works. Tried with this video: https://youtu.be/8xQbWu9yzS0?si=0HlMMsDTzjpIrONT
 
 2. Used Copilot for the code behind the logic for the connection with yt-dlp
+
 new Thread(() -> {
-           
             try {
                 ProcessBuilder builder = new ProcessBuilder("yt-dlp", "-f", formato, url);
                 builder.redirectErrorStream(true);
@@ -38,4 +38,7 @@ new Thread(() -> {
 3. Having some problems with the download of qualities for some videos. Youtube doesn't allow to have some qualities and i don't know how to resolve it. 
 For example, i can download with this video https://youtu.be/2Vv-BfVoq4g?si=Rxf6Oj7cIqdwpiLo both 1080p or 480p but not 720p. Can you explain it to me?
 
+
+4. Mayority of commands used for yt-dlp are in the manual at https://github.com/yt-dlp/yt-dlp?tab=readme-ov-file#subtitle-options
+For example, had a problem with subs so looked for the part of sub at the index. Used --write-auto-subs and created a command. Used auto because is hard to find videos that have manual subs.
 

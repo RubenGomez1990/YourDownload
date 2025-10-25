@@ -1,9 +1,11 @@
 
+import java.util.List;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.swing.JFileChooser;
@@ -310,7 +312,7 @@ public class PantallaPrincipal extends javax.swing.JFrame {
     }//GEN-LAST:event_jMenuItemPreferencesActionPerformed
 
     private void jButtonDescargaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonDescargaActionPerformed
-        String url = jTextFieldUrl.getText().trim(); // Le indicamos que coja el texto del TextField
+        final String url = jTextFieldUrl.getText().trim(); // Le indicamos que coja el texto del TextField
         
         if (url.isEmpty()){
             JOptionPane.showMessageDialog(this, "Introduce una URL válida"); //En caso de que no se introduzca una URL correcta.
@@ -321,7 +323,7 @@ public class PantallaPrincipal extends javax.swing.JFrame {
         jTextAreaConsola.setText("");
         jProgressBarra.setValue(0);
         
-        // Asignar calidad al video.
+        // Asignar calidad al video. Simple IF para escoger la calidad. 
         String formatoSeleccionado = "137+140";
             if (jRadioButton1080.isSelected()) {
                 formatoSeleccionado = "137+140";
@@ -331,13 +333,27 @@ public class PantallaPrincipal extends javax.swing.JFrame {
                 formatoSeleccionado = "135+140";
             }
             
-        final String formato = formatoSeleccionado;
+        boolean descargarSubtitulos = jCheckBoxSubtitulosSi.isSelected();
+        final String formatoFinal = formatoSeleccionado; // Igualamos a formatoSeleccionado ya que el uso de Thread no permite el cambio de la variable que debe ser final.
         
         new Thread(() -> {
-            
-       
             try {
-                ProcessBuilder builder = new ProcessBuilder("yt-dlp", "-f", formato, url);
+                // Construir comando
+                List<String> comando = new ArrayList<>();
+                comando.add("yt-dlp");
+                comando.add("-f");
+                comando.add(formatoFinal);
+                comando.add(url);
+
+                if (descargarSubtitulos) {
+                    comando.add("--write-auto-sub");       // descarga subtítulos
+                    comando.add("--sub-lang");
+                    comando.add("en");                // idioma español
+                    comando.add("--convert-subs");
+                    comando.add("srt");               // formato .srt
+        }
+
+                ProcessBuilder builder = new ProcessBuilder(comando); // Añadimos -f para que seleccione formato.
                 builder.redirectErrorStream(true);
                 Process process = builder.start();
                 
