@@ -52,6 +52,8 @@ For example, had a problem with subs so looked for the part of sub at the index.
 
 7. Having some troubles with the media player for the recent download. Used again stack overflow or Copilot for the code. 
 
+8. Couldn't do the part of m3u files or selecting the download speed. Tried for a while but was impossible for me.
+
 Personal notes: I'm having so much trouble with this task. I'm working at a company and its hard for me to follow the big quantity of time you need for studying and understanding it. I mean,
 i will do my best effort but probably i will need some help. Can you give me some recomendations? There is a lot of code used here that aren't in the theory of the moodle, i've been using lot of time
 for investigation but i think that using other codes won't help me because i'm not getting the full concepts. I will improve, for sure but this task was extremely hard. I've figured some methods or
