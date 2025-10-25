@@ -1,8 +1,14 @@
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.InputStreamReader;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
@@ -58,9 +64,9 @@ public class PantallaPrincipal extends javax.swing.JFrame {
         jProgressBarra = new javax.swing.JProgressBar();
         jPanelConsola = new javax.swing.JPanel();
         jScrollPaneConsola = new javax.swing.JScrollPane();
-        jTextArea1 = new javax.swing.JTextArea();
-        jPanel1 = new javax.swing.JPanel();
-        jButton1 = new javax.swing.JButton();
+        jTextAreaConsola = new javax.swing.JTextArea();
+        jPanelDescarga = new javax.swing.JPanel();
+        jButtonDescarga = new javax.swing.JButton();
         jMenuBar = new javax.swing.JMenuBar();
         jMenuFile = new javax.swing.JMenu();
         jMenuItemExit = new javax.swing.JMenuItem();
@@ -186,9 +192,9 @@ public class PantallaPrincipal extends javax.swing.JFrame {
 
         jPanelConsola.setLayout(null);
 
-        jTextArea1.setColumns(20);
-        jTextArea1.setRows(5);
-        jScrollPaneConsola.setViewportView(jTextArea1);
+        jTextAreaConsola.setColumns(20);
+        jTextAreaConsola.setRows(5);
+        jScrollPaneConsola.setViewportView(jTextAreaConsola);
 
         jPanelConsola.add(jScrollPaneConsola);
         jScrollPaneConsola.setBounds(0, 0, 700, 260);
@@ -196,19 +202,19 @@ public class PantallaPrincipal extends javax.swing.JFrame {
         getContentPane().add(jPanelConsola);
         jPanelConsola.setBounds(10, 250, 780, 330);
 
-        jPanel1.setLayout(null);
+        jPanelDescarga.setLayout(null);
 
-        jButton1.setText("Download!");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        jButtonDescarga.setText("Download!");
+        jButtonDescarga.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                jButtonDescargaActionPerformed(evt);
             }
         });
-        jPanel1.add(jButton1);
-        jButton1.setBounds(0, 0, 170, 60);
+        jPanelDescarga.add(jButtonDescarga);
+        jButtonDescarga.setBounds(0, 0, 170, 60);
 
-        getContentPane().add(jPanel1);
-        jPanel1.setBounds(540, 50, 170, 60);
+        getContentPane().add(jPanelDescarga);
+        jPanelDescarga.setBounds(540, 50, 170, 60);
 
         jMenuFile.setText("File");
 
@@ -297,14 +303,47 @@ public class PantallaPrincipal extends javax.swing.JFrame {
     private void jMenuItemPreferencesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemPreferencesActionPerformed
         // Dentro del JFrame principal
     setContentPane(new PanelPreferencias()); // PanelPreferencias es el JPanel que diseñaste
-    revalidate(); // Recalcula el layout
-    repaint();    // Redibuja la ventana
+    revalidate(); 
+    repaint();
 
     }//GEN-LAST:event_jMenuItemPreferencesActionPerformed
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jButton1ActionPerformed
+    private void jButtonDescargaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonDescargaActionPerformed
+        String url = jTextFieldUrl.getText().trim(); // Le indicamos que coja el texto del TextField
+        
+        if (url.isEmpty()){
+            JOptionPane.showMessageDialog(this, "Introduce una URL válida"); //En caso de que no se introduzca una URL correcta.
+            return;
+        }
+        
+        jButtonDescarga.setEnabled(false);
+        jTextAreaConsola.setText("");
+        jProgressBarra.setValue(0);
+        
+        new Thread(() -> {
+            try {
+                ProcessBuilder builder = new ProcessBuilder("yt-dlp", url);
+                builder.redirectErrorStream(true);
+                Process process = builder.start();
+                
+                BufferedReader reader = new BufferedReader (new InputStreamReader(process.getInputStream()));
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    final String outputLine = line;
+                    SwingUtilities.invokeLater(() -> {
+                        jTextAreaConsola.append (outputLine + "\n");
+                        jTextAreaConsola.setCaretPosition(jTextAreaConsola.getDocument().getLength());
+                        actualizarBarraProgreso(outputLine);
+                    });
+                }
+                    process.waitFor();
+            } catch (Exception e){
+                SwingUtilities.invokeLater(() -> jTextAreaConsola.append("Error: " + e.getMessage() + "\n"));
+            } finally {
+                SwingUtilities.invokeLater(() -> jButtonDescarga.setEnabled(true));
+            }
+        }).start();
+    }//GEN-LAST:event_jButtonDescargaActionPerformed
 
     /**
      * @param args the command line arguments
@@ -330,10 +369,19 @@ public class PantallaPrincipal extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(() -> new PantallaPrincipal().setVisible(true));
     }
+    
+    private void actualizarBarraProgreso(String line) {
+    Pattern pattern = Pattern.compile("\\[download\\]\\s+(\\d+\\.\\d+)%");
+    Matcher matcher = pattern.matcher(line);
+    if (matcher.find()) {
+        double porcentaje = Double.parseDouble(matcher.group(1));
+        jProgressBarra.setValue((int) porcentaje);
+    }
+}
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup buttonGroupCalidad;
-    private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButtonDescarga;
     private javax.swing.JButton jButtonRutaGuardado;
     private javax.swing.JCheckBox jCheckBoxSubtitulosSi;
     private javax.swing.JComboBox<String> jComboBoxFormato;
@@ -351,9 +399,9 @@ public class PantallaPrincipal extends javax.swing.JFrame {
     private javax.swing.JMenuItem jMenuItemAbout;
     private javax.swing.JMenuItem jMenuItemExit;
     private javax.swing.JMenuItem jMenuItemPreferences;
-    private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanelCalidad;
     private javax.swing.JPanel jPanelConsola;
+    private javax.swing.JPanel jPanelDescarga;
     private javax.swing.JPanel jPanelFormato;
     private javax.swing.JPanel jPanelGuardado;
     private javax.swing.JPanel jPanelProgreso;
@@ -364,7 +412,8 @@ public class PantallaPrincipal extends javax.swing.JFrame {
     private javax.swing.JRadioButton jRadioButton480;
     private javax.swing.JRadioButton jRadioButton720;
     private javax.swing.JScrollPane jScrollPaneConsola;
-    private javax.swing.JTextArea jTextArea1;
+    private javax.swing.JTextArea jTextAreaConsola;
     private javax.swing.JTextField jTextFieldUrl;
     // End of variables declaration//GEN-END:variables
 }
+
