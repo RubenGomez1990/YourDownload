@@ -1,7 +1,5 @@
 
 import java.util.List;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStreamReader;
@@ -24,14 +22,19 @@ import javax.swing.SwingUtilities;
 public class PantallaPrincipal extends javax.swing.JFrame {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(PantallaPrincipal.class.getName());
+    private String rutaDestino = "";
 
     /**
      * Creates new form PantallaPrincipal
      */
     public PantallaPrincipal() {
-        initComponents();
-        this.setLocationRelativeTo(null);
-    }
+    initComponents();
+    this.setLocationRelativeTo(null);
+
+    jButtonCambiar.setVisible(false); // Ocultar botón de cambiar al inicio
+    jLabelGuardar.setText("No folder selected"); // Texto inicial
+}
+
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -61,6 +64,7 @@ public class PantallaPrincipal extends javax.swing.JFrame {
         jPanelGuardado = new javax.swing.JPanel();
         jLabelGuardar = new javax.swing.JLabel();
         jButtonRutaGuardado = new javax.swing.JButton();
+        jButtonCambiar = new javax.swing.JButton();
         jPanelProgreso = new javax.swing.JPanel();
         jLabelProgreso = new javax.swing.JLabel();
         jProgressBarra = new javax.swing.JProgressBar();
@@ -157,6 +161,11 @@ public class PantallaPrincipal extends javax.swing.JFrame {
         jLabelFormato.setBounds(0, 0, 90, 20);
 
         jComboBoxFormato.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { ".avi", ".mp4", ".mp3" }));
+        jComboBoxFormato.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jComboBoxFormatoActionPerformed(evt);
+            }
+        });
         jPanelFormato.add(jComboBoxFormato);
         jComboBoxFormato.setBounds(110, 0, 72, 22);
 
@@ -167,7 +176,7 @@ public class PantallaPrincipal extends javax.swing.JFrame {
 
         jLabelGuardar.setText("Destination folder:");
         jPanelGuardado.add(jLabelGuardar);
-        jLabelGuardar.setBounds(0, 0, 890, 20);
+        jLabelGuardar.setBounds(0, 0, 260, 20);
 
         jButtonRutaGuardado.setText("Choose save location");
         jButtonRutaGuardado.addActionListener(new java.awt.event.ActionListener() {
@@ -177,6 +186,15 @@ public class PantallaPrincipal extends javax.swing.JFrame {
         });
         jPanelGuardado.add(jButtonRutaGuardado);
         jButtonRutaGuardado.setBounds(110, 0, 150, 20);
+
+        jButtonCambiar.setText("Change");
+        jButtonCambiar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonCambiarActionPerformed(evt);
+            }
+        });
+        jPanelGuardado.add(jButtonCambiar);
+        jButtonCambiar.setBounds(270, 0, 72, 20);
 
         getContentPane().add(jPanelGuardado);
         jPanelGuardado.setBounds(10, 170, 930, 20);
@@ -273,26 +291,20 @@ public class PantallaPrincipal extends javax.swing.JFrame {
     }//GEN-LAST:event_jCheckBoxSubtitulosSiActionPerformed
 
     private void jButtonRutaGuardadoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonRutaGuardadoActionPerformed
-       // Dentro del evento del botón
-    JFileChooser selectorRuta = new JFileChooser();
-    selectorRuta.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY); // Solo carpetas
+        // Dentro del evento del botón
+        JFileChooser selectorRuta = new JFileChooser();
+        selectorRuta.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 
-    int resultado = selectorRuta.showOpenDialog(null); // Mostrar ventana
+        int resultado = selectorRuta.showOpenDialog(this);
+        if (resultado == JFileChooser.APPROVE_OPTION) {
+            File carpeta = selectorRuta.getSelectedFile();
+            rutaDestino = carpeta.getAbsolutePath();
 
-    if (resultado == JFileChooser.APPROVE_OPTION) {
-        File carpeta = selectorRuta.getSelectedFile();
-        String ruta = carpeta.getAbsolutePath();
+            jLabelGuardar.setText("Saved at: " + rutaDestino);
 
-    // Mostrar mensaje en consola
-    System.out.println("Saved at: " + ruta);
-    
-    // También puedes mostrarlo en un JLabel o JTextField
-    jLabelGuardar.setText("Saved at: " + ruta);
-    
-    jButtonRutaGuardado.setVisible(false);
-}
-
-
+            jButtonRutaGuardado.setVisible(false); // Oculta el botón inicial
+            jButtonCambiar.setVisible(true);       // Muestra el botón de cambiar
+        }
     }//GEN-LAST:event_jButtonRutaGuardadoActionPerformed
 
     private void jMenuItemExitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemExitActionPerformed
@@ -338,11 +350,35 @@ public class PantallaPrincipal extends javax.swing.JFrame {
         
         new Thread(() -> {
             try {
+                
                 // Construir comando
                 List<String> comando = new ArrayList<>();
                 comando.add("yt-dlp");
-                comando.add("-f");
-                comando.add(formatoFinal);
+                String formatoSalida = jComboBoxFormato.getSelectedItem().toString();
+
+                if (formatoSalida.contains(".mp3")) {
+                    // Solo audio: no se especifica -f
+                    comando.add("-x");
+                    comando.add("--audio-format");
+                    comando.add("mp3");
+                } else {
+                    // Vídeo: se especifica calidad
+                    comando.add("-f");
+                    comando.add(formatoFinal);
+
+                    if (formatoSalida.contains(".mp4")) {
+                        comando.add("--recode-video");
+                        comando.add("mp4");
+                    } else if (formatoSalida.contains(".avi")) {
+                        comando.add("--recode-video");
+                        comando.add("avi");
+                    }
+                }
+                if (!rutaDestino.isEmpty()) {
+                    comando.add("-o");
+                    comando.add(rutaDestino + File.separator + "%(title)s.%(ext)s");
+                }
+                
                 comando.add(url);
 
                 if (descargarSubtitulos) {
@@ -351,8 +387,20 @@ public class PantallaPrincipal extends javax.swing.JFrame {
                     comando.add("en");                // idioma español
                     comando.add("--convert-subs");
                     comando.add("srt");               // formato .srt
-        }
+                }
 
+                if (formatoSalida.contains("MP4")) {
+                    comando.add("--recode-video");
+                    comando.add("mp4");
+                } else if (formatoSalida.contains("AVI")) {
+                    comando.add("--recode-video");
+                    comando.add("avi");
+                } else if (formatoSalida.contains("MP3")) {
+                    comando.add("-x");
+                    comando.add("--audio-format");
+                    comando.add("mp3");
+                }
+                
                 ProcessBuilder builder = new ProcessBuilder(comando); // Añadimos -f para que seleccione formato.
                 builder.redirectErrorStream(true);
                 Process process = builder.start();
@@ -376,6 +424,24 @@ public class PantallaPrincipal extends javax.swing.JFrame {
         }).start();
         
     }//GEN-LAST:event_jButtonDescargaActionPerformed
+
+    private void jComboBoxFormatoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBoxFormatoActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jComboBoxFormatoActionPerformed
+
+    private void jButtonCambiarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonCambiarActionPerformed
+    JFileChooser selectorRuta = new JFileChooser();
+    selectorRuta.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+
+    int resultado = selectorRuta.showOpenDialog(this);
+        if (resultado == JFileChooser.APPROVE_OPTION) {
+            File carpeta = selectorRuta.getSelectedFile();
+            rutaDestino = carpeta.getAbsolutePath();
+
+            jLabelGuardar.setText("Saved at: " + rutaDestino);
+            // No necesitas cambiar visibilidad aquí
+        }
+    }//GEN-LAST:event_jButtonCambiarActionPerformed
 
     /**
      * @param args the command line arguments
@@ -413,6 +479,7 @@ public class PantallaPrincipal extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup buttonGroupCalidad;
+    private javax.swing.JButton jButtonCambiar;
     private javax.swing.JButton jButtonDescarga;
     private javax.swing.JButton jButtonRutaGuardado;
     private javax.swing.JCheckBox jCheckBoxSubtitulosSi;
