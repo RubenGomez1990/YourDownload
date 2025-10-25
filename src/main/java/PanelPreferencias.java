@@ -49,14 +49,14 @@ public class PanelPreferencias extends javax.swing.JPanel {
         jButtonTemporales = new javax.swing.JButton();
         jPanelPlaylists = new javax.swing.JPanel();
         jLabelPlaylists = new javax.swing.JLabel();
+        jCheckBoxPlaylists = new javax.swing.JCheckBox();
         jPanelLimite = new javax.swing.JPanel();
-        jLabel1 = new javax.swing.JLabel();
-        jComboBox1 = new javax.swing.JComboBox<>();
+        jLabelLimite = new javax.swing.JLabel();
+        jComboBoxLimite = new javax.swing.JComboBox<>();
         jPanelBinaries = new javax.swing.JPanel();
         jLabelBinaries = new javax.swing.JLabel();
         jButtonBinaries = new javax.swing.JButton();
         jButtonVolver = new javax.swing.JButton();
-        jCheckBoxPlaylists = new javax.swing.JCheckBox();
 
         setPreferredSize(new java.awt.Dimension(800, 600));
         setLayout(null);
@@ -85,18 +85,31 @@ public class PanelPreferencias extends javax.swing.JPanel {
         jPanelPlaylists.add(jLabelPlaylists);
         jLabelPlaylists.setBounds(0, 0, 146, 20);
 
+        jCheckBoxPlaylists.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jCheckBoxPlaylistsActionPerformed(evt);
+            }
+        });
+        jPanelPlaylists.add(jCheckBoxPlaylists);
+        jCheckBoxPlaylists.setBounds(430, 0, 20, 20);
+
         add(jPanelPlaylists);
-        jPanelPlaylists.setBounds(10, 60, 270, 20);
+        jPanelPlaylists.setBounds(10, 60, 580, 20);
 
         jPanelLimite.setLayout(null);
 
-        jLabel1.setText("Limit download speed:");
-        jPanelLimite.add(jLabel1);
-        jLabel1.setBounds(0, 0, 130, 20);
+        jLabelLimite.setText("Limit download speed:");
+        jPanelLimite.add(jLabelLimite);
+        jLabelLimite.setBounds(0, 0, 130, 20);
 
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "1 MB/s", "10 MB/s", "100 MB/s", "Unlimited" }));
-        jPanelLimite.add(jComboBox1);
-        jComboBox1.setBounds(430, 0, 100, 22);
+        jComboBoxLimite.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "1 MB/s", "10 MB/s", "100 MB/s", "Unlimited" }));
+        jComboBoxLimite.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jComboBoxLimiteActionPerformed(evt);
+            }
+        });
+        jPanelLimite.add(jComboBoxLimite);
+        jComboBoxLimite.setBounds(430, 0, 100, 22);
 
         add(jPanelLimite);
         jPanelLimite.setBounds(10, 100, 640, 30);
@@ -127,14 +140,6 @@ public class PanelPreferencias extends javax.swing.JPanel {
         });
         add(jButtonVolver);
         jButtonVolver.setBounds(10, 180, 73, 23);
-
-        jCheckBoxPlaylists.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jCheckBoxPlaylistsActionPerformed(evt);
-            }
-        });
-        add(jCheckBoxPlaylists);
-        jCheckBoxPlaylists.setBounds(440, 60, 20, 20);
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButtonTemporalesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonTemporalesActionPerformed
@@ -180,15 +185,18 @@ public class PanelPreferencias extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_jButtonBinariesActionPerformed
 
+    private void jComboBoxLimiteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBoxLimiteActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jComboBoxLimiteActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButtonBinaries;
     private javax.swing.JButton jButtonTemporales;
     private javax.swing.JButton jButtonVolver;
     private javax.swing.JCheckBox jCheckBoxPlaylists;
-    private javax.swing.JComboBox<String> jComboBox1;
-    private javax.swing.JLabel jLabel1;
+    private javax.swing.JComboBox<String> jComboBoxLimite;
     private javax.swing.JLabel jLabelBinaries;
+    private javax.swing.JLabel jLabelLimite;
     private javax.swing.JLabel jLabelPlaylists;
     private javax.swing.JLabel jLabelTemporales;
     private javax.swing.JPanel jPanelBinaries;

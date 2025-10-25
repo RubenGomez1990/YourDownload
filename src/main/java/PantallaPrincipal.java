@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.prefs.Preferences;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.swing.JFileChooser;
@@ -24,8 +25,9 @@ public class PantallaPrincipal extends javax.swing.JFrame {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(PantallaPrincipal.class.getName());
     private String rutaDestino = "";
-    private final JPanel panelOriginal;
+    private JPanel panelOriginal;
     private String rutaBinarios = "";
+  
 
     /**
      * Creates new form PantallaPrincipal
@@ -327,12 +329,10 @@ public class PantallaPrincipal extends javax.swing.JFrame {
     }//GEN-LAST:event_jMenuItemAboutActionPerformed
 
     private void jMenuItemPreferencesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemPreferencesActionPerformed
-        // Dentro del JFrame principal
+
     setContentPane(new PanelPreferencias(this, panelOriginal));
     revalidate();
     repaint();
-
-
     }//GEN-LAST:event_jMenuItemPreferencesActionPerformed
 
     private void jButtonDescargaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonDescargaActionPerformed
@@ -364,6 +364,8 @@ public class PantallaPrincipal extends javax.swing.JFrame {
             try {
                 
                 // Construir comando
+                Preferences prefs = Preferences.userRoot().node("PanelPreferencias");
+                String rutaBinarios = prefs.get("rutaBinarios", "C:\\Users\\ruben\\AppData\\Local\\yt-dlp.exe");
                 List<String> comando = new ArrayList<>();
                 comando.add(rutaBinarios);
                 String formatoSalida = jComboBoxFormato.getSelectedItem().toString();
@@ -407,6 +409,9 @@ public class PantallaPrincipal extends javax.swing.JFrame {
                     comando.add("srt");               // formato .srt
                 }
                 
+                System.out.println("Ruta binarios: " + rutaBinarios);
+                System.out.println("Comando: " + comando);
+
                 ProcessBuilder builder = new ProcessBuilder(comando); // Añadimos -f para que seleccione formato.
                 builder.redirectErrorStream(true);
                 Process process = builder.start();
