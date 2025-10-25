@@ -96,7 +96,7 @@ public class PantallaPrincipal extends javax.swing.JFrame {
             }
         });
         jPanelWeb.add(jTextFieldUrl);
-        jTextFieldUrl.setBounds(110, 0, 400, 22);
+        jTextFieldUrl.setBounds(110, 0, 400, 30);
 
         getContentPane().add(jPanelWeb);
         jPanelWeb.setBounds(10, 50, 510, 30);
@@ -181,14 +181,15 @@ public class PantallaPrincipal extends javax.swing.JFrame {
 
         jPanelProgreso.setLayout(null);
 
+        jLabelProgreso.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
         jLabelProgreso.setText("Completed:");
         jPanelProgreso.add(jLabelProgreso);
-        jLabelProgreso.setBounds(0, 0, 70, 30);
+        jLabelProgreso.setBounds(0, -10, 100, 40);
         jPanelProgreso.add(jProgressBarra);
-        jProgressBarra.setBounds(110, 10, 240, 10);
+        jProgressBarra.setBounds(110, 0, 260, 20);
 
         getContentPane().add(jPanelProgreso);
-        jPanelProgreso.setBounds(10, 210, 350, 30);
+        jPanelProgreso.setBounds(10, 210, 400, 30);
 
         jPanelConsola.setLayout(null);
 
@@ -197,7 +198,7 @@ public class PantallaPrincipal extends javax.swing.JFrame {
         jScrollPaneConsola.setViewportView(jTextAreaConsola);
 
         jPanelConsola.add(jScrollPaneConsola);
-        jScrollPaneConsola.setBounds(0, 0, 700, 260);
+        jScrollPaneConsola.setBounds(0, 0, 700, 240);
 
         getContentPane().add(jPanelConsola);
         jPanelConsola.setBounds(10, 250, 780, 330);
@@ -320,9 +321,23 @@ public class PantallaPrincipal extends javax.swing.JFrame {
         jTextAreaConsola.setText("");
         jProgressBarra.setValue(0);
         
+        // Asignar calidad al video.
+        String formatoSeleccionado = "137+140";
+            if (jRadioButton1080.isSelected()) {
+                formatoSeleccionado = "137+140";
+            } else if (jRadioButton720.isSelected()){
+                formatoSeleccionado = "22";
+            } else if (jRadioButton480.isSelected()){
+                formatoSeleccionado = "135+140";
+            }
+            
+        final String formato = formatoSeleccionado;
+        
         new Thread(() -> {
+            
+       
             try {
-                ProcessBuilder builder = new ProcessBuilder("yt-dlp", url);
+                ProcessBuilder builder = new ProcessBuilder("yt-dlp", "-f", formato, url);
                 builder.redirectErrorStream(true);
                 Process process = builder.start();
                 
@@ -343,6 +358,7 @@ public class PantallaPrincipal extends javax.swing.JFrame {
                 SwingUtilities.invokeLater(() -> jButtonDescarga.setEnabled(true));
             }
         }).start();
+        
     }//GEN-LAST:event_jButtonDescargaActionPerformed
 
     /**
