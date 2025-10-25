@@ -49,3 +49,12 @@ For example, had a problem with subs so looked for the part of sub at the index.
     repaint();
 
 6. Allowed to save the preferences for the binaries path. Both Stackoverflow and copilot helped me. 
+
+7. Having some troubles with the media player for the recent download. Used again stack overflow or Copilot for the code. 
+
+Personal notes: I'm having so much trouble with this task. I'm working at a company and its hard for me to follow the big quantity of time you need for studying and understanding it. I mean,
+i will do my best effort but probably i will need some help. Can you give me some recomendations? There is a lot of code used here that aren't in the theory of the moodle, i've been using lot of time
+for investigation but i think that using other codes won't help me because i'm not getting the full concepts. I will improve, for sure but this task was extremely hard. I've figured some methods or
+variables but the logic behind the use of every button was impossible to understand. In any case, every single time i used external code o looked for a solution, it was because i needed how to figure
+out the logic of the code and still was impossible for me because we have 0 acknowledge about java swing. 
+
