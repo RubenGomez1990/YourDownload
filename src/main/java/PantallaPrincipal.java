@@ -25,6 +25,7 @@ public class PantallaPrincipal extends javax.swing.JFrame {
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(PantallaPrincipal.class.getName());
     private String rutaDestino = "";
     private final JPanel panelOriginal;
+    private String rutaBinarios = "";
 
     /**
      * Creates new form PantallaPrincipal
@@ -364,7 +365,7 @@ public class PantallaPrincipal extends javax.swing.JFrame {
                 
                 // Construir comando
                 List<String> comando = new ArrayList<>();
-                comando.add("yt-dlp");
+                comando.add(rutaBinarios);
                 String formatoSalida = jComboBoxFormato.getSelectedItem().toString();
 
                 if (formatoSalida.contains(".mp3")) {
@@ -390,6 +391,12 @@ public class PantallaPrincipal extends javax.swing.JFrame {
                     comando.add(rutaDestino + File.separator + "%(title)s.%(ext)s");
                 }
                 
+                if (!rutaDestino.isEmpty()) {
+                comando.add("--paths");
+                comando.add("temp:" + rutaDestino);
+                }       
+
+                
                 comando.add(url);
 
                 if (descargarSubtitulos) {
@@ -398,18 +405,6 @@ public class PantallaPrincipal extends javax.swing.JFrame {
                     comando.add("en");                // idioma español
                     comando.add("--convert-subs");
                     comando.add("srt");               // formato .srt
-                }
-
-                if (formatoSalida.contains("MP4")) {
-                    comando.add("--recode-video");
-                    comando.add("mp4");
-                } else if (formatoSalida.contains("AVI")) {
-                    comando.add("--recode-video");
-                    comando.add("avi");
-                } else if (formatoSalida.contains("MP3")) {
-                    comando.add("-x");
-                    comando.add("--audio-format");
-                    comando.add("mp3");
                 }
                 
                 ProcessBuilder builder = new ProcessBuilder(comando); // Añadimos -f para que seleccione formato.

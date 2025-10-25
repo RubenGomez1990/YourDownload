@@ -1,4 +1,7 @@
 
+import java.io.File;
+import java.util.prefs.Preferences;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
@@ -15,7 +18,8 @@ public class PanelPreferencias extends javax.swing.JPanel {
     
     private JFrame pantallaPrincipal;
     private JPanel panelOriginal;
-
+    private String rutaDestino = "";
+    private String rutaBinarios;
     /**
     * Crea el panel de preferencias.
     * @param pantallaPrincipal la ventana principal que contiene este panel
@@ -25,6 +29,10 @@ public class PanelPreferencias extends javax.swing.JPanel {
         initComponents();
         this.pantallaPrincipal = pantallaPrincipal;
         this.panelOriginal = panelOriginal;
+        
+        Preferences prefs = Preferences.userRoot().node(this.getClass().getName());
+        this.rutaBinarios = prefs.get("rutaBinarios", "C:\\Users\\ruben\\AppData\\Local\\yt-dlp.exe");
+        jLabelBinaries.setText("Binaries path: " + rutaBinarios);
     }
 
     /**
@@ -41,15 +49,14 @@ public class PanelPreferencias extends javax.swing.JPanel {
         jButtonTemporales = new javax.swing.JButton();
         jPanelPlaylists = new javax.swing.JPanel();
         jLabelPlaylists = new javax.swing.JLabel();
-        jCheckBoxPlaylists = new javax.swing.JCheckBox();
         jPanelLimite = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jComboBox1 = new javax.swing.JComboBox<>();
         jPanelBinaries = new javax.swing.JPanel();
         jLabelBinaries = new javax.swing.JLabel();
-        jTextFieldBinaries = new javax.swing.JTextField();
         jButtonBinaries = new javax.swing.JButton();
         jButtonVolver = new javax.swing.JButton();
+        jCheckBoxPlaylists = new javax.swing.JCheckBox();
 
         setPreferredSize(new java.awt.Dimension(800, 600));
         setLayout(null);
@@ -58,7 +65,7 @@ public class PanelPreferencias extends javax.swing.JPanel {
 
         jLabelTemporales.setText("Temporary files path:");
         jPanelTemporales.add(jLabelTemporales);
-        jLabelTemporales.setBounds(0, 0, 112, 20);
+        jLabelTemporales.setBounds(0, 0, 320, 20);
 
         jButtonTemporales.setText("Choose");
         jButtonTemporales.addActionListener(new java.awt.event.ActionListener() {
@@ -67,24 +74,16 @@ public class PanelPreferencias extends javax.swing.JPanel {
             }
         });
         jPanelTemporales.add(jButtonTemporales);
-        jButtonTemporales.setBounds(170, 0, 75, 23);
+        jButtonTemporales.setBounds(430, 0, 75, 23);
 
         add(jPanelTemporales);
-        jPanelTemporales.setBounds(10, 20, 270, 30);
+        jPanelTemporales.setBounds(10, 20, 650, 30);
 
         jPanelPlaylists.setLayout(null);
 
         jLabelPlaylists.setText("Create m3u file for Playlists:");
         jPanelPlaylists.add(jLabelPlaylists);
         jLabelPlaylists.setBounds(0, 0, 146, 20);
-
-        jCheckBoxPlaylists.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jCheckBoxPlaylistsActionPerformed(evt);
-            }
-        });
-        jPanelPlaylists.add(jCheckBoxPlaylists);
-        jCheckBoxPlaylists.setBounds(170, 0, 20, 20);
 
         add(jPanelPlaylists);
         jPanelPlaylists.setBounds(10, 60, 270, 20);
@@ -97,25 +96,28 @@ public class PanelPreferencias extends javax.swing.JPanel {
 
         jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "1 MB/s", "10 MB/s", "100 MB/s", "Unlimited" }));
         jPanelLimite.add(jComboBox1);
-        jComboBox1.setBounds(170, 0, 100, 22);
+        jComboBox1.setBounds(430, 0, 100, 22);
 
         add(jPanelLimite);
-        jPanelLimite.setBounds(10, 100, 290, 30);
+        jPanelLimite.setBounds(10, 100, 640, 30);
 
         jPanelBinaries.setLayout(null);
 
         jLabelBinaries.setText("Binaries path:");
         jPanelBinaries.add(jLabelBinaries);
-        jLabelBinaries.setBounds(0, 0, 80, 20);
-        jPanelBinaries.add(jTextFieldBinaries);
-        jTextFieldBinaries.setBounds(170, 0, 300, 22);
+        jLabelBinaries.setBounds(0, 0, 380, 20);
 
-        jButtonBinaries.setText("Change it!");
+        jButtonBinaries.setText("Change Binaries Path");
+        jButtonBinaries.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonBinariesActionPerformed(evt);
+            }
+        });
         jPanelBinaries.add(jButtonBinaries);
-        jButtonBinaries.setBounds(480, 0, 90, 20);
+        jButtonBinaries.setBounds(430, 0, 150, 20);
 
         add(jPanelBinaries);
-        jPanelBinaries.setBounds(10, 140, 670, 30);
+        jPanelBinaries.setBounds(10, 140, 830, 30);
 
         jButtonVolver.setText("Go back");
         jButtonVolver.addActionListener(new java.awt.event.ActionListener() {
@@ -125,10 +127,31 @@ public class PanelPreferencias extends javax.swing.JPanel {
         });
         add(jButtonVolver);
         jButtonVolver.setBounds(10, 180, 73, 23);
+
+        jCheckBoxPlaylists.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jCheckBoxPlaylistsActionPerformed(evt);
+            }
+        });
+        add(jCheckBoxPlaylists);
+        jCheckBoxPlaylists.setBounds(440, 60, 20, 20);
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButtonTemporalesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonTemporalesActionPerformed
-        // TODO add your handling code here:
+    JFileChooser chooser = new JFileChooser();
+    chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+
+    int result = chooser.showOpenDialog(this);
+    if (result == JFileChooser.APPROVE_OPTION) {
+        File selectedFolder = chooser.getSelectedFile();
+        String rutaTemporal = selectedFolder.getAbsolutePath();
+
+    // Guarda la ruta donde quieras (por ejemplo, en una variable global o en un campo de texto)
+    jLabelTemporales.setText(rutaTemporal); // ejemplo visual
+    this.rutaDestino = rutaTemporal;     // ejemplo funcional
+}
+
+    
     }//GEN-LAST:event_jButtonTemporalesActionPerformed
 
     private void jCheckBoxPlaylistsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBoxPlaylistsActionPerformed
@@ -141,6 +164,21 @@ public class PanelPreferencias extends javax.swing.JPanel {
         pantallaPrincipal.repaint();
 
     }//GEN-LAST:event_jButtonVolverActionPerformed
+
+    private void jButtonBinariesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonBinariesActionPerformed
+        JFileChooser chooser = new JFileChooser();
+        chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+
+        int result = chooser.showOpenDialog(this);
+        if (result == JFileChooser.APPROVE_OPTION) {
+        File selectedFile = chooser.getSelectedFile();
+        rutaBinarios = selectedFile.getAbsolutePath();
+
+        jLabelBinaries.setText("Binaries path: " + rutaBinarios);
+        Preferences prefs = Preferences.userRoot().node(this.getClass().getName());
+        prefs.put("rutaBinarios", rutaBinarios);
+        }
+    }//GEN-LAST:event_jButtonBinariesActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -157,6 +195,5 @@ public class PanelPreferencias extends javax.swing.JPanel {
     private javax.swing.JPanel jPanelLimite;
     private javax.swing.JPanel jPanelPlaylists;
     private javax.swing.JPanel jPanelTemporales;
-    private javax.swing.JTextField jTextFieldBinaries;
     // End of variables declaration//GEN-END:variables
 }

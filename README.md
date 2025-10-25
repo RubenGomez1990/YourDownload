@@ -47,4 +47,5 @@ For example, had a problem with subs so looked for the part of sub at the index.
     setContentPane(new PanelPreferencias(this, panelOriginal));
     revalidate();
     repaint();
-I think that this code logic is still hard for me because never used it before (not at 1ºDAM too). Sorry if some code is given by IA . Some logics still hard for me to learn and i always forgot to declare variables.
+
+6. Allowed to save the preferences for the binaries path. Both Stackoverflow and copilot helped me. 
