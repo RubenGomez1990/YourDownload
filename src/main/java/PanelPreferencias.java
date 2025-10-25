@@ -1,3 +1,7 @@
+
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JPanel.java to edit this template
@@ -8,12 +12,19 @@
  * @author LionKeriot
  */
 public class PanelPreferencias extends javax.swing.JPanel {
+    
+    private JFrame pantallaPrincipal;
+    private JPanel panelOriginal;
 
     /**
-     * Creates new form PanelPreferencias
-     */
-    public PanelPreferencias() {
+    * Crea el panel de preferencias.
+    * @param pantallaPrincipal la ventana principal que contiene este panel
+    */
+
+    public PanelPreferencias(JFrame pantallaPrincipal, JPanel panelOriginal) {
         initComponents();
+        this.pantallaPrincipal = pantallaPrincipal;
+        this.panelOriginal = panelOriginal;
     }
 
     /**
@@ -38,6 +49,7 @@ public class PanelPreferencias extends javax.swing.JPanel {
         jLabelBinaries = new javax.swing.JLabel();
         jTextFieldBinaries = new javax.swing.JTextField();
         jButtonBinaries = new javax.swing.JButton();
+        jButtonVolver = new javax.swing.JButton();
 
         setPreferredSize(new java.awt.Dimension(800, 600));
         setLayout(null);
@@ -96,7 +108,7 @@ public class PanelPreferencias extends javax.swing.JPanel {
         jPanelBinaries.add(jLabelBinaries);
         jLabelBinaries.setBounds(0, 0, 80, 20);
         jPanelBinaries.add(jTextFieldBinaries);
-        jTextFieldBinaries.setBounds(170, 0, 300, 20);
+        jTextFieldBinaries.setBounds(170, 0, 300, 22);
 
         jButtonBinaries.setText("Change it!");
         jPanelBinaries.add(jButtonBinaries);
@@ -104,6 +116,15 @@ public class PanelPreferencias extends javax.swing.JPanel {
 
         add(jPanelBinaries);
         jPanelBinaries.setBounds(10, 140, 670, 30);
+
+        jButtonVolver.setText("Go back");
+        jButtonVolver.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonVolverActionPerformed(evt);
+            }
+        });
+        add(jButtonVolver);
+        jButtonVolver.setBounds(10, 180, 73, 23);
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButtonTemporalesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonTemporalesActionPerformed
@@ -114,10 +135,18 @@ public class PanelPreferencias extends javax.swing.JPanel {
         // TODO add your handling code here:
     }//GEN-LAST:event_jCheckBoxPlaylistsActionPerformed
 
+    private void jButtonVolverActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonVolverActionPerformed
+        pantallaPrincipal.setContentPane(panelOriginal);
+        pantallaPrincipal.revalidate();
+        pantallaPrincipal.repaint();
+
+    }//GEN-LAST:event_jButtonVolverActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButtonBinaries;
     private javax.swing.JButton jButtonTemporales;
+    private javax.swing.JButton jButtonVolver;
     private javax.swing.JCheckBox jCheckBoxPlaylists;
     private javax.swing.JComboBox<String> jComboBox1;
     private javax.swing.JLabel jLabel1;

@@ -8,6 +8,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
 /*
@@ -23,6 +24,7 @@ public class PantallaPrincipal extends javax.swing.JFrame {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(PantallaPrincipal.class.getName());
     private String rutaDestino = "";
+    private final JPanel panelOriginal;
 
     /**
      * Creates new form PantallaPrincipal
@@ -30,7 +32,8 @@ public class PantallaPrincipal extends javax.swing.JFrame {
     public PantallaPrincipal() {
     initComponents();
     this.setLocationRelativeTo(null);
-
+    
+    panelOriginal = (JPanel) getContentPane();
     jButtonCambiar.setVisible(false); // Ocultar botón de cambiar al inicio
     jLabelGuardar.setText("No folder selected"); // Texto inicial
 }
@@ -324,9 +327,10 @@ public class PantallaPrincipal extends javax.swing.JFrame {
 
     private void jMenuItemPreferencesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemPreferencesActionPerformed
         // Dentro del JFrame principal
-    setContentPane(new PanelPreferencias()); // PanelPreferencias es el JPanel que diseñaste
-    revalidate(); 
+    setContentPane(new PanelPreferencias(this, panelOriginal));
+    revalidate();
     repaint();
+
 
     }//GEN-LAST:event_jMenuItemPreferencesActionPerformed
 
