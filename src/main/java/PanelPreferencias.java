@@ -21,7 +21,7 @@ public class PanelPreferencias extends javax.swing.JPanel {
     private String rutaDestino = "";
     private String rutaBinarios;
     /**
-    * Crea el panel de preferencias.
+    *
     * @param pantallaPrincipal la ventana principal que contiene este panel
     */
 
@@ -151,7 +151,7 @@ public class PanelPreferencias extends javax.swing.JPanel {
         File selectedFolder = chooser.getSelectedFile();
         String rutaTemporal = selectedFolder.getAbsolutePath();
 
-    // Guarda la ruta donde quieras (por ejemplo, en una variable global o en un campo de texto)
+    // Guarda la ruta donde quieras
     jLabelTemporales.setText(rutaTemporal); // ejemplo visual
     this.rutaDestino = rutaTemporal;     // ejemplo funcional
 }

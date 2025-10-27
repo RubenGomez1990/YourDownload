@@ -298,19 +298,19 @@ public class PantallaPrincipal extends javax.swing.JFrame {
     }//GEN-LAST:event_jCheckBoxSubtitulosSiActionPerformed
 
     private void jButtonRutaGuardadoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonRutaGuardadoActionPerformed
-        // Dentro del evento del botón
+        // Filechooser para seleccionar una ruta
         JFileChooser selectorRuta = new JFileChooser();
         selectorRuta.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 
-        int resultado = selectorRuta.showOpenDialog(this);
+        int resultado = selectorRuta.showOpenDialog(this); // selecciona la ruta 
         if (resultado == JFileChooser.APPROVE_OPTION) {
             File carpeta = selectorRuta.getSelectedFile();
             rutaDestino = carpeta.getAbsolutePath();
 
             jLabelGuardar.setText("Saved at: " + rutaDestino);
 
-            jButtonRutaGuardado.setVisible(false); // Oculta el botón inicial
-            jButtonCambiar.setVisible(true);       // Muestra el botón de cambiar
+            jButtonRutaGuardado.setVisible(false); 
+            jButtonCambiar.setVisible(true);  
         }
     }//GEN-LAST:event_jButtonRutaGuardadoActionPerformed
 
@@ -367,7 +367,7 @@ public class PantallaPrincipal extends javax.swing.JFrame {
             final File[] archivoDescargado = new File [1];
             try {
                 
-                // Construir comando
+                // construccion comando
                 Preferences prefs = Preferences.userRoot().node("PanelPreferencias");
                 String rutaBinarios = prefs.get("rutaBinarios", "C:\\Users\\ruben\\AppData\\Local\\yt-dlp.exe");
                 List<String> comando = new ArrayList<>();
@@ -375,12 +375,12 @@ public class PantallaPrincipal extends javax.swing.JFrame {
                 String formatoSalida = jComboBoxFormato.getSelectedItem().toString();
 
                 if (formatoSalida.contains(".mp3")) {
-                    // Solo audio: no se especifica -f
+                    // no se especifica -f para audio
                     comando.add("-x");
                     comando.add("--audio-format");
                     comando.add("mp3");
                 } else {
-                    // Vídeo: se especifica calidad
+                    // se especifica -f 
                     comando.add("-f");
                     comando.add(formatoFinal);
 
@@ -422,7 +422,6 @@ public class PantallaPrincipal extends javax.swing.JFrame {
                 String line;
                 while ((line = reader.readLine()) != null) {
                     final String outputLine = line;
-                    // Detectar ruta del archivo descargado
                     if (outputLine.contains("Destination:")) {
                         String ruta = outputLine.substring(outputLine.indexOf("Destination:") + 12).trim();
                         archivoDescargado[0] = new File(ruta);
@@ -456,11 +455,11 @@ public class PantallaPrincipal extends javax.swing.JFrame {
                 SwingUtilities.invokeLater(() -> {
                 jButtonDescarga.setEnabled(true);
 
-                // Mostrar el JDialog DescargaCompletada
+                // Muestra el Jdialog de descarga completada
                 DescargaCompletada dialog = new DescargaCompletada(null, true, archivoDescargado[0]);
-                dialog.setSize(300, 250);               // Tamaño adecuado
-                dialog.setLocationRelativeTo(null);     // Centrado en pantalla
-                dialog.setVisible(true);                // Mostrar el diálogo
+                dialog.setSize(300, 250);               
+                dialog.setLocationRelativeTo(null);     
+                dialog.setVisible(true);                
             });
         }
         }).start();

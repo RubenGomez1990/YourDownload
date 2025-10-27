@@ -17,7 +17,7 @@ public class About extends javax.swing.JDialog {
     public About(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
-        setSize(350, 250); // Ajusta el tamaño según tu contenido
+        setSize(350, 250);
         setLocationRelativeTo(null); // Centra en pantalla
     }
 
