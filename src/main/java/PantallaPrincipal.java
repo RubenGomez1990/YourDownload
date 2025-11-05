@@ -28,6 +28,7 @@ public class PantallaPrincipal extends javax.swing.JFrame {
     private JPanel panelOriginal;
     private String rutaBinarios = "";
     private PanelPreferencias panelPreferencias;
+    private List<InformacionDescargas> listaRecursos = new ArrayList<>();
   
 
     /**
