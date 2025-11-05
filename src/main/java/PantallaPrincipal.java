@@ -2,8 +2,10 @@
 import java.util.List;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.prefs.Preferences;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -456,11 +458,22 @@ public class PantallaPrincipal extends javax.swing.JFrame {
                     });
                 }
                     process.waitFor();
-            } catch (Exception e){
+            } catch (IOException | InterruptedException e){
                 SwingUtilities.invokeLater(() -> jTextAreaConsola.append("Error: " + e.getMessage() + "\n"));
             } finally {
                 SwingUtilities.invokeLater(() -> {
                 jButtonDescarga.setEnabled(true);
+                
+                //Recogemos las propiedades del archivo descargado
+                File archivoFinal = archivoDescargado[0];
+                if (archivoFinal != null && archivoFinal.exists()){
+                    String rutaAbsoluta = archivoFinal.getAbsolutePath();
+                    long tamanyo = archivoFinal.length();
+                    String mimeType = obtenerMimeSimple(archivoFinal.getName());
+                // Y lo añadimos a la listaRecursos
+                    InformacionDescargas nuevaDescarga = new InformacionDescargas(rutaAbsoluta, new Date(), tamanyo, mimeType);
+                    listaRecursos.add(nuevaDescarga);
+                }
 
                 // Muestra el Jdialog de descarga completada
                 DescargaCompletada dialog = new DescargaCompletada(null, true, archivoDescargado[0]);
@@ -518,11 +531,31 @@ public class PantallaPrincipal extends javax.swing.JFrame {
     private void actualizarBarraProgreso(String line) {
     Pattern pattern = Pattern.compile("\\[download\\]\\s+(\\d+\\.\\d+)%");
     Matcher matcher = pattern.matcher(line);
-    if (matcher.find()) {
-        double porcentaje = Double.parseDouble(matcher.group(1));
-        jProgressBarra.setValue((int) porcentaje);
+        if (matcher.find()) {
+            double porcentaje = Double.parseDouble(matcher.group(1));
+            jProgressBarra.setValue((int) porcentaje);
+        }
     }
-}
+    
+    
+    /**
+    * Determina un tipo MIME (formato de contenido) simple basado en la extensión del archivo.
+    * * Esta función es auxiliar para categorizar el archivo descargado 
+     * (MP4, AVI, MP3) para la biblioteca.
+    *
+     * @param nombreArchivo El nombre completo del archivo (e.g., "MiVideo.mp4").
+    * @return El String que representa el tipo MIME estándar (e.g., "video/mp4").
+     */
+    private String obtenerMimeSimple(String nombreArchivo){
+        if (nombreArchivo.toLowerCase().endsWith(".mp4")) {
+            return "video/mp4";
+        } else if (nombreArchivo.toLowerCase().endsWith (".avi")) {
+            return "video/x-msvideo";
+        } else if (nombreArchivo.toLowerCase().endsWith (".mp3")) {
+            return "audio/mpeg";
+        }
+        return "application/octet-stream";
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup buttonGroupCalidad;

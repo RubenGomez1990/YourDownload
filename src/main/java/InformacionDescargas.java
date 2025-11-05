@@ -1,4 +1,5 @@
 
+import java.io.File;
 import java.util.Date;
 
 /*
@@ -19,8 +20,8 @@ public class InformacionDescargas {
     private final Long tamanyo;
     private final String mimeType;
     
-    public InformacionDescargas (String nombreArchivo, String rutaAbsoluta, Date fechaDescarga, Long tamanyo, String mimeType){
-        this.nombreArchivo = nombreArchivo;
+    public InformacionDescargas (String rutaAbsoluta, Date fechaDescarga, Long tamanyo, String mimeType){
+        this.nombreArchivo = new File(rutaAbsoluta).getName();
         this.rutaAbsoluta = rutaAbsoluta;
         this.fechaDescarga = fechaDescarga;
         this.tamanyo = tamanyo;
