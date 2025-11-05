@@ -350,17 +350,22 @@ public class PantallaPrincipal extends javax.swing.JFrame {
         jProgressBarra.setValue(0);
         
         // Asignar calidad al video. Simple IF para escoger la calidad. 
-        String formatoSeleccionado = "137+140";
+        String formatoSeleccionado = "bestvideo+bestaudio"; // Default: la mejor calidad disponible
+
             if (jRadioButton1080.isSelected()) {
-                formatoSeleccionado = "137+140";
-            } else if (jRadioButton720.isSelected()){
-                formatoSeleccionado = "22";
-            } else if (jRadioButton480.isSelected()){
-                formatoSeleccionado = "135+140";
+                // Busca el mejor video de 1080p o menos, más el mejor audio
+                formatoSeleccionado = "bestvideo[height<=1080]+bestaudio";
+            } else if (jRadioButton720.isSelected()) {
+                // Busca el mejor video de 720p o menos, más el mejor audio
+                formatoSeleccionado = "bestvideo[height<=720]+bestaudio";
+            } else if (jRadioButton480.isSelected()) {
+                // Busca el mejor video de 480p o menos, más el mejor audio
+                formatoSeleccionado = "bestvideo[height<=480]+bestaudio";
             }
-            
-        boolean descargarSubtitulos = jCheckBoxSubtitulosSi.isSelected();
-        final String formatoFinal = formatoSeleccionado; // Igualamos a formatoSeleccionado ya que el uso de Thread no permite el cambio de la variable que debe ser final.
+
+            // El resto del código que usa 'formatoFinal' permanece igual
+            boolean descargarSubtitulos = jCheckBoxSubtitulosSi.isSelected();
+            final String formatoFinal = formatoSeleccionado; // Igualamos a formatoSeleccionado ya que el uso de Thread no permite el cambio de la variable que debe ser final.
         
         new Thread(() -> {
             
