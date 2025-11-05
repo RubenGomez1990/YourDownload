@@ -93,7 +93,7 @@ public class PantallaPrincipal extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("YourDownload");
-        setPreferredSize(new java.awt.Dimension(735, 560));
+        setPreferredSize(new java.awt.Dimension(1024, 768));
         getContentPane().setLayout(null);
 
         jLabelWelcome.setText("Welcome! Download videos with no barriers!");
