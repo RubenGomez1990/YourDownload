@@ -377,6 +377,7 @@ public class PantallaPrincipal extends javax.swing.JFrame {
                 String rutaBinarios = prefs.get("rutaBinarios", "C:\\Users\\ruben\\AppData\\Local\\yt-dlp.exe");
                 List<String> comando = new ArrayList<>();
                 comando.add(rutaBinarios);
+                comando.add("--no-download-archive");
                 String formatoSalida = jComboBoxFormato.getSelectedItem().toString();
 
                 if (formatoSalida.contains(".mp3")) {
@@ -399,7 +400,7 @@ public class PantallaPrincipal extends javax.swing.JFrame {
                 }
                 if (!rutaDestino.isEmpty()) {
                     comando.add("-o");
-                    comando.add(rutaDestino + File.separator + "%(title)s.%(ext)s");
+                    comando.add(rutaDestino + File.separator + "%(title)s - %(epoch)s.%(ext)s");
                 }
 
                 if (!rutaDestino.isEmpty()) {
