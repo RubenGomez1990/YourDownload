@@ -83,6 +83,8 @@ public class PantallaPrincipal extends javax.swing.JFrame {
         jTextAreaConsola = new javax.swing.JTextArea();
         jPanelDescarga = new javax.swing.JPanel();
         jButtonDescarga = new javax.swing.JButton();
+        jPanelLibrary = new javax.swing.JPanel();
+        jButtonLibrary = new javax.swing.JButton();
         jMenuBar = new javax.swing.JMenuBar();
         jMenuFile = new javax.swing.JMenu();
         jMenuItemExit = new javax.swing.JMenuItem();
@@ -112,10 +114,10 @@ public class PantallaPrincipal extends javax.swing.JFrame {
             }
         });
         jPanelWeb.add(jTextFieldUrl);
-        jTextFieldUrl.setBounds(110, 0, 400, 30);
+        jTextFieldUrl.setBounds(110, 0, 670, 30);
 
         getContentPane().add(jPanelWeb);
-        jPanelWeb.setBounds(10, 50, 510, 30);
+        jPanelWeb.setBounds(10, 50, 780, 30);
 
         jPanelCalidad.setLayout(null);
 
@@ -207,7 +209,7 @@ public class PantallaPrincipal extends javax.swing.JFrame {
         jButtonCambiar.setBounds(270, 0, 72, 20);
 
         getContentPane().add(jPanelGuardado);
-        jPanelGuardado.setBounds(10, 170, 930, 20);
+        jPanelGuardado.setBounds(10, 170, 440, 20);
 
         jPanelProgreso.setLayout(null);
 
@@ -216,10 +218,10 @@ public class PantallaPrincipal extends javax.swing.JFrame {
         jPanelProgreso.add(jLabelProgreso);
         jLabelProgreso.setBounds(0, -10, 100, 40);
         jPanelProgreso.add(jProgressBarra);
-        jProgressBarra.setBounds(110, 0, 260, 20);
+        jProgressBarra.setBounds(110, 0, 670, 20);
 
         getContentPane().add(jPanelProgreso);
-        jPanelProgreso.setBounds(10, 210, 400, 30);
+        jPanelProgreso.setBounds(10, 210, 780, 30);
 
         jPanelConsola.setLayout(null);
 
@@ -228,10 +230,10 @@ public class PantallaPrincipal extends javax.swing.JFrame {
         jScrollPaneConsola.setViewportView(jTextAreaConsola);
 
         jPanelConsola.add(jScrollPaneConsola);
-        jScrollPaneConsola.setBounds(0, 0, 700, 240);
+        jScrollPaneConsola.setBounds(0, 0, 990, 470);
 
         getContentPane().add(jPanelConsola);
-        jPanelConsola.setBounds(10, 250, 780, 330);
+        jPanelConsola.setBounds(10, 250, 990, 470);
 
         jPanelDescarga.setLayout(null);
 
@@ -245,7 +247,21 @@ public class PantallaPrincipal extends javax.swing.JFrame {
         jButtonDescarga.setBounds(0, 0, 170, 60);
 
         getContentPane().add(jPanelDescarga);
-        jPanelDescarga.setBounds(540, 50, 170, 60);
+        jPanelDescarga.setBounds(830, 40, 170, 60);
+
+        jPanelLibrary.setLayout(null);
+
+        jButtonLibrary.setText("Media Library");
+        jButtonLibrary.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonLibraryActionPerformed(evt);
+            }
+        });
+        jPanelLibrary.add(jButtonLibrary);
+        jButtonLibrary.setBounds(0, 0, 170, 60);
+
+        getContentPane().add(jPanelLibrary);
+        jPanelLibrary.setBounds(830, 110, 170, 60);
 
         jMenuFile.setText("File");
 
@@ -503,6 +519,10 @@ public class PantallaPrincipal extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_jButtonCambiarActionPerformed
 
+    private void jButtonLibraryActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonLibraryActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jButtonLibraryActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -561,6 +581,7 @@ public class PantallaPrincipal extends javax.swing.JFrame {
     private javax.swing.ButtonGroup buttonGroupCalidad;
     private javax.swing.JButton jButtonCambiar;
     private javax.swing.JButton jButtonDescarga;
+    private javax.swing.JButton jButtonLibrary;
     private javax.swing.JButton jButtonRutaGuardado;
     private javax.swing.JCheckBox jCheckBoxSubtitulosSi;
     private javax.swing.JComboBox<String> jComboBoxFormato;
@@ -583,6 +604,7 @@ public class PantallaPrincipal extends javax.swing.JFrame {
     private javax.swing.JPanel jPanelDescarga;
     private javax.swing.JPanel jPanelFormato;
     private javax.swing.JPanel jPanelGuardado;
+    private javax.swing.JPanel jPanelLibrary;
     private javax.swing.JPanel jPanelProgreso;
     private javax.swing.JPanel jPanelSubtitulos;
     private javax.swing.JPanel jPanelWeb;
