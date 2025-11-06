@@ -13,7 +13,7 @@ import java.util.List;
  */
 public class InformacionDescargasTableModel extends javax.swing.table.AbstractTableModel {
     private final List<InformacionDescargas> recursos;
-    private final String[] nombresColumnas = {"Nombre", "Tamaño", "Formato", "Fecha"};
+    private final String[] nombresColumnas = {"Name", "Size", "Format", "Download Date"};
     
     public InformacionDescargasTableModel(List<InformacionDescargas> recursos){
         this.recursos = recursos;

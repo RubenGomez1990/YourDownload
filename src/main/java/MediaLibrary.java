@@ -84,6 +84,11 @@ public class MediaLibrary extends javax.swing.JPanel {
         jButtonVolver.setBounds(380, 530, 75, 23);
 
         jButtonEliminar.setText("Delete");
+        jButtonEliminar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonEliminarActionPerformed(evt);
+            }
+        });
         add(jButtonEliminar);
         jButtonEliminar.setBounds(290, 530, 72, 23);
     }// </editor-fold>//GEN-END:initComponents
@@ -93,6 +98,42 @@ public class MediaLibrary extends javax.swing.JPanel {
         principal.revalidate();
         principal.repaint();
     }//GEN-LAST:event_jButtonVolverActionPerformed
+
+    private void jButtonEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonEliminarActionPerformed
+       // Obtiene la fila seleccionada
+       Object[] opciones = {"Yes", "No"};
+        int filaSeleccionada = jTableMedia.getSelectedRow();
+        
+        // Asignamos una variable al recurso que vamos a eliminar.
+        if (filaSeleccionada >=0) {
+            InformacionDescargas  recursoEliminar = listaRecursos.get(filaSeleccionada);
+        
+       // Pedimos confirmación
+       int confirmacion = javax.swing.JOptionPane.showOptionDialog(this,"Are you sure you want to delete '" 
+            + recursoEliminar.getNombreArchivo(),"Confirm Deletion",
+            javax.swing.JOptionPane.YES_NO_OPTION, // Tipo de opción
+            javax.swing.JOptionPane.QUESTION_MESSAGE, // Icono de pregunta
+            null, // No usar icono custom
+            opciones, // Array de Strings a mostrar en los botones
+            opciones[0] // Opción por defecto ("Yes")
+            );
+       
+        if (confirmacion == javax.swing.JOptionPane.YES_OPTION) {
+            java.io.File archivo = new java.io.File(recursoEliminar.getRutaAbsoluta());
+
+            if (archivo.delete()) {
+                listaRecursos.remove(filaSeleccionada);
+                tableModel.fireTableDataChanged();
+                javax.swing.JOptionPane.showMessageDialog(this, "File deleted successfully.", "Success!", javax.swing.JOptionPane.INFORMATION_MESSAGE);
+                } else {
+                    // Error al eliminar del disco (ej: el archivo no existe o permisos insuficientes)
+                    javax.swing.JOptionPane.showMessageDialog(this, "Error: File could not have been deleted. Check the log.", "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+                }
+            }
+            } else {
+            javax.swing.JOptionPane.showMessageDialog(this, "Select a file to delete", "Warning", javax.swing.JOptionPane.WARNING_MESSAGE);
+        }
+    }//GEN-LAST:event_jButtonEliminarActionPerformed
 
     
 
