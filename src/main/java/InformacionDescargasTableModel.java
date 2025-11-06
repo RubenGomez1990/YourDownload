@@ -38,7 +38,7 @@ public class InformacionDescargasTableModel extends javax.swing.table.AbstractTa
         
         switch (columnIndex) {
             case 0: return recurso.getNombreArchivo();
-            case 1: return recurso.getTamanyo();
+            case 1: return recurso.getTamanoFormateado();
             case 2: return recurso.getMimeType();
             case 3: return recurso.getFechaDescarga();
             default: return null;

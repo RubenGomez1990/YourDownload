@@ -43,6 +43,7 @@ public class MediaLibrary extends javax.swing.JPanel {
         jComboBoxFiltro = new javax.swing.JComboBox<>();
         jButtonFiltrar = new javax.swing.JButton();
         jButtonVolver = new javax.swing.JButton();
+        jButtonEliminar = new javax.swing.JButton();
 
         setEnabled(false);
         setPreferredSize(new java.awt.Dimension(1024, 768));
@@ -74,13 +75,29 @@ public class MediaLibrary extends javax.swing.JPanel {
 
         jButtonVolver.setText("Return");
         jButtonVolver.setName(""); // NOI18N
+        jButtonVolver.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonVolverActionPerformed(evt);
+            }
+        });
         add(jButtonVolver);
-        jButtonVolver.setBounds(290, 530, 72, 23);
+        jButtonVolver.setBounds(380, 530, 75, 23);
+
+        jButtonEliminar.setText("Delete");
+        add(jButtonEliminar);
+        jButtonEliminar.setBounds(290, 530, 72, 23);
     }// </editor-fold>//GEN-END:initComponents
+
+    private void jButtonVolverActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonVolverActionPerformed
+        principal.setContentPane(panelOriginal);
+        principal.revalidate();
+        principal.repaint();
+    }//GEN-LAST:event_jButtonVolverActionPerformed
 
     
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton jButtonEliminar;
     private javax.swing.JButton jButtonFiltrar;
     private javax.swing.JButton jButtonVolver;
     private javax.swing.JComboBox<String> jComboBoxFiltro;
