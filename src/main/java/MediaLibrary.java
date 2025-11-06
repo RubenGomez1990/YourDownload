@@ -42,6 +42,7 @@ public class MediaLibrary extends javax.swing.JPanel {
         jTableMedia = new javax.swing.JTable();
         jComboBoxFiltro = new javax.swing.JComboBox<>();
         jButtonFiltrar = new javax.swing.JButton();
+        jButtonVolver = new javax.swing.JButton();
 
         setEnabled(false);
         setPreferredSize(new java.awt.Dimension(1024, 768));
@@ -61,21 +62,27 @@ public class MediaLibrary extends javax.swing.JPanel {
         jScrollPaneMedia.setViewportView(jTableMedia);
 
         add(jScrollPaneMedia);
-        jScrollPaneMedia.setBounds(0, 0, 850, 480);
+        jScrollPaneMedia.setBounds(0, 0, 930, 500);
 
         jComboBoxFiltro.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
         add(jComboBoxFiltro);
         jComboBoxFiltro.setBounds(110, 530, 72, 22);
 
-        jButtonFiltrar.setText("jButton1");
+        jButtonFiltrar.setText("Filter");
         add(jButtonFiltrar);
-        jButtonFiltrar.setBounds(200, 530, 75, 23);
+        jButtonFiltrar.setBounds(200, 530, 72, 23);
+
+        jButtonVolver.setText("Return");
+        jButtonVolver.setName(""); // NOI18N
+        add(jButtonVolver);
+        jButtonVolver.setBounds(290, 530, 72, 23);
     }// </editor-fold>//GEN-END:initComponents
 
     
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButtonFiltrar;
+    private javax.swing.JButton jButtonVolver;
     private javax.swing.JComboBox<String> jComboBoxFiltro;
     private javax.swing.JScrollPane jScrollPaneMedia;
     private javax.swing.JTable jTableMedia;

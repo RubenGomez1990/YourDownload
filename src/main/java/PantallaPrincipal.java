@@ -520,7 +520,11 @@ public class PantallaPrincipal extends javax.swing.JFrame {
     }//GEN-LAST:event_jButtonCambiarActionPerformed
 
     private void jButtonLibraryActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonLibraryActionPerformed
-        // TODO add your handling code here:
+        MediaLibrary panelBiblioteca = new MediaLibrary(this, panelOriginal, listaRecursos);
+        
+        setContentPane(panelBiblioteca);
+        revalidate();
+        repaint();
     }//GEN-LAST:event_jButtonLibraryActionPerformed
 
     /**
