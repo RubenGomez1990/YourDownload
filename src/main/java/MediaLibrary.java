@@ -25,6 +25,12 @@ public class MediaLibrary extends javax.swing.JPanel {
         initComponents();
         tableModel = new InformacionDescargasTableModel(listaRecursos);
         jTableMedia.setModel(tableModel);
+        
+        javax.swing.table.TableRowSorter<InformacionDescargasTableModel> sorter = new javax.swing.table.TableRowSorter<>(tableModel);
+        jTableMedia.setRowSorter(sorter);
+        
+        
+        initFiltroComboBox();
     }
     
     
@@ -41,9 +47,9 @@ public class MediaLibrary extends javax.swing.JPanel {
         jScrollPaneMedia = new javax.swing.JScrollPane();
         jTableMedia = new javax.swing.JTable();
         jComboBoxFiltro = new javax.swing.JComboBox<>();
-        jButtonFiltrar = new javax.swing.JButton();
         jButtonVolver = new javax.swing.JButton();
         jButtonEliminar = new javax.swing.JButton();
+        jLabelFiltro = new javax.swing.JLabel();
 
         setEnabled(false);
         setPreferredSize(new java.awt.Dimension(1024, 768));
@@ -66,12 +72,13 @@ public class MediaLibrary extends javax.swing.JPanel {
         jScrollPaneMedia.setBounds(0, 0, 930, 500);
 
         jComboBoxFiltro.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        jComboBoxFiltro.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jComboBoxFiltroActionPerformed(evt);
+            }
+        });
         add(jComboBoxFiltro);
-        jComboBoxFiltro.setBounds(110, 530, 72, 22);
-
-        jButtonFiltrar.setText("Filter");
-        add(jButtonFiltrar);
-        jButtonFiltrar.setBounds(200, 530, 72, 23);
+        jComboBoxFiltro.setBounds(110, 530, 120, 30);
 
         jButtonVolver.setText("Return");
         jButtonVolver.setName(""); // NOI18N
@@ -81,7 +88,7 @@ public class MediaLibrary extends javax.swing.JPanel {
             }
         });
         add(jButtonVolver);
-        jButtonVolver.setBounds(380, 530, 75, 23);
+        jButtonVolver.setBounds(750, 540, 120, 30);
 
         jButtonEliminar.setText("Delete");
         jButtonEliminar.addActionListener(new java.awt.event.ActionListener() {
@@ -90,7 +97,11 @@ public class MediaLibrary extends javax.swing.JPanel {
             }
         });
         add(jButtonEliminar);
-        jButtonEliminar.setBounds(290, 530, 72, 23);
+        jButtonEliminar.setBounds(440, 530, 120, 30);
+
+        jLabelFiltro.setText("Filter by:");
+        add(jLabelFiltro);
+        jLabelFiltro.setBounds(30, 530, 70, 30);
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButtonVolverActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonVolverActionPerformed
@@ -135,13 +146,67 @@ public class MediaLibrary extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_jButtonEliminarActionPerformed
 
+    private void jComboBoxFiltroActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBoxFiltroActionPerformed
+
+    
+    @SuppressWarnings("unchecked")
+    javax.swing.table.TableRowSorter<InformacionDescargasTableModel> sorter = 
+    (javax.swing.table.TableRowSorter<InformacionDescargasTableModel>) jTableMedia.getRowSorter();
+    
+        if (sorter == null) return; 
+        String filtroSeleccionado = (String) jComboBoxFiltro.getSelectedItem();
+    
+        if (filtroSeleccionado.equals("All Types")) {
+            // CASO A: Mostrar todas las filas.
+            sorter.setRowFilter(null); 
+        } else {
+        // CASO B: Filtrar las filas (el caso que antes estaba en el 'else').
+        String mimeTypeFiltro = "";
+        // Lógica de traducción
+        if (filtroSeleccionado.contains("MP4")) {
+            mimeTypeFiltro = "video/mp4";
+        } else if (filtroSeleccionado.contains("AVI")) {
+            mimeTypeFiltro = "video/x-msvideo";
+        } else if (filtroSeleccionado.contains("MP3")) {
+            mimeTypeFiltro = "audio/mpeg";
+        }
+        
+        // Aplicar el filtro a la Columna 2 (MIME Type)
+        javax.swing.RowFilter<Object, Object> rf = 
+            javax.swing.RowFilter.regexFilter("^" + mimeTypeFiltro + "$", 2);
+            
+        sorter.setRowFilter(rf);
+    }
+    }//GEN-LAST:event_jComboBoxFiltroActionPerformed
+
+    private void initFiltroComboBox() {
+        // 1. Definimos las opciones de filtro con nombres amigables para el usuario
+        String[] tiposDeFiltro = {
+            "All Types",      // Opción 0: Desactivar filtro
+            "Video (MP4)",    // Opción para buscar "video/mp4"
+            "Audio (MP3)",    // Opción para buscar "audio/mpeg"
+            "Video (AVI)"     // Opción para buscar "video/x-msvideo"
+        };
+
+        // 2. Asignamos las opciones al JComboBox
+        javax.swing.DefaultComboBoxModel<String> modeloFiltro = new javax.swing.DefaultComboBoxModel<>(tiposDeFiltro);
+        jComboBoxFiltro.setModel(modeloFiltro); 
+    
+        // 3. Conectamos el JComboBox a la lógica de acción
+        jComboBoxFiltro.addActionListener(new java.awt.event.ActionListener() {
+        public void actionPerformed(java.awt.event.ActionEvent evt) {
+            // Llama al método que contiene la lógica del RowFilter
+            jComboBoxFiltroActionPerformed(evt);
+        }
+    });
+}
     
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButtonEliminar;
-    private javax.swing.JButton jButtonFiltrar;
     private javax.swing.JButton jButtonVolver;
     private javax.swing.JComboBox<String> jComboBoxFiltro;
+    private javax.swing.JLabel jLabelFiltro;
     private javax.swing.JScrollPane jScrollPaneMedia;
     private javax.swing.JTable jTableMedia;
     // End of variables declaration//GEN-END:variables
