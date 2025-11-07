@@ -397,6 +397,7 @@ public class PantallaPrincipal extends javax.swing.JFrame {
                 List<String> comando = new ArrayList<>();
                 comando.add(rutaBinarios);
                 comando.add("--no-download-archive");
+                comando.add("--restrict-filenames");
                 String formatoSalida = jComboBoxFormato.getSelectedItem().toString();
 
                 if (formatoSalida.contains(".mp3")) {
@@ -482,6 +483,8 @@ public class PantallaPrincipal extends javax.swing.JFrame {
                 
                 //Recogemos las propiedades del archivo descargado
                 File archivoFinal = archivoDescargado[0];
+                System.out.println("DEBUG (Descarga): Ruta de archivo final: " + archivoFinal.getAbsolutePath());
+                System.out.println("DEBUG (Descarga): ¿Existe el archivo?: " + archivoFinal.exists());
                 if (archivoFinal != null && archivoFinal.exists()){
                     String rutaAbsoluta = archivoFinal.getAbsolutePath();
                     long tamanyo = archivoFinal.length();
@@ -525,6 +528,7 @@ public class PantallaPrincipal extends javax.swing.JFrame {
         setContentPane(panelBiblioteca);
         revalidate();
         repaint();
+        System.out.println("DEBUG: Se abre MediaLibrary. Contiene " + listaRecursos.size() + " archivos.");
     }//GEN-LAST:event_jButtonLibraryActionPerformed
 
     /**
