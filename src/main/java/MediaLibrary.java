@@ -46,10 +46,14 @@ public class MediaLibrary extends javax.swing.JPanel {
 
         jScrollPaneMedia = new javax.swing.JScrollPane();
         jTableMedia = new javax.swing.JTable();
-        jComboBoxFiltro = new javax.swing.JComboBox<>();
-        jButtonVolver = new javax.swing.JButton();
-        jButtonEliminar = new javax.swing.JButton();
         jLabelFiltro = new javax.swing.JLabel();
+        jComboBoxFiltro = new javax.swing.JComboBox<>();
+        jButtonEliminar = new javax.swing.JButton();
+        jButtonVolver = new javax.swing.JButton();
+        jLabelSearch = new javax.swing.JLabel();
+        jTextFieldBusqueda = new javax.swing.JTextField();
+        jScrollPaneTextFilter = new javax.swing.JScrollPane();
+        jListTextFilter = new javax.swing.JList<>();
 
         setEnabled(false);
         setPreferredSize(new java.awt.Dimension(1024, 768));
@@ -69,7 +73,11 @@ public class MediaLibrary extends javax.swing.JPanel {
         jScrollPaneMedia.setViewportView(jTableMedia);
 
         add(jScrollPaneMedia);
-        jScrollPaneMedia.setBounds(0, 0, 930, 500);
+        jScrollPaneMedia.setBounds(0, 0, 930, 220);
+
+        jLabelFiltro.setText("Filter by:");
+        add(jLabelFiltro);
+        jLabelFiltro.setBounds(10, 230, 70, 30);
 
         jComboBoxFiltro.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
         jComboBoxFiltro.addActionListener(new java.awt.event.ActionListener() {
@@ -78,7 +86,16 @@ public class MediaLibrary extends javax.swing.JPanel {
             }
         });
         add(jComboBoxFiltro);
-        jComboBoxFiltro.setBounds(110, 530, 120, 30);
+        jComboBoxFiltro.setBounds(130, 230, 120, 30);
+
+        jButtonEliminar.setText("Delete");
+        jButtonEliminar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonEliminarActionPerformed(evt);
+            }
+        });
+        add(jButtonEliminar);
+        jButtonEliminar.setBounds(400, 230, 120, 30);
 
         jButtonVolver.setText("Return");
         jButtonVolver.setName(""); // NOI18N
@@ -88,20 +105,23 @@ public class MediaLibrary extends javax.swing.JPanel {
             }
         });
         add(jButtonVolver);
-        jButtonVolver.setBounds(750, 540, 120, 30);
+        jButtonVolver.setBounds(690, 230, 120, 30);
 
-        jButtonEliminar.setText("Delete");
-        jButtonEliminar.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButtonEliminarActionPerformed(evt);
-            }
+        jLabelSearch.setText("Search by text:");
+        add(jLabelSearch);
+        jLabelSearch.setBounds(10, 270, 80, 30);
+        add(jTextFieldBusqueda);
+        jTextFieldBusqueda.setBounds(130, 270, 120, 30);
+
+        jListTextFilter.setModel(new javax.swing.AbstractListModel<String>() {
+            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
+            public int getSize() { return strings.length; }
+            public String getElementAt(int i) { return strings[i]; }
         });
-        add(jButtonEliminar);
-        jButtonEliminar.setBounds(440, 530, 120, 30);
+        jScrollPaneTextFilter.setViewportView(jListTextFilter);
 
-        jLabelFiltro.setText("Filter by:");
-        add(jLabelFiltro);
-        jLabelFiltro.setBounds(30, 530, 70, 30);
+        add(jScrollPaneTextFilter);
+        jScrollPaneTextFilter.setBounds(10, 310, 240, 100);
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButtonVolverActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonVolverActionPerformed
@@ -207,7 +227,11 @@ public class MediaLibrary extends javax.swing.JPanel {
     private javax.swing.JButton jButtonVolver;
     private javax.swing.JComboBox<String> jComboBoxFiltro;
     private javax.swing.JLabel jLabelFiltro;
+    private javax.swing.JLabel jLabelSearch;
+    private javax.swing.JList<String> jListTextFilter;
     private javax.swing.JScrollPane jScrollPaneMedia;
+    private javax.swing.JScrollPane jScrollPaneTextFilter;
     private javax.swing.JTable jTableMedia;
+    private javax.swing.JTextField jTextFieldBusqueda;
     // End of variables declaration//GEN-END:variables
 }
