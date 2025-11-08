@@ -56,4 +56,9 @@ public class InformacionDescargas {
          return new java.text.DecimalFormat("#,##0.#")
                 .format(tamanyo / Math.pow(1024, digitGroups)) + " " + units[digitGroups];
     }
+    @Override
+    public String toString() {
+    // Usamos el nombre del archivo y el tamaño formateado para que sea informativo.
+    return nombreArchivo + " (" + getTamanoFormateado() + ")";
+    }  
 }

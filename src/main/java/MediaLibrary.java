@@ -1,6 +1,9 @@
 
 import java.util.List;
+import javax.swing.DefaultListModel;
 import javax.swing.JPanel;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
@@ -16,6 +19,7 @@ public class MediaLibrary extends javax.swing.JPanel {
     private final JPanel panelOriginal;
     private final List<InformacionDescargas> listaRecursos;
     private InformacionDescargasTableModel tableModel;
+
     
     public MediaLibrary (PantallaPrincipal principal, JPanel panelOriginal, List<InformacionDescargas> listaRecursos){
         this.principal = principal;
@@ -31,6 +35,8 @@ public class MediaLibrary extends javax.swing.JPanel {
         
         
         initFiltroComboBox();
+        initBusqueda();
+        initJlist();
     }
     
     
@@ -220,6 +226,76 @@ public class MediaLibrary extends javax.swing.JPanel {
         }
     });
 }
+    
+    private void initBusqueda() {
+        jTextFieldBusqueda.getDocument().addDocumentListener(new DocumentListener(){
+           
+            private void handleUpdate(){
+                String texto = jTextFieldBusqueda.getText();
+                actualizarBusqueda(texto);
+            }
+            
+            @Override
+            public void insertUpdate(DocumentEvent e){
+                handleUpdate();
+            }
+            
+            @Override
+            public void removeUpdate(DocumentEvent e){
+                handleUpdate();
+            }
+            
+            @Override
+            public void changedUpdate(DocumentEvent e){
+            }
+        });
+    }
+    
+    private void initJlist(){
+        
+        //Creamos el modelo que almacena los objetos de InformacionDescargas
+        DefaultListModel<InformacionDescargas> modeloLista = new DefaultListModel<>();
+        
+        //Leemos cada elemento de la lista y lo añadimos
+        for (InformacionDescargas recurso : listaRecursos){
+            modeloLista.addElement(recurso);
+        }
+        
+        @SuppressWarnings("unchecked")
+        javax.swing.ListModel modeloRaw = (javax.swing.ListModel) modeloLista;
+        jListTextFilter.setModel(modeloRaw);
+    }
+    
+    private void actualizarBusqueda(String textoBusqueda){
+        
+        @SuppressWarnings("unchecked")
+        javax.swing.table.TableRowSorter<InformacionDescargasTableModel> sorter = 
+        (javax.swing.table.TableRowSorter<InformacionDescargasTableModel>) jTableMedia.getRowSorter();
+        
+        if (sorter == null) return;
+        
+        if (textoBusqueda.isEmpty()){
+            sorter.setRowFilter(null);
+        } else {
+            String regex = "(?i)" + java.util.regex.Pattern.quote(textoBusqueda);
+            
+            javax.swing.RowFilter<Object, Object> rf = javax.swing.RowFilter.regexFilter(regex, 0);
+            sorter.setRowFilter(rf);
+        }
+        
+        DefaultListModel<InformacionDescargas> modeloListaFiltrada = new DefaultListModel<>();
+        int filasVisibles = sorter.getViewRowCount();
+        for (int i = 0; i < filasVisibles; i++){
+            int indiceModeloOriginal = sorter.convertRowIndexToModel(i);
+            
+            InformacionDescargas recurso = listaRecursos.get(indiceModeloOriginal);
+            
+            modeloListaFiltrada.addElement(recurso);
+        }
+        @SuppressWarnings("unchecked")
+        javax.swing.ListModel modeloRawFiltrado = (javax.swing.ListModel) modeloListaFiltrada;
+        jListTextFilter.setModel(modeloRawFiltrado);
+    }
     
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
