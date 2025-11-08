@@ -56,6 +56,7 @@ public class MainScreen extends javax.swing.JFrame {
     private void initComponents() {
 
         buttonGroupCalidad = new javax.swing.ButtonGroup();
+        buttonGroupAQ = new javax.swing.ButtonGroup();
         jLabelWelcome = new javax.swing.JLabel();
         jPanelWeb = new javax.swing.JPanel();
         jLabelUrl = new javax.swing.JLabel();
@@ -85,6 +86,10 @@ public class MainScreen extends javax.swing.JFrame {
         jButtonDescarga = new javax.swing.JButton();
         jPanelLibrary = new javax.swing.JPanel();
         jButtonLibrary = new javax.swing.JButton();
+        jPanelAudioQuality = new javax.swing.JPanel();
+        jRadioButtonHQ = new javax.swing.JRadioButton();
+        jRadioButtonHigh = new javax.swing.JRadioButton();
+        jLabelAQ = new javax.swing.JLabel();
         jMenuBar = new javax.swing.JMenuBar();
         jMenuFile = new javax.swing.JMenu();
         jMenuItemExit = new javax.swing.JMenuItem();
@@ -123,7 +128,7 @@ public class MainScreen extends javax.swing.JFrame {
 
         jLabelCalidad.setText("Output Resolution:");
         jPanelCalidad.add(jLabelCalidad);
-        jLabelCalidad.setBounds(0, 0, 100, 16);
+        jLabelCalidad.setBounds(0, 0, 100, 20);
 
         buttonGroupCalidad.add(jRadioButton1080);
         jRadioButton1080.setText("1080p");
@@ -137,6 +142,11 @@ public class MainScreen extends javax.swing.JFrame {
 
         buttonGroupCalidad.add(jRadioButton720);
         jRadioButton720.setText("720p");
+        jRadioButton720.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jRadioButton720ActionPerformed(evt);
+            }
+        });
         jPanelCalidad.add(jRadioButton720);
         jRadioButton720.setBounds(170, 0, 50, 21);
 
@@ -262,6 +272,30 @@ public class MainScreen extends javax.swing.JFrame {
 
         getContentPane().add(jPanelLibrary);
         jPanelLibrary.setBounds(830, 110, 170, 60);
+
+        jPanelAudioQuality.setLayout(null);
+
+        buttonGroupAQ.add(jRadioButtonHQ);
+        jRadioButtonHQ.setText("HQ (Best)");
+        jPanelAudioQuality.add(jRadioButtonHQ);
+        jRadioButtonHQ.setBounds(100, 0, 100, 21);
+
+        buttonGroupAQ.add(jRadioButtonHigh);
+        jRadioButtonHigh.setText("Balanced (High)");
+        jRadioButtonHigh.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jRadioButtonHighActionPerformed(evt);
+            }
+        });
+        jPanelAudioQuality.add(jRadioButtonHigh);
+        jRadioButtonHigh.setBounds(220, 0, 120, 21);
+
+        jLabelAQ.setText("Audio:");
+        jPanelAudioQuality.add(jLabelAQ);
+        jLabelAQ.setBounds(0, 0, 80, 20);
+
+        getContentPane().add(jPanelAudioQuality);
+        jPanelAudioQuality.setBounds(10, 90, 270, 20);
 
         jMenuFile.setText("File");
 
@@ -396,7 +430,7 @@ public class MainScreen extends javax.swing.JFrame {
                 String rutaBinarios = prefs.get("rutaBinarios", "C:\\Users\\ruben\\AppData\\Local\\yt-dlp.exe");
                 List<String> comando = new ArrayList<>();
                 comando.add(rutaBinarios);
-                comando.add("--no-download-archive");
+                comando.add("--force-overwrites");
                 comando.add("--restrict-filenames");
                 String formatoSalida = jComboBoxFormato.getSelectedItem().toString();
 
@@ -405,6 +439,20 @@ public class MainScreen extends javax.swing.JFrame {
                     comando.add("-x");
                     comando.add("--audio-format");
                     comando.add("mp3");
+                    
+                    String calidadAudio = "best";
+                    
+                    if (jRadioButtonHQ.isSelected()) {
+                        calidadAudio = "0";
+                    } else if (jRadioButtonHigh.isSelected()){
+                        calidadAudio = "5";
+                    }
+                    
+                    if (!calidadAudio.equals("best")) {
+                        comando.add("--audio-quality");
+                        comando.add(calidadAudio);
+                    }
+                
                 } else {
                     // se especifica -f 
                     comando.add("-f");
@@ -421,12 +469,7 @@ public class MainScreen extends javax.swing.JFrame {
                 if (!rutaDestino.isEmpty()) {
                     comando.add("-o");
                     comando.add(rutaDestino + File.separator + "%(title)s - %(epoch)s.%(ext)s");
-                }
-
-                if (!rutaDestino.isEmpty()) {
-                comando.add("--paths");
-                comando.add("temp:" + rutaDestino);
-                }       
+                }   
 
                 comando.add(url);
 
@@ -510,17 +553,15 @@ public class MainScreen extends javax.swing.JFrame {
 
         // 2. Comprobar si es audio
         boolean esAudio = formatoSalida.contains(".mp3");
-    
-        // 3. Habilitar/Deshabilitar los componentes de calidad
-        jRadioButton1080.setEnabled(!esAudio);
-        jRadioButton720.setEnabled(!esAudio);
-        jRadioButton480.setEnabled(!esAudio);
-        jLabelCalidad.setEnabled(!esAudio); // Deshabilitar la etiqueta de "Output Resolution"
-    
-        // 4. Si se selecciona audio, asegurar que no haya ninguna calidad seleccionada.
-        if (esAudio) {
+        jPanelAudioQuality.setVisible(esAudio);
+        jPanelCalidad.setVisible(!esAudio);
+        
+        if (esAudio){
             buttonGroupCalidad.clearSelection();
+        } else {
+            buttonGroupAQ.clearSelection();
         }
+
     }//GEN-LAST:event_jComboBoxFormatoActionPerformed
 
     private void jButtonCambiarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonCambiarActionPerformed
@@ -545,6 +586,14 @@ public class MainScreen extends javax.swing.JFrame {
         repaint();
         System.out.println("DEBUG: Se abre MediaLibrary. Contiene " + listaRecursos.size() + " archivos.");
     }//GEN-LAST:event_jButtonLibraryActionPerformed
+
+    private void jRadioButton720ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButton720ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jRadioButton720ActionPerformed
+
+    private void jRadioButtonHighActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButtonHighActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jRadioButtonHighActionPerformed
 
     /**
      * @param args the command line arguments
@@ -601,6 +650,7 @@ public class MainScreen extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.ButtonGroup buttonGroupAQ;
     private javax.swing.ButtonGroup buttonGroupCalidad;
     private javax.swing.JButton jButtonCambiar;
     private javax.swing.JButton jButtonDescarga;
@@ -608,6 +658,7 @@ public class MainScreen extends javax.swing.JFrame {
     private javax.swing.JButton jButtonRutaGuardado;
     private javax.swing.JCheckBox jCheckBoxSubtitulosSi;
     private javax.swing.JComboBox<String> jComboBoxFormato;
+    private javax.swing.JLabel jLabelAQ;
     private javax.swing.JLabel jLabelCalidad;
     private javax.swing.JLabel jLabelFormato;
     private javax.swing.JLabel jLabelGuardar;
@@ -622,6 +673,7 @@ public class MainScreen extends javax.swing.JFrame {
     private javax.swing.JMenuItem jMenuItemAbout;
     private javax.swing.JMenuItem jMenuItemExit;
     private javax.swing.JMenuItem jMenuItemPreferences;
+    private javax.swing.JPanel jPanelAudioQuality;
     private javax.swing.JPanel jPanelCalidad;
     private javax.swing.JPanel jPanelConsola;
     private javax.swing.JPanel jPanelDescarga;
@@ -635,6 +687,8 @@ public class MainScreen extends javax.swing.JFrame {
     private javax.swing.JRadioButton jRadioButton1080;
     private javax.swing.JRadioButton jRadioButton480;
     private javax.swing.JRadioButton jRadioButton720;
+    private javax.swing.JRadioButton jRadioButtonHQ;
+    private javax.swing.JRadioButton jRadioButtonHigh;
     private javax.swing.JScrollPane jScrollPaneConsola;
     private javax.swing.JTextArea jTextAreaConsola;
     private javax.swing.JTextField jTextFieldUrl;
