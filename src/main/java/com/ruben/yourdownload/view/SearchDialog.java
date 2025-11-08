@@ -111,25 +111,31 @@ public class SearchDialog extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButtonPlayActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonPlayActionPerformed
-      Object selectedValue = jListSearchList.getSelectedValue();
-      DownloadInfo resource = (DownloadInfo) selectedValue;
+        Object selectedValue = jListSearchList.getSelectedValue();
+        DownloadInfo resource = (DownloadInfo) selectedValue; // Cast explícito
+
+    if (resource != null){
+        java.io.File file = new java.io.File(resource.getAbsolutePath());
         
-        if (resource != null){
-            java.io.File file = new java.io.File(resource.getAbsolutePath());
-            
-            if (file.exists()){
-                try {
-                    java.awt.Desktop.getDesktop().open(file);
-                } catch (java.io.IOException e){
-                    JOptionPane.showMessageDialog(this, "Error opening the file: " + e.getMessage(), "I/O error", JOptionPane.ERROR_MESSAGE);
-                    logger.log(java.util.logging.Level.SEVERE, "Error opening the file.", e);
-                }
-            } else {
-                JOptionPane.showMessageDialog(this, "File not found","Error", JOptionPane.WARNING_MESSAGE);
+        if (file.exists()){
+            // [Si el archivo existe, el try-catch de apertura es correcto]
+            try {
+                java.awt.Desktop.getDesktop().open(file);
+            } catch (java.io.IOException e){
+                JOptionPane.showMessageDialog(this, "Error opening the file: " + e.getMessage(), "I/O error", JOptionPane.ERROR_MESSAGE);
+                logger.log(java.util.logging.Level.SEVERE, "Error opening the file.", e);
             }
         } else {
-            JOptionPane.showMessageDialog(this, "First, select a valid file.");
+            // --- CÓDIGO CORREGIDO: Muestra la ruta estática que no existe ---
+            JOptionPane.showMessageDialog(this, 
+                "File not found at the stored location:\n" + resource.getAbsolutePath(), 
+                "Error: File Missing", 
+                JOptionPane.ERROR_MESSAGE);
+            // -------------------------------------------------------------------
         }
+    } else {
+        JOptionPane.showMessageDialog(this, "First, select a valid file.");
+    }
         
     }//GEN-LAST:event_jButtonPlayActionPerformed
 

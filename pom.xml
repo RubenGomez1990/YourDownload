@@ -11,4 +11,13 @@
         <exec.mainClass>com.mycompany.youdownloaddefinitivo.YouDownloadDefinitivo</exec.mainClass>
     </properties>
     <name>YourDownload</name>
+    
+    <dependencies>
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>2.13.1</version>
+            <type>jar</type>
+        </dependency>
+    </dependencies>
 </project>

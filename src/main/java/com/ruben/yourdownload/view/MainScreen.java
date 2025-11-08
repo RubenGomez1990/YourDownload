@@ -2,6 +2,7 @@ package com.ruben.yourdownload.view;
 
 
 import com.ruben.yourdownload.model.DownloadInfo;
+import com.ruben.yourdownload.service.DownloadService;
 import java.util.List;
 import java.io.BufferedReader;
 import java.io.File;
@@ -33,13 +34,14 @@ public class MainScreen extends javax.swing.JFrame {
     private JPanel originalPanel;
     private String binariesPath = "";
     private PreferencesPanel preferencesPanel;
-    private List<DownloadInfo> resourcesList = new ArrayList<>();
+    private List<DownloadInfo> resourcesList;
   
 
     /**
      * Creates new form PantallaPrincipal
      */
     public MainScreen() {
+    resourcesList = DownloadService.loadHistory(); 
     initComponents();
     this.setSize(1024,768);
     this.setLocationRelativeTo(null);
@@ -383,7 +385,8 @@ public class MainScreen extends javax.swing.JFrame {
                 options, options[0]);
         
             if (result == 0) {
-            System.exit(0);
+                DownloadService.saveHistory(resourcesList);
+                System.exit(0);
             } 
     }//GEN-LAST:event_jMenuItemExitActionPerformed
 
