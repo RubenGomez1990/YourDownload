@@ -277,8 +277,13 @@ public class MainScreen extends javax.swing.JFrame {
 
         buttonGroupAQ.add(jRadioButtonHQ);
         jRadioButtonHQ.setText("HQ (Best)");
+        jRadioButtonHQ.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jRadioButtonHQActionPerformed(evt);
+            }
+        });
         jPanelAudioQuality.add(jRadioButtonHQ);
-        jRadioButtonHQ.setBounds(100, 0, 100, 21);
+        jRadioButtonHQ.setBounds(50, 0, 100, 21);
 
         buttonGroupAQ.add(jRadioButtonHigh);
         jRadioButtonHigh.setText("Balanced (High)");
@@ -288,7 +293,7 @@ public class MainScreen extends javax.swing.JFrame {
             }
         });
         jPanelAudioQuality.add(jRadioButtonHigh);
-        jRadioButtonHigh.setBounds(220, 0, 120, 21);
+        jRadioButtonHigh.setBounds(150, 0, 120, 21);
 
         jLabelAQ.setText("Audio:");
         jPanelAudioQuality.add(jLabelAQ);
@@ -427,7 +432,28 @@ public class MainScreen extends javax.swing.JFrame {
                 
                 // construccion comando
                 Preferences prefs = Preferences.userRoot().node("PanelPreferencias");
-                String rutaBinarios = prefs.get("rutaBinarios", "C:\\Users\\ruben\\AppData\\Local\\yt-dlp.exe");
+                String rutaBinarios = prefs.get("rutaBinarios", "");
+                
+                if (rutaBinarios.isEmpty()){
+                    String homePath = System.getProperty("user.home") + File.separator + "td-dlp.exe";
+                    File homeFile = new File(homePath);
+                    
+                    if (homeFile.exists()) {
+                    rutaBinarios = homeFile.getAbsolutePath();
+                
+                    // Opcional: Guarda esta ruta en Preferences para la próxima vez
+                    prefs.put("rutaBinarios", rutaBinarios);
+                    System.out.println("DEBUG: Binario de yt-dlp.exe encontrado en user.home.");
+                }
+            }
+                
+                // 2. Comprobación de seguridad FINAL (si sigue vacía después de la búsqueda)
+                if (rutaBinarios.isEmpty()) {
+                    SwingUtilities.invokeLater(() -> {
+                    JOptionPane.showMessageDialog(MainScreen.this, "La ruta del binario yt-dlp.exe no está configurada.", "Error de Configuración", JOptionPane.ERROR_MESSAGE);
+                });
+                return; // Detiene la ejecución del hilo de descarga
+            }
                 List<String> comando = new ArrayList<>();
                 comando.add(rutaBinarios);
                 comando.add("--force-overwrites");
@@ -594,6 +620,10 @@ public class MainScreen extends javax.swing.JFrame {
     private void jRadioButtonHighActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButtonHighActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_jRadioButtonHighActionPerformed
+
+    private void jRadioButtonHQActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButtonHQActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jRadioButtonHQActionPerformed
 
     /**
      * @param args the command line arguments
