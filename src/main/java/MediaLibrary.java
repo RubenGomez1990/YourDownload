@@ -35,8 +35,6 @@ public class MediaLibrary extends javax.swing.JPanel {
         
         
         initFiltroComboBox();
-        initBusqueda();
-        initJlist();
     }
     
     
@@ -56,10 +54,7 @@ public class MediaLibrary extends javax.swing.JPanel {
         jComboBoxFiltro = new javax.swing.JComboBox<>();
         jButtonEliminar = new javax.swing.JButton();
         jButtonVolver = new javax.swing.JButton();
-        jLabelSearch = new javax.swing.JLabel();
-        jTextFieldBusqueda = new javax.swing.JTextField();
-        jScrollPaneTextFilter = new javax.swing.JScrollPane();
-        jListTextFilter = new javax.swing.JList<>();
+        jButtonBusqueda = new javax.swing.JButton();
 
         setEnabled(false);
         setPreferredSize(new java.awt.Dimension(1024, 768));
@@ -113,21 +108,14 @@ public class MediaLibrary extends javax.swing.JPanel {
         add(jButtonVolver);
         jButtonVolver.setBounds(690, 230, 120, 30);
 
-        jLabelSearch.setText("Search by text:");
-        add(jLabelSearch);
-        jLabelSearch.setBounds(10, 270, 80, 30);
-        add(jTextFieldBusqueda);
-        jTextFieldBusqueda.setBounds(130, 270, 120, 30);
-
-        jListTextFilter.setModel(new javax.swing.AbstractListModel<String>() {
-            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
-            public int getSize() { return strings.length; }
-            public String getElementAt(int i) { return strings[i]; }
+        jButtonBusqueda.setText("Search by text");
+        jButtonBusqueda.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonBusquedaActionPerformed(evt);
+            }
         });
-        jScrollPaneTextFilter.setViewportView(jListTextFilter);
-
-        add(jScrollPaneTextFilter);
-        jScrollPaneTextFilter.setBounds(10, 310, 240, 100);
+        add(jButtonBusqueda);
+        jButtonBusqueda.setBounds(130, 280, 120, 30);
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButtonVolverActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonVolverActionPerformed
@@ -205,6 +193,25 @@ public class MediaLibrary extends javax.swing.JPanel {
     }
     }//GEN-LAST:event_jComboBoxFiltroActionPerformed
 
+    private void jButtonBusquedaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonBusquedaActionPerformed
+        javax.swing.JFrame parentFrame = principal;
+    
+    try {
+        // La ejecución crítica que puede fallar:
+        SearchDialog busqueda = new SearchDialog(parentFrame, listaRecursos);
+        busqueda.setVisible(true);
+        
+    } catch (Exception e) {
+        // Capturamos la excepción (NPE, error de componente, etc.)
+        javax.swing.JOptionPane.showMessageDialog(principal, 
+            "Error al abrir la búsqueda: " + e.getMessage(), 
+            "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+        
+        // Esta línea es crucial para ver la traza de error completa en la consola
+        e.printStackTrace(); 
+        }
+    }//GEN-LAST:event_jButtonBusquedaActionPerformed
+
     private void initFiltroComboBox() {
         // 1. Definimos las opciones de filtro con nombres amigables para el usuario
         String[] tiposDeFiltro = {
@@ -226,88 +233,18 @@ public class MediaLibrary extends javax.swing.JPanel {
         }
     });
 }
+
     
-    private void initBusqueda() {
-        jTextFieldBusqueda.getDocument().addDocumentListener(new DocumentListener(){
-           
-            private void handleUpdate(){
-                String texto = jTextFieldBusqueda.getText();
-                actualizarBusqueda(texto);
-            }
-            
-            @Override
-            public void insertUpdate(DocumentEvent e){
-                handleUpdate();
-            }
-            
-            @Override
-            public void removeUpdate(DocumentEvent e){
-                handleUpdate();
-            }
-            
-            @Override
-            public void changedUpdate(DocumentEvent e){
-            }
-        });
-    }
     
-    private void initJlist(){
-        
-        //Creamos el modelo que almacena los objetos de InformacionDescargas
-        DefaultListModel<InformacionDescargas> modeloLista = new DefaultListModel<>();
-        
-        //Leemos cada elemento de la lista y lo añadimos
-        for (InformacionDescargas recurso : listaRecursos){
-            modeloLista.addElement(recurso);
-        }
-        
-        @SuppressWarnings("unchecked")
-        javax.swing.ListModel modeloRaw = (javax.swing.ListModel) modeloLista;
-        jListTextFilter.setModel(modeloRaw);
-    }
-    
-    private void actualizarBusqueda(String textoBusqueda){
-        
-        @SuppressWarnings("unchecked")
-        javax.swing.table.TableRowSorter<InformacionDescargasTableModel> sorter = 
-        (javax.swing.table.TableRowSorter<InformacionDescargasTableModel>) jTableMedia.getRowSorter();
-        
-        if (sorter == null) return;
-        
-        if (textoBusqueda.isEmpty()){
-            sorter.setRowFilter(null);
-        } else {
-            String regex = "(?i)" + java.util.regex.Pattern.quote(textoBusqueda);
-            
-            javax.swing.RowFilter<Object, Object> rf = javax.swing.RowFilter.regexFilter(regex, 0);
-            sorter.setRowFilter(rf);
-        }
-        
-        DefaultListModel<InformacionDescargas> modeloListaFiltrada = new DefaultListModel<>();
-        int filasVisibles = sorter.getViewRowCount();
-        for (int i = 0; i < filasVisibles; i++){
-            int indiceModeloOriginal = sorter.convertRowIndexToModel(i);
-            
-            InformacionDescargas recurso = listaRecursos.get(indiceModeloOriginal);
-            
-            modeloListaFiltrada.addElement(recurso);
-        }
-        @SuppressWarnings("unchecked")
-        javax.swing.ListModel modeloRawFiltrado = (javax.swing.ListModel) modeloListaFiltrada;
-        jListTextFilter.setModel(modeloRawFiltrado);
-    }
     
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton jButtonBusqueda;
     private javax.swing.JButton jButtonEliminar;
     private javax.swing.JButton jButtonVolver;
     private javax.swing.JComboBox<String> jComboBoxFiltro;
     private javax.swing.JLabel jLabelFiltro;
-    private javax.swing.JLabel jLabelSearch;
-    private javax.swing.JList<String> jListTextFilter;
     private javax.swing.JScrollPane jScrollPaneMedia;
-    private javax.swing.JScrollPane jScrollPaneTextFilter;
     private javax.swing.JTable jTableMedia;
-    private javax.swing.JTextField jTextFieldBusqueda;
     // End of variables declaration//GEN-END:variables
 }
