@@ -13,17 +13,17 @@ import javax.swing.JOptionPane;
  *
  * @author LionKeriot
  */
-public class DescargaCompletada extends javax.swing.JDialog {
+public class DownloadComplete extends javax.swing.JDialog {
     
-    private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(DescargaCompletada.class.getName());
-    private File archivoDescargado;
+    private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(DownloadComplete.class.getName());
+    private File downloadFile;
     /**
      * Creates new form DescargaCompletada
      */
-    public DescargaCompletada(java.awt.Frame parent, boolean modal, File archivoDescargado) {
+    public DownloadComplete(java.awt.Frame parent, boolean modal, File downloadFile) {
         super(parent, modal);
         initComponents();
-        this.archivoDescargado = archivoDescargado;
+        this.downloadFile = downloadFile;
     }
 
     /**
@@ -71,14 +71,14 @@ public class DescargaCompletada extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButtonReproducirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonReproducirActionPerformed
-        if (archivoDescargado != null && archivoDescargado.exists()) {
+        if (downloadFile != null && downloadFile.exists()) {
             try {
-            Desktop.getDesktop().open(archivoDescargado);
+            Desktop.getDesktop().open(downloadFile);
         } catch (IOException e) {
-            JOptionPane.showMessageDialog(this, "No se pudo abrir el archivo: " + e.getMessage());
+            JOptionPane.showMessageDialog(this, "Couldn't open file: " + e.getMessage());
         }
         } else {
-            JOptionPane.showMessageDialog(this, "Archivo no encontrado.");
+            JOptionPane.showMessageDialog(this, "File not found.");
         }
     }//GEN-LAST:event_jButtonReproducirActionPerformed
 

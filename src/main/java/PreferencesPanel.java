@@ -14,25 +14,25 @@ import javax.swing.JPanel;
  *
  * @author LionKeriot
  */
-public class PanelPreferencias extends javax.swing.JPanel {
+public class PreferencesPanel extends javax.swing.JPanel {
     
-    private JFrame pantallaPrincipal;
-    private JPanel panelOriginal;
-    private String rutaDestino = "";
-    private String rutaBinarios;
+    private JFrame mainScreen;
+    private JPanel originalPanel;
+    private String destinyPath = "";
+    private String binariesPath;
     /**
     *
-    * @param pantallaPrincipal la ventana principal que contiene este panel
+    * @param mainScreen la ventana principal que contiene este panel
     */
 
-    public PanelPreferencias(JFrame pantallaPrincipal, JPanel panelOriginal) {
+    public PreferencesPanel(JFrame mainScreen, JPanel originalPanel) {
         initComponents();
-        this.pantallaPrincipal = pantallaPrincipal;
-        this.panelOriginal = panelOriginal;
+        this.mainScreen = mainScreen;
+        this.originalPanel = originalPanel;
         
         Preferences prefs = Preferences.userRoot().node(this.getClass().getName());
-        this.rutaBinarios = prefs.get("rutaBinarios", "C:\\Users\\ruben\\AppData\\Local\\yt-dlp.exe");
-        jLabelBinaries.setText("Binaries path: " + rutaBinarios);
+        this.binariesPath = prefs.get("rutaBinarios", "C:\\Users\\ruben\\AppData\\Local\\yt-dlp.exe");
+        jLabelBinaries.setText("Binaries path: " + binariesPath);
     }
 
     /**
@@ -149,11 +149,11 @@ public class PanelPreferencias extends javax.swing.JPanel {
     int result = chooser.showOpenDialog(this);
     if (result == JFileChooser.APPROVE_OPTION) {
         File selectedFolder = chooser.getSelectedFile();
-        String rutaTemporal = selectedFolder.getAbsolutePath();
+        String temporalPath = selectedFolder.getAbsolutePath();
 
     // Guarda la ruta donde quieras
-    jLabelTemporales.setText(rutaTemporal); // ejemplo visual
-    this.rutaDestino = rutaTemporal;     // ejemplo funcional
+    jLabelTemporales.setText(temporalPath); // ejemplo visual
+    this.destinyPath = temporalPath;     // ejemplo funcional
 }
 
     
@@ -165,9 +165,9 @@ public class PanelPreferencias extends javax.swing.JPanel {
 
     private void jButtonVolverActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonVolverActionPerformed
         
-        pantallaPrincipal.setContentPane(panelOriginal);
-        pantallaPrincipal.revalidate();
-        pantallaPrincipal.repaint();
+        mainScreen.setContentPane(originalPanel);
+        mainScreen.revalidate();
+        mainScreen.repaint();
 
     }//GEN-LAST:event_jButtonVolverActionPerformed
 
@@ -178,11 +178,11 @@ public class PanelPreferencias extends javax.swing.JPanel {
         int result = chooser.showOpenDialog(this);
         if (result == JFileChooser.APPROVE_OPTION) {
         File selectedFile = chooser.getSelectedFile();
-        rutaBinarios = selectedFile.getAbsolutePath();
+        binariesPath = selectedFile.getAbsolutePath();
 
-        jLabelBinaries.setText("Binaries path: " + rutaBinarios);
+        jLabelBinaries.setText("Binaries path: " + binariesPath);
         Preferences prefs = Preferences.userRoot().node(this.getClass().getName());
-        prefs.put("rutaBinarios", rutaBinarios);
+        prefs.put("Binaries Path", binariesPath);
         }
     }//GEN-LAST:event_jButtonBinariesActionPerformed
 

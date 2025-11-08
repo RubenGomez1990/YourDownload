@@ -18,19 +18,19 @@ import javax.swing.event.DocumentListener;
 public class SearchDialog extends javax.swing.JDialog {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(SearchDialog.class.getName());
-    private final List<InformacionDescargas> listaRecursos;
+    private final List<DownloadInfo> resourcesList;
     /**
      * Creates new form SearchDialog
      */
-    public SearchDialog(java.awt.Frame parent, List<InformacionDescargas> listaRecursos) {
+    public SearchDialog(java.awt.Frame parent, List<DownloadInfo> resourcesList) {
         super(parent, true);
-        this.listaRecursos = listaRecursos;
+        this.resourcesList = resourcesList;
         initComponents();
  
         javax.swing.SwingUtilities.invokeLater(() -> {
         // Estas líneas ahora se ejecutarán después de que la ventana esté lista.
-        initBusqueda();
-        aplicarFiltroBusqueda(""); 
+        initSearching();
+        applySearchingFilter(""); 
     });
         
         setTitle("Search Files");
@@ -48,7 +48,7 @@ public class SearchDialog extends javax.swing.JDialog {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jTextFieldIntroducir = new javax.swing.JTextField();
+        jTextFieldIntroduce = new javax.swing.JTextField();
         jScrollPaneList = new javax.swing.JScrollPane();
         jListSearchList = new javax.swing.JList<>();
         jButtonPlay = new javax.swing.JButton();
@@ -58,14 +58,14 @@ public class SearchDialog extends javax.swing.JDialog {
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         getContentPane().setLayout(null);
 
-        jTextFieldIntroducir.setText("Enter a word");
-        jTextFieldIntroducir.addActionListener(new java.awt.event.ActionListener() {
+        jTextFieldIntroduce.setText("Enter a word");
+        jTextFieldIntroduce.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextFieldIntroducirActionPerformed(evt);
+                jTextFieldIntroduceActionPerformed(evt);
             }
         });
-        getContentPane().add(jTextFieldIntroducir);
-        jTextFieldIntroducir.setBounds(30, 16, 279, 30);
+        getContentPane().add(jTextFieldIntroduce);
+        jTextFieldIntroduce.setBounds(30, 16, 279, 30);
 
         jListSearchList.setModel(new javax.swing.AbstractListModel<String>() {
             String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5", "Item 6", "Item 7", " " };
@@ -75,7 +75,7 @@ public class SearchDialog extends javax.swing.JDialog {
         jScrollPaneList.setViewportView(jListSearchList);
 
         getContentPane().add(jScrollPaneList);
-        jScrollPaneList.setBounds(30, 81, 888, 100);
+        jScrollPaneList.setBounds(30, 81, 888, 146);
 
         jButtonPlay.setText("Play it!");
         jButtonPlay.addActionListener(new java.awt.event.ActionListener() {
@@ -109,14 +109,14 @@ public class SearchDialog extends javax.swing.JDialog {
 
     private void jButtonPlayActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonPlayActionPerformed
       Object selectedValue = jListSearchList.getSelectedValue();
-      InformacionDescargas recurso = (InformacionDescargas) selectedValue;
+      DownloadInfo resource = (DownloadInfo) selectedValue;
         
-        if (recurso != null){
-            java.io.File archivo = new java.io.File(recurso.getRutaAbsoluta());
+        if (resource != null){
+            java.io.File file = new java.io.File(resource.getAbsolutePath());
             
-            if (archivo.exists()){
+            if (file.exists()){
                 try {
-                    java.awt.Desktop.getDesktop().open(archivo);
+                    java.awt.Desktop.getDesktop().open(file);
                 } catch (java.io.IOException e){
                     JOptionPane.showMessageDialog(this, "Error opening the file: " + e.getMessage(), "I/O error", JOptionPane.ERROR_MESSAGE);
                     logger.log(java.util.logging.Level.SEVERE, "Error opening the file.", e);
@@ -133,27 +133,27 @@ public class SearchDialog extends javax.swing.JDialog {
     private void jButtonDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonDeleteActionPerformed
     
     Object selectedValue = jListSearchList.getSelectedValue();
-    InformacionDescargas recursoAEliminar = (InformacionDescargas) selectedValue;
+    DownloadInfo resourceToDelete = (DownloadInfo) selectedValue;
 
-        if (recursoAEliminar == null) {
-            javax.swing.JOptionPane.showMessageDialog(this, "Selecciona un archivo primero.", "Advertencia", javax.swing.JOptionPane.WARNING_MESSAGE);
+        if (resourceToDelete == null) {
+            javax.swing.JOptionPane.showMessageDialog(this, "First select a file", "Warning", javax.swing.JOptionPane.WARNING_MESSAGE);
             return;
         }
     
-    Object[] opciones = {"Yes", "No"};
-    int resultadoConfirmacion = javax.swing.JOptionPane.showOptionDialog(this,
-        "Are you sure you want to delete '" + recursoAEliminar.getNombreArchivo() + "'?\nThis action will delete the file from the disk.",
+    Object[] options = {"Yes", "No"};
+    int confirmationResult = javax.swing.JOptionPane.showOptionDialog(this,
+        "Are you sure you want to delete '" + resourceToDelete.getFileName() + "'?\nThis action will delete the file from the disk.",
         "Confirm Deletion",
         javax.swing.JOptionPane.YES_NO_OPTION,
         javax.swing.JOptionPane.QUESTION_MESSAGE,
-        null, opciones, opciones[0]
+        null, options, options[0]
     );
 
-    if (resultadoConfirmacion == YES_OPTION) {
-        java.io.File archivo = new java.io.File(recursoAEliminar.getRutaAbsoluta());
-            if (archivo.delete()) {
-                listaRecursos.remove(recursoAEliminar);
-                aplicarFiltroBusqueda(jTextFieldIntroducir.getText());
+    if (confirmationResult == YES_OPTION) {
+        java.io.File file = new java.io.File(resourceToDelete.getAbsolutePath());
+            if (file.delete()) {
+                resourcesList.remove(resourceToDelete);
+                applySearchingFilter(jTextFieldIntroduce.getText());
                 javax.swing.JOptionPane.showMessageDialog(this, "File deleted successfully.", "Success!", javax.swing.JOptionPane.INFORMATION_MESSAGE); 
             } else {
                 javax.swing.JOptionPane.showMessageDialog(this, 
@@ -163,20 +163,20 @@ public class SearchDialog extends javax.swing.JDialog {
         }
     }//GEN-LAST:event_jButtonDeleteActionPerformed
 
-    private void jTextFieldIntroducirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextFieldIntroducirActionPerformed
+    private void jTextFieldIntroduceActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextFieldIntroduceActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jTextFieldIntroducirActionPerformed
+    }//GEN-LAST:event_jTextFieldIntroduceActionPerformed
 
     private void jButtonReturnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonReturnActionPerformed
         this.dispose();
     }//GEN-LAST:event_jButtonReturnActionPerformed
     
-    private void initBusqueda() {
-        jTextFieldIntroducir.getDocument().addDocumentListener(new DocumentListener(){
+    private void initSearching() {
+        jTextFieldIntroduce.getDocument().addDocumentListener(new DocumentListener(){
            
             private void handleUpdate(){
-                String texto = jTextFieldIntroducir.getText();
-                aplicarFiltroBusqueda(texto);
+                String text = jTextFieldIntroduce.getText();
+                applySearchingFilter(text);
             }
             
             @Override
@@ -195,28 +195,28 @@ public class SearchDialog extends javax.swing.JDialog {
         });
     }
     
-    private void aplicarFiltroBusqueda(String textoBusqueda) {
+    private void applySearchingFilter(String searchingText) {
     
-        String textoBusquedaLower = textoBusqueda.toLowerCase();
-        DefaultListModel<InformacionDescargas> modeloResultados = new DefaultListModel<>();
+        String lowerSearchingText = searchingText.toLowerCase();
+        DefaultListModel<DownloadInfo> resultsModel = new DefaultListModel<>();
 
-        if (textoBusqueda.isEmpty()) {
-            for (InformacionDescargas recurso : listaRecursos) {
-                modeloResultados.addElement(recurso);
+        if (searchingText.isEmpty()) {
+            for (DownloadInfo resource : resourcesList) {
+                resultsModel.addElement(resource);
             }
         } else {
-            for (InformacionDescargas recurso : listaRecursos) {
+            for (DownloadInfo resource : resourcesList) {
 
-                String nombreArchivoLower = recurso.getNombreArchivo().toLowerCase();
+                String lowerArchiveName = resource.getFileName().toLowerCase();
 
-                if (nombreArchivoLower.contains(textoBusquedaLower)) {
-                    modeloResultados.addElement(recurso);
+                if (lowerArchiveName.contains(lowerSearchingText)) {
+                    resultsModel.addElement(resource);
                 }
             }
         }
     @SuppressWarnings("unchecked")
-        javax.swing.ListModel modeloRaw = (javax.swing.ListModel) modeloResultados;
-        jListSearchList.setModel(modeloRaw);
+        javax.swing.ListModel rawModel = (javax.swing.ListModel) resultsModel;
+        jListSearchList.setModel(rawModel);
 }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButtonDelete;
@@ -224,6 +224,6 @@ public class SearchDialog extends javax.swing.JDialog {
     private javax.swing.JButton jButtonReturn;
     private javax.swing.JList<String> jListSearchList;
     private javax.swing.JScrollPane jScrollPaneList;
-    private javax.swing.JTextField jTextFieldIntroducir;
+    private javax.swing.JTextField jTextFieldIntroduce;
     // End of variables declaration//GEN-END:variables
 }

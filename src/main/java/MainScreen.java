@@ -26,11 +26,11 @@ import javax.swing.SwingUtilities;
 public class MainScreen extends javax.swing.JFrame {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(MainScreen.class.getName());
-    private String rutaDestino = "";
-    private JPanel panelOriginal;
-    private String rutaBinarios = "";
-    private PanelPreferencias panelPreferencias;
-    private List<InformacionDescargas> listaRecursos = new ArrayList<>();
+    private String destinyPath = "";
+    private JPanel originalPanel;
+    private String binariesPath = "";
+    private PreferencesPanel preferencesPanel;
+    private List<DownloadInfo> resourcesList = new ArrayList<>();
   
 
     /**
@@ -38,11 +38,13 @@ public class MainScreen extends javax.swing.JFrame {
      */
     public MainScreen() {
     initComponents();
+    this.setSize(1024,768);
     this.setLocationRelativeTo(null);
     
-    panelOriginal = (JPanel) getContentPane();
-    jButtonCambiar.setVisible(false); // Ocultar botón de cambiar al inicio
-    jLabelGuardar.setText("No folder selected"); // Texto inicial
+    
+    originalPanel = (JPanel) getContentPane();
+    jButtonChange.setVisible(false); // Ocultar botón de cambiar al inicio
+    jLabelSave.setText("No folder selected"); // Texto inicial
 }
 
 
@@ -55,35 +57,35 @@ public class MainScreen extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        buttonGroupCalidad = new javax.swing.ButtonGroup();
+        buttonGroupQuality = new javax.swing.ButtonGroup();
         buttonGroupAQ = new javax.swing.ButtonGroup();
         jLabelWelcome = new javax.swing.JLabel();
         jPanelWeb = new javax.swing.JPanel();
         jLabelUrl = new javax.swing.JLabel();
         jTextFieldUrl = new javax.swing.JTextField();
-        jPanelCalidad = new javax.swing.JPanel();
+        jPanelQuality = new javax.swing.JPanel();
         jLabelCalidad = new javax.swing.JLabel();
         jRadioButton1080 = new javax.swing.JRadioButton();
         jRadioButton720 = new javax.swing.JRadioButton();
         jRadioButton480 = new javax.swing.JRadioButton();
-        jPanelSubtitulos = new javax.swing.JPanel();
+        jPanelSubtitle = new javax.swing.JPanel();
         jLabelSubtitulos = new javax.swing.JLabel();
-        jCheckBoxSubtitulosSi = new javax.swing.JCheckBox();
-        jPanelFormato = new javax.swing.JPanel();
+        jCheckBoxSubtitlesYes = new javax.swing.JCheckBox();
+        jPanelFormat = new javax.swing.JPanel();
         jLabelFormato = new javax.swing.JLabel();
         jComboBoxFormato = new javax.swing.JComboBox<>();
-        jPanelGuardado = new javax.swing.JPanel();
-        jLabelGuardar = new javax.swing.JLabel();
-        jButtonRutaGuardado = new javax.swing.JButton();
-        jButtonCambiar = new javax.swing.JButton();
-        jPanelProgreso = new javax.swing.JPanel();
+        jPanelSave = new javax.swing.JPanel();
+        jLabelSave = new javax.swing.JLabel();
+        jButtonSavePath = new javax.swing.JButton();
+        jButtonChange = new javax.swing.JButton();
+        jPanelProgress = new javax.swing.JPanel();
         jLabelProgreso = new javax.swing.JLabel();
-        jProgressBarra = new javax.swing.JProgressBar();
-        jPanelConsola = new javax.swing.JPanel();
+        jProgressBar = new javax.swing.JProgressBar();
+        jPanelConsole = new javax.swing.JPanel();
         jScrollPaneConsola = new javax.swing.JScrollPane();
-        jTextAreaConsola = new javax.swing.JTextArea();
-        jPanelDescarga = new javax.swing.JPanel();
-        jButtonDescarga = new javax.swing.JButton();
+        jTextAreaConsole = new javax.swing.JTextArea();
+        jPanelDownload = new javax.swing.JPanel();
+        jButtonDownload = new javax.swing.JButton();
         jPanelLibrary = new javax.swing.JPanel();
         jButtonLibrary = new javax.swing.JButton();
         jPanelAudioQuality = new javax.swing.JPanel();
@@ -100,7 +102,6 @@ public class MainScreen extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("YourDownload");
-        setPreferredSize(new java.awt.Dimension(1024, 768));
         getContentPane().setLayout(null);
 
         jLabelWelcome.setText("Welcome! Download videos with no barriers!");
@@ -124,62 +125,62 @@ public class MainScreen extends javax.swing.JFrame {
         getContentPane().add(jPanelWeb);
         jPanelWeb.setBounds(10, 50, 780, 30);
 
-        jPanelCalidad.setLayout(null);
+        jPanelQuality.setLayout(null);
 
         jLabelCalidad.setText("Output Resolution:");
-        jPanelCalidad.add(jLabelCalidad);
+        jPanelQuality.add(jLabelCalidad);
         jLabelCalidad.setBounds(0, 0, 100, 20);
 
-        buttonGroupCalidad.add(jRadioButton1080);
+        buttonGroupQuality.add(jRadioButton1080);
         jRadioButton1080.setText("1080p");
         jRadioButton1080.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jRadioButton1080ActionPerformed(evt);
             }
         });
-        jPanelCalidad.add(jRadioButton1080);
+        jPanelQuality.add(jRadioButton1080);
         jRadioButton1080.setBounds(110, 0, 60, 21);
 
-        buttonGroupCalidad.add(jRadioButton720);
+        buttonGroupQuality.add(jRadioButton720);
         jRadioButton720.setText("720p");
         jRadioButton720.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jRadioButton720ActionPerformed(evt);
             }
         });
-        jPanelCalidad.add(jRadioButton720);
+        jPanelQuality.add(jRadioButton720);
         jRadioButton720.setBounds(170, 0, 50, 21);
 
-        buttonGroupCalidad.add(jRadioButton480);
+        buttonGroupQuality.add(jRadioButton480);
         jRadioButton480.setText("480p");
-        jPanelCalidad.add(jRadioButton480);
+        jPanelQuality.add(jRadioButton480);
         jRadioButton480.setBounds(220, 0, 50, 21);
 
-        getContentPane().add(jPanelCalidad);
-        jPanelCalidad.setBounds(10, 90, 270, 20);
+        getContentPane().add(jPanelQuality);
+        jPanelQuality.setBounds(10, 90, 270, 20);
 
-        jPanelSubtitulos.setLayout(null);
+        jPanelSubtitle.setLayout(null);
 
         jLabelSubtitulos.setText("Download Subtitles:");
-        jPanelSubtitulos.add(jLabelSubtitulos);
+        jPanelSubtitle.add(jLabelSubtitulos);
         jLabelSubtitulos.setBounds(0, 0, 110, 20);
 
-        jCheckBoxSubtitulosSi.setText("Yes");
-        jCheckBoxSubtitulosSi.addActionListener(new java.awt.event.ActionListener() {
+        jCheckBoxSubtitlesYes.setText("Yes");
+        jCheckBoxSubtitlesYes.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jCheckBoxSubtitulosSiActionPerformed(evt);
+                jCheckBoxSubtitlesYesActionPerformed(evt);
             }
         });
-        jPanelSubtitulos.add(jCheckBoxSubtitulosSi);
-        jCheckBoxSubtitulosSi.setBounds(120, 0, 84, 20);
+        jPanelSubtitle.add(jCheckBoxSubtitlesYes);
+        jCheckBoxSubtitlesYes.setBounds(120, 0, 84, 20);
 
-        getContentPane().add(jPanelSubtitulos);
-        jPanelSubtitulos.setBounds(320, 90, 170, 30);
+        getContentPane().add(jPanelSubtitle);
+        jPanelSubtitle.setBounds(320, 90, 170, 30);
 
-        jPanelFormato.setLayout(null);
+        jPanelFormat.setLayout(null);
 
         jLabelFormato.setText("Output Format:");
-        jPanelFormato.add(jLabelFormato);
+        jPanelFormat.add(jLabelFormato);
         jLabelFormato.setBounds(0, 0, 90, 20);
 
         jComboBoxFormato.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { ".mp4", ".avi", ".mp3" }));
@@ -188,76 +189,76 @@ public class MainScreen extends javax.swing.JFrame {
                 jComboBoxFormatoActionPerformed(evt);
             }
         });
-        jPanelFormato.add(jComboBoxFormato);
+        jPanelFormat.add(jComboBoxFormato);
         jComboBoxFormato.setBounds(110, 0, 72, 22);
 
-        getContentPane().add(jPanelFormato);
-        jPanelFormato.setBounds(10, 130, 190, 30);
+        getContentPane().add(jPanelFormat);
+        jPanelFormat.setBounds(10, 130, 190, 30);
 
-        jPanelGuardado.setLayout(null);
+        jPanelSave.setLayout(null);
 
-        jLabelGuardar.setText("Destination folder:");
-        jPanelGuardado.add(jLabelGuardar);
-        jLabelGuardar.setBounds(0, 0, 260, 20);
+        jLabelSave.setText("Destination folder:");
+        jPanelSave.add(jLabelSave);
+        jLabelSave.setBounds(0, 0, 260, 20);
 
-        jButtonRutaGuardado.setText("Choose save location");
-        jButtonRutaGuardado.addActionListener(new java.awt.event.ActionListener() {
+        jButtonSavePath.setText("Choose save location");
+        jButtonSavePath.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButtonRutaGuardadoActionPerformed(evt);
+                jButtonSavePathActionPerformed(evt);
             }
         });
-        jPanelGuardado.add(jButtonRutaGuardado);
-        jButtonRutaGuardado.setBounds(110, 0, 150, 20);
+        jPanelSave.add(jButtonSavePath);
+        jButtonSavePath.setBounds(110, 0, 150, 20);
 
-        jButtonCambiar.setText("Change");
-        jButtonCambiar.addActionListener(new java.awt.event.ActionListener() {
+        jButtonChange.setText("Change");
+        jButtonChange.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButtonCambiarActionPerformed(evt);
+                jButtonChangeActionPerformed(evt);
             }
         });
-        jPanelGuardado.add(jButtonCambiar);
-        jButtonCambiar.setBounds(270, 0, 72, 20);
+        jPanelSave.add(jButtonChange);
+        jButtonChange.setBounds(270, 0, 72, 20);
 
-        getContentPane().add(jPanelGuardado);
-        jPanelGuardado.setBounds(10, 170, 440, 20);
+        getContentPane().add(jPanelSave);
+        jPanelSave.setBounds(10, 170, 440, 20);
 
-        jPanelProgreso.setLayout(null);
+        jPanelProgress.setLayout(null);
 
         jLabelProgreso.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
         jLabelProgreso.setText("Completed:");
-        jPanelProgreso.add(jLabelProgreso);
+        jPanelProgress.add(jLabelProgreso);
         jLabelProgreso.setBounds(0, -10, 100, 40);
-        jPanelProgreso.add(jProgressBarra);
-        jProgressBarra.setBounds(110, 0, 670, 20);
+        jPanelProgress.add(jProgressBar);
+        jProgressBar.setBounds(110, 0, 670, 20);
 
-        getContentPane().add(jPanelProgreso);
-        jPanelProgreso.setBounds(10, 210, 780, 30);
+        getContentPane().add(jPanelProgress);
+        jPanelProgress.setBounds(10, 210, 780, 30);
 
-        jPanelConsola.setLayout(null);
+        jPanelConsole.setLayout(null);
 
-        jTextAreaConsola.setColumns(20);
-        jTextAreaConsola.setRows(5);
-        jScrollPaneConsola.setViewportView(jTextAreaConsola);
+        jTextAreaConsole.setColumns(20);
+        jTextAreaConsole.setRows(5);
+        jScrollPaneConsola.setViewportView(jTextAreaConsole);
 
-        jPanelConsola.add(jScrollPaneConsola);
+        jPanelConsole.add(jScrollPaneConsola);
         jScrollPaneConsola.setBounds(0, 0, 990, 470);
 
-        getContentPane().add(jPanelConsola);
-        jPanelConsola.setBounds(10, 250, 990, 470);
+        getContentPane().add(jPanelConsole);
+        jPanelConsole.setBounds(10, 250, 990, 470);
 
-        jPanelDescarga.setLayout(null);
+        jPanelDownload.setLayout(null);
 
-        jButtonDescarga.setText("Download!");
-        jButtonDescarga.addActionListener(new java.awt.event.ActionListener() {
+        jButtonDownload.setText("Download!");
+        jButtonDownload.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButtonDescargaActionPerformed(evt);
+                jButtonDownloadActionPerformed(evt);
             }
         });
-        jPanelDescarga.add(jButtonDescarga);
-        jButtonDescarga.setBounds(0, 0, 170, 60);
+        jPanelDownload.add(jButtonDownload);
+        jButtonDownload.setBounds(0, 0, 170, 60);
 
-        getContentPane().add(jPanelDescarga);
-        jPanelDescarga.setBounds(830, 40, 170, 60);
+        getContentPane().add(jPanelDownload);
+        jPanelDownload.setBounds(830, 40, 170, 60);
 
         jPanelLibrary.setLayout(null);
 
@@ -351,34 +352,34 @@ public class MainScreen extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_jRadioButton1080ActionPerformed
 
-    private void jCheckBoxSubtitulosSiActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBoxSubtitulosSiActionPerformed
+    private void jCheckBoxSubtitlesYesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBoxSubtitlesYesActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jCheckBoxSubtitulosSiActionPerformed
+    }//GEN-LAST:event_jCheckBoxSubtitlesYesActionPerformed
 
-    private void jButtonRutaGuardadoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonRutaGuardadoActionPerformed
+    private void jButtonSavePathActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSavePathActionPerformed
         // Filechooser para seleccionar una ruta
-        JFileChooser selectorRuta = new JFileChooser();
-        selectorRuta.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        JFileChooser pathSelector = new JFileChooser();
+        pathSelector.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 
-        int resultado = selectorRuta.showOpenDialog(this); // selecciona la ruta 
+        int resultado = pathSelector.showOpenDialog(this); // selecciona la ruta 
         if (resultado == JFileChooser.APPROVE_OPTION) {
-            File carpeta = selectorRuta.getSelectedFile();
-            rutaDestino = carpeta.getAbsolutePath();
+            File folder = pathSelector.getSelectedFile();
+            destinyPath = folder.getAbsolutePath();
 
-            jLabelGuardar.setText("Saved at: " + rutaDestino);
+            jLabelSave.setText("Saved at: " + destinyPath);
 
-            jButtonRutaGuardado.setVisible(false); 
-            jButtonCambiar.setVisible(true);  
+            jButtonSavePath.setVisible(false); 
+            jButtonChange.setVisible(true);  
         }
-    }//GEN-LAST:event_jButtonRutaGuardadoActionPerformed
+    }//GEN-LAST:event_jButtonSavePathActionPerformed
 
     private void jMenuItemExitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemExitActionPerformed
-        String[] opciones = {"Yes", "No"};
-        int resultado = JOptionPane.showOptionDialog(this, "Are you sure you want to exit?",
+        String[] options = {"Yes", "No"};
+        int result = JOptionPane.showOptionDialog(this, "Are you sure you want to exit?",
                 "Exit", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, 
-                opciones, opciones[0]);
+                options, options[0]);
         
-            if (resultado == 0) {
+            if (result == 0) {
             System.exit(0);
             } 
     }//GEN-LAST:event_jMenuItemExitActionPerformed
@@ -390,12 +391,12 @@ public class MainScreen extends javax.swing.JFrame {
     }//GEN-LAST:event_jMenuItemAboutActionPerformed
 
     private void jMenuItemPreferencesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemPreferencesActionPerformed
-    setContentPane(new PanelPreferencias(this, panelOriginal));
+    setContentPane(new PreferencesPanel(this, originalPanel));
     revalidate();
     repaint();
     }//GEN-LAST:event_jMenuItemPreferencesActionPerformed
 
-    private void jButtonDescargaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonDescargaActionPerformed
+    private void jButtonDownloadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonDownloadActionPerformed
         final String url = jTextFieldUrl.getText().trim(); // Le indicamos que coja el texto del TextField
         
         if (url.isEmpty()){
@@ -403,112 +404,96 @@ public class MainScreen extends javax.swing.JFrame {
             return;
         }
         
-        jButtonDescarga.setEnabled(false);
-        jTextAreaConsola.setText("");
-        jProgressBarra.setValue(0);
+        jButtonDownload.setEnabled(false);
+        jTextAreaConsole.setText("");
+        jProgressBar.setValue(0);
         
         // Asignar calidad al video. Simple IF para escoger la calidad. 
-        String formatoSeleccionado = "bestvideo+bestaudio"; // Default: la mejor calidad disponible
+        String selectedFormat = "bestvideo+bestaudio"; // Default: la mejor calidad disponible
 
             if (jRadioButton1080.isSelected()) {
                 // Busca el mejor video de 1080p o menos, más el mejor audio
-                formatoSeleccionado = "bestvideo[height<=1080]+bestaudio";
+                selectedFormat = "bestvideo[height<=1080]+bestaudio";
             } else if (jRadioButton720.isSelected()) {
                 // Busca el mejor video de 720p o menos, más el mejor audio
-                formatoSeleccionado = "bestvideo[height<=720]+bestaudio";
+                selectedFormat = "bestvideo[height<=720]+bestaudio";
             } else if (jRadioButton480.isSelected()) {
                 // Busca el mejor video de 480p o menos, más el mejor audio
-                formatoSeleccionado = "bestvideo[height<=480]+bestaudio";
+                selectedFormat = "bestvideo[height<=480]+bestaudio";
             }
 
-            // El resto del código que usa 'formatoFinal' permanece igual
-            boolean descargarSubtitulos = jCheckBoxSubtitulosSi.isSelected();
-            final String formatoFinal = formatoSeleccionado; // Igualamos a formatoSeleccionado ya que el uso de Thread no permite el cambio de la variable que debe ser final.
+            // El resto del código que usa 'finalFormat' permanece igual
+            boolean downloadSubtitle = jCheckBoxSubtitlesYes.isSelected();
+            final String finalFormat = selectedFormat; // Igualamos a selectedFormat ya que el uso de Thread no permite el cambio de la variable que debe ser final.
         
         new Thread(() -> {
             
-            final File[] archivoDescargado = new File [1];
+            final File[] downloadFile = new File [1];
             try {
                 
-                // construccion comando
-                Preferences prefs = Preferences.userRoot().node("PanelPreferencias");
-                String rutaBinarios = prefs.get("rutaBinarios", "");
-                
-                if (rutaBinarios.isEmpty()){
-                    String homePath = System.getProperty("user.home") + File.separator + "td-dlp.exe";
-                    File homeFile = new File(homePath);
-                    
-                    if (homeFile.exists()) {
-                    rutaBinarios = homeFile.getAbsolutePath();
-                
-                    // Opcional: Guarda esta ruta en Preferences para la próxima vez
-                    prefs.put("rutaBinarios", rutaBinarios);
-                    System.out.println("DEBUG: Binario de yt-dlp.exe encontrado en user.home.");
-                }
-            }
-                
-                // 2. Comprobación de seguridad FINAL (si sigue vacía después de la búsqueda)
-                if (rutaBinarios.isEmpty()) {
-                    SwingUtilities.invokeLater(() -> {
-                    JOptionPane.showMessageDialog(MainScreen.this, "La ruta del binario yt-dlp.exe no está configurada.", "Error de Configuración", JOptionPane.ERROR_MESSAGE);
-                });
-                return; // Detiene la ejecución del hilo de descarga
-            }
-                List<String> comando = new ArrayList<>();
-                comando.add(rutaBinarios);
-                comando.add("--force-overwrites");
-                comando.add("--restrict-filenames");
-                String formatoSalida = jComboBoxFormato.getSelectedItem().toString();
+                // 1. LLAMAR AL SERVICIO DE RUTAS (MVC)
+                String binariesPath = getBinariesPath(); 
 
-                if (formatoSalida.contains(".mp3")) {
+                // 2. CHEQUEO DE SEGURIDAD FINAL
+                if (binariesPath.isEmpty()) {
+                   JOptionPane.showMessageDialog(this, "yt-dlp.exe binary path is not configured.", "Config error", JOptionPane.ERROR_MESSAGE);
+                return; 
+}
+                List<String> command = new ArrayList<>();
+                command.add(binariesPath);
+                command.add("--force-overwrites");
+                command.add("--restrict-filenames");
+                String outputFormat = jComboBoxFormato.getSelectedItem().toString();
+
+                if (outputFormat.contains(".mp3")) {
                     // no se especifica -f para audio
-                    comando.add("-x");
-                    comando.add("--audio-format");
-                    comando.add("mp3");
+                    command.add("-x");
+                    command.add("--audio-format");
+                    command.add("mp3");
                     
-                    String calidadAudio = "best";
+                    String audioQuality = "best";
                     
                     if (jRadioButtonHQ.isSelected()) {
-                        calidadAudio = "0";
+                        audioQuality = "0";
                     } else if (jRadioButtonHigh.isSelected()){
-                        calidadAudio = "5";
+                        audioQuality = "5";
                     }
                     
-                    if (!calidadAudio.equals("best")) {
-                        comando.add("--audio-quality");
-                        comando.add(calidadAudio);
+                    if (!audioQuality.equals("best")) {
+                        command.add("--audio-quality");
+                        command.add(audioQuality);
                     }
                 
                 } else {
                     // se especifica -f 
-                    comando.add("-f");
-                    comando.add(formatoFinal);
+                    command.add("-f");
+                    command.add(finalFormat);
 
-                    if (formatoSalida.contains(".mp4")) {
-                        comando.add("--recode-video");
-                        comando.add("mp4");
-                    } else if (formatoSalida.contains(".avi")) {
-                        comando.add("--recode-video");
-                        comando.add("avi");
+                    if (outputFormat.contains(".mp4")) {
+                        command.add("--recode-video");
+                        command.add("mp4");
+                    } else if (outputFormat.contains(".avi")) {
+                        command.add("--recode-video");
+                        command.add("avi");
                     }
                 }
-                if (!rutaDestino.isEmpty()) {
-                    comando.add("-o");
-                    comando.add(rutaDestino + File.separator + "%(title)s - %(epoch)s.%(ext)s");
+                if (!destinyPath.isEmpty()) {
+                    command.add("-o");
+                    command.add(destinyPath + File.separator + "%(title)s - %(epoch)s.%(ext)s");
                 }   
 
-                comando.add(url);
+                command.add(url);
 
-                if (descargarSubtitulos) {
-                    comando.add("--write-auto-sub");       // descarga subtítulos
-                    comando.add("--sub-lang");
-                    comando.add("en");                // idioma español
-                    comando.add("--convert-subs");
-                    comando.add("srt");               // formato .srt
+                if (downloadSubtitle) {
+                    command.add("--write-auto-sub");       // descarga subtítulos
+                    command.add("--sub-lang");
+                    command.add("en");                // idioma español
+                    command.add("--convert-subs");
+                    command.add("srt");               // formato .srt
                 }
                 
-                System.out.println("Comando final: " + String.join(" ", comando));
-                ProcessBuilder builder = new ProcessBuilder(comando); // Añadimos -f para que seleccione formato.
+                System.out.println("Comando final: " + String.join(" ", command));
+                ProcessBuilder builder = new ProcessBuilder(command); // Añadimos -f para que seleccione formato.
                 builder.redirectErrorStream(true);
                 Process process = builder.start();
                 
@@ -518,99 +503,98 @@ public class MainScreen extends javax.swing.JFrame {
                 while ((line = reader.readLine()) != null) {
                     final String outputLine = line;
                     if (outputLine.contains("Destination:")) {
-                        String ruta = outputLine.substring(outputLine.indexOf("Destination:") + 12).trim();
-                        archivoDescargado[0] = new File(ruta);
-                        System.out.println("Archivo detectado (Destination): " + ruta);
+                        String path = outputLine.substring(outputLine.indexOf("Destination:") + 12).trim();
+                        downloadFile[0] = new File(path);
+                        System.out.println("Archivo detectado (Destination): " + path);
                     } else if (outputLine.contains("Merging formats into")) {
-                        String ruta = outputLine.substring(outputLine.indexOf("Merging formats into") + 22).trim().replaceAll("\"", "");
-                        archivoDescargado[0] = new File(ruta);
-                        System.out.println("Archivo detectado (Merge): " + ruta);
-                    } else if (outputLine.contains("Deleting original file") && archivoDescargado[0] == null) {
+                        String path = outputLine.substring(outputLine.indexOf("Merging formats into") + 22).trim().replaceAll("\"", "");
+                        downloadFile[0] = new File(path);
+                        System.out.println("Archivo detectado (Merge): " + path);
+                    } else if (outputLine.contains("Deleting original file") && downloadFile[0] == null) {
                         // En caso de que se haya convertido y el original se haya eliminado
                         int start = outputLine.indexOf("Deleting original file") + 25;
                         int end = outputLine.lastIndexOf("\"");
                         if (start < end) {
-                            String ruta = outputLine.substring(start, end).trim().replaceAll("\"", "");
-                            archivoDescargado[0] = new File(ruta);
-                            System.out.println("Archivo detectado (Deleted original): " + ruta);
+                            String path = outputLine.substring(start, end).trim().replaceAll("\"", "");
+                            downloadFile[0] = new File(path);
+                            System.out.println("Archivo detectado (Deleted original): " + path);
                         }
                     }   
 
                     
                     SwingUtilities.invokeLater(() -> {
-                        jTextAreaConsola.append (outputLine + "\n");
-                        jTextAreaConsola.setCaretPosition(jTextAreaConsola.getDocument().getLength());
-                        actualizarBarraProgreso(outputLine);
+                        jTextAreaConsole.append (outputLine + "\n");
+                        jTextAreaConsole.setCaretPosition(jTextAreaConsole.getDocument().getLength());
+                        updateProgressBar(outputLine);
                     });
                 }
                     process.waitFor();
             } catch (IOException | InterruptedException e){
-                SwingUtilities.invokeLater(() -> jTextAreaConsola.append("Error: " + e.getMessage() + "\n"));
+                SwingUtilities.invokeLater(() -> jTextAreaConsole.append("Error: " + e.getMessage() + "\n"));
             } finally {
                 SwingUtilities.invokeLater(() -> {
-                jButtonDescarga.setEnabled(true);
+                jButtonDownload.setEnabled(true);
                 
                 //Recogemos las propiedades del archivo descargado
-                File archivoFinal = archivoDescargado[0];
-                System.out.println("DEBUG (Descarga): Ruta de archivo final: " + archivoFinal.getAbsolutePath());
-                System.out.println("DEBUG (Descarga): ¿Existe el archivo?: " + archivoFinal.exists());
-                if (archivoFinal != null && archivoFinal.exists()){
-                    String rutaAbsoluta = archivoFinal.getAbsolutePath();
-                    long tamanyo = archivoFinal.length();
-                    String mimeType = obtenerMimeSimple(archivoFinal.getName());
-                // Y lo añadimos a la listaRecursos
-                    InformacionDescargas nuevaDescarga = new InformacionDescargas(rutaAbsoluta, new Date(), tamanyo, mimeType);
-                    listaRecursos.add(nuevaDescarga);
+                File finalFile = downloadFile[0];
+                System.out.println("DEBUG (Descarga): Ruta de archivo final: " + finalFile.getAbsolutePath());
+                System.out.println("DEBUG (Descarga): ¿Existe el archivo?: " + finalFile.exists());
+                if (finalFile != null && finalFile.exists()){
+                    String rutaAbsoluta = finalFile.getAbsolutePath();
+                    long tamanyo = finalFile.length();
+                    String mimeType = obtainMimeSimple(finalFile.getName());
+                // Y lo añadimos a la resourcesList
+                    DownloadInfo nuevaDescarga = new DownloadInfo(rutaAbsoluta, new Date(), tamanyo, mimeType);
+                    resourcesList.add(nuevaDescarga);
                 }
 
                 // Muestra el Jdialog de descarga completada
-                DescargaCompletada dialog = new DescargaCompletada(null, true, archivoDescargado[0]);
+                DownloadComplete dialog = new DownloadComplete(null, true, downloadFile[0]);
                 dialog.setSize(300, 250);               
                 dialog.setLocationRelativeTo(null);     
                 dialog.setVisible(true);                
             });
         }
         }).start();
-    }//GEN-LAST:event_jButtonDescargaActionPerformed
+    }//GEN-LAST:event_jButtonDownloadActionPerformed
 
     private void jComboBoxFormatoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBoxFormatoActionPerformed
         // 1. Obtener el formato seleccionado (ej: ".mp3" o ".mp4")
-        String formatoSalida = jComboBoxFormato.getSelectedItem().toString();
+        String outputFormat = jComboBoxFormato.getSelectedItem().toString();
 
         // 2. Comprobar si es audio
-        boolean esAudio = formatoSalida.contains(".mp3");
-        jPanelAudioQuality.setVisible(esAudio);
-        jPanelCalidad.setVisible(!esAudio);
+        boolean isAudio = outputFormat.contains(".mp3");
+        jPanelAudioQuality.setVisible(isAudio);
+        jPanelQuality.setVisible(!isAudio);
         
-        if (esAudio){
-            buttonGroupCalidad.clearSelection();
+        if (isAudio){
+            buttonGroupQuality.clearSelection();
         } else {
             buttonGroupAQ.clearSelection();
         }
 
     }//GEN-LAST:event_jComboBoxFormatoActionPerformed
 
-    private void jButtonCambiarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonCambiarActionPerformed
-    JFileChooser selectorRuta = new JFileChooser();
-    selectorRuta.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+    private void jButtonChangeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonChangeActionPerformed
+    JFileChooser pathSelector = new JFileChooser();
+    pathSelector.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 
-    int resultado = selectorRuta.showOpenDialog(this);
-        if (resultado == JFileChooser.APPROVE_OPTION) {
-            File carpeta = selectorRuta.getSelectedFile();
-            rutaDestino = carpeta.getAbsolutePath();
+    int result = pathSelector.showOpenDialog(this);
+        if (result == JFileChooser.APPROVE_OPTION) {
+            File folder = pathSelector.getSelectedFile();
+            destinyPath = folder.getAbsolutePath();
 
-            jLabelGuardar.setText("Saved at: " + rutaDestino);
+            jLabelSave.setText("Saved at: " + destinyPath);
             // No necesitas cambiar visibilidad aquí
         }
-    }//GEN-LAST:event_jButtonCambiarActionPerformed
+    }//GEN-LAST:event_jButtonChangeActionPerformed
 
     private void jButtonLibraryActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonLibraryActionPerformed
-        MediaLibrary panelBiblioteca = new MediaLibrary(this, panelOriginal, listaRecursos);
+        MediaLibrary libraryPanel=  new MediaLibrary(this, originalPanel, resourcesList);
         
-        setContentPane(panelBiblioteca);
+        setContentPane(libraryPanel);
         revalidate();
         repaint();
-        System.out.println("DEBUG: Se abre MediaLibrary. Contiene " + listaRecursos.size() + " archivos.");
     }//GEN-LAST:event_jButtonLibraryActionPerformed
 
     private void jRadioButton720ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButton720ActionPerformed
@@ -650,12 +634,12 @@ public class MainScreen extends javax.swing.JFrame {
         java.awt.EventQueue.invokeLater(() -> new MainScreen().setVisible(true));
     }
     
-    private void actualizarBarraProgreso(String line) {
+    private void updateProgressBar(String line) {
     Pattern pattern = Pattern.compile("\\[download\\]\\s+(\\d+\\.\\d+)%");
     Matcher matcher = pattern.matcher(line);
         if (matcher.find()) {
-            double porcentaje = Double.parseDouble(matcher.group(1));
-            jProgressBarra.setValue((int) porcentaje);
+            double percent = Double.parseDouble(matcher.group(1));
+            jProgressBar.setValue((int) percent);
         }
     }
     
@@ -665,34 +649,68 @@ public class MainScreen extends javax.swing.JFrame {
     * * Esta función es auxiliar para categorizar el archivo descargado 
      * (MP4, AVI, MP3) para la biblioteca.
     *
-     * @param nombreArchivo El nombre completo del archivo (e.g., "MiVideo.mp4").
+     * @param fileName El nombre completo del archivo (e.g., "MiVideo.mp4").
     * @return El String que representa el tipo MIME estándar (e.g., "video/mp4").
      */
-    private String obtenerMimeSimple(String nombreArchivo){
-        if (nombreArchivo.toLowerCase().endsWith(".mp4")) {
+    private String obtainMimeSimple(String fileName){
+        if (fileName.toLowerCase().endsWith(".mp4")) {
             return "video/mp4";
-        } else if (nombreArchivo.toLowerCase().endsWith (".avi")) {
+        } else if (fileName.toLowerCase().endsWith (".avi")) {
             return "video/x-msvideo";
-        } else if (nombreArchivo.toLowerCase().endsWith (".mp3")) {
+        } else if (fileName.toLowerCase().endsWith (".mp3")) {
             return "audio/mpeg";
         }
         return "application/octet-stream";
     }
+    
+    private String getBinariesPath() {
+    Preferences prefs = Preferences.userRoot().node("PreferencesPanel");
+    String binariesPath = prefs.get("binariesPath", ""); // 1. Lee la preferencia guardada
+
+    // --- BÚSQUEDA SECUENCIAL (Solo si la preferencia está vacía) ---
+
+    // 2. CHEQUEO: Buscar en AppData/Local (Ubicación de instalación estándar)
+    if (binariesPath.isEmpty()) { 
+        String appDataPath = System.getenv("LOCALAPPDATA") + File.separator + "yt-dlp.exe";
+        File appDataFile = new File(appDataPath);
+        
+        if (appDataFile.exists()) {
+            binariesPath = appDataFile.getAbsolutePath();
+            prefs.put("binariesPath", binariesPath); // Guarda la ruta
+            return binariesPath; // ¡Sale si lo encuentra!
+        }
+    }
+    
+    // 3. CHEQUEO: Buscar en user.home (Ubicación de respaldo)
+    if (binariesPath.isEmpty()) { 
+        String homePath = System.getProperty("user.home") + File.separator + "yt-dlp.exe";
+        File homeFile = new File(homePath);
+
+        if (homeFile.exists()) {
+            binariesPath = homeFile.getAbsolutePath();
+            prefs.put("binariesPath", binariesPath);
+            return binariesPath; // ¡Sale si lo encuentra!
+        }
+    }
+    
+    // Si no se encuentra en ninguna parte, devuelve la cadena vacía.
+    return binariesPath; 
+}
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup buttonGroupAQ;
-    private javax.swing.ButtonGroup buttonGroupCalidad;
-    private javax.swing.JButton jButtonCambiar;
-    private javax.swing.JButton jButtonDescarga;
+    private javax.swing.ButtonGroup buttonGroupQuality;
+    private javax.swing.JButton jButtonChange;
+    private javax.swing.JButton jButtonDownload;
     private javax.swing.JButton jButtonLibrary;
-    private javax.swing.JButton jButtonRutaGuardado;
-    private javax.swing.JCheckBox jCheckBoxSubtitulosSi;
+    private javax.swing.JButton jButtonSavePath;
+    private javax.swing.JCheckBox jCheckBoxSubtitlesYes;
     private javax.swing.JComboBox<String> jComboBoxFormato;
     private javax.swing.JLabel jLabelAQ;
     private javax.swing.JLabel jLabelCalidad;
     private javax.swing.JLabel jLabelFormato;
-    private javax.swing.JLabel jLabelGuardar;
     private javax.swing.JLabel jLabelProgreso;
+    private javax.swing.JLabel jLabelSave;
     private javax.swing.JLabel jLabelSubtitulos;
     private javax.swing.JLabel jLabelUrl;
     private javax.swing.JLabel jLabelWelcome;
@@ -704,23 +722,23 @@ public class MainScreen extends javax.swing.JFrame {
     private javax.swing.JMenuItem jMenuItemExit;
     private javax.swing.JMenuItem jMenuItemPreferences;
     private javax.swing.JPanel jPanelAudioQuality;
-    private javax.swing.JPanel jPanelCalidad;
-    private javax.swing.JPanel jPanelConsola;
-    private javax.swing.JPanel jPanelDescarga;
-    private javax.swing.JPanel jPanelFormato;
-    private javax.swing.JPanel jPanelGuardado;
+    private javax.swing.JPanel jPanelConsole;
+    private javax.swing.JPanel jPanelDownload;
+    private javax.swing.JPanel jPanelFormat;
     private javax.swing.JPanel jPanelLibrary;
-    private javax.swing.JPanel jPanelProgreso;
-    private javax.swing.JPanel jPanelSubtitulos;
+    private javax.swing.JPanel jPanelProgress;
+    private javax.swing.JPanel jPanelQuality;
+    private javax.swing.JPanel jPanelSave;
+    private javax.swing.JPanel jPanelSubtitle;
     private javax.swing.JPanel jPanelWeb;
-    private javax.swing.JProgressBar jProgressBarra;
+    private javax.swing.JProgressBar jProgressBar;
     private javax.swing.JRadioButton jRadioButton1080;
     private javax.swing.JRadioButton jRadioButton480;
     private javax.swing.JRadioButton jRadioButton720;
     private javax.swing.JRadioButton jRadioButtonHQ;
     private javax.swing.JRadioButton jRadioButtonHigh;
     private javax.swing.JScrollPane jScrollPaneConsola;
-    private javax.swing.JTextArea jTextAreaConsola;
+    private javax.swing.JTextArea jTextAreaConsole;
     private javax.swing.JTextField jTextFieldUrl;
     // End of variables declaration//GEN-END:variables
 }
