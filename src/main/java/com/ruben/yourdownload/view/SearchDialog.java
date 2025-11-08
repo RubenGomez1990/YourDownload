@@ -1,4 +1,7 @@
+package com.ruben.yourdownload.view;
 
+
+import com.ruben.yourdownload.model.DownloadInfo;
 import java.util.List;
 import javax.swing.DefaultListModel;
 import javax.swing.JOptionPane;

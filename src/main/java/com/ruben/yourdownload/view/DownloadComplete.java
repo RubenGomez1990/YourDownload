@@ -1,3 +1,5 @@
+package com.ruben.yourdownload.view;
+
 
 import java.awt.Desktop;
 import java.io.File;
@@ -24,6 +26,18 @@ public class DownloadComplete extends javax.swing.JDialog {
         super(parent, modal);
         initComponents();
         this.downloadFile = downloadFile;
+        
+        // --- ANULACIÓN PORTABLE DE LA RUTA ABSOLUTA ---
+        java.net.URL iconURL = getClass().getResource("/resources/icons/icons8-checkmark-120.png");
+    
+        // Si se encuentra el recurso en el classpath (dentro del JAR), lo usamos.
+        if (iconURL != null) {
+        jLabelEnded.setIcon(new javax.swing.ImageIcon(iconURL));
+    } else {
+        // Opcional: Si el icono no se encuentra, podemos notificarlo.
+        System.err.println("Error: Icon resource not found.");
+    }
+    // ---------------------------------------------
     }
 
     /**
@@ -35,42 +49,42 @@ public class DownloadComplete extends javax.swing.JDialog {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jLabelTerminada = new javax.swing.JLabel();
-        jButtonReproducir = new javax.swing.JButton();
-        jButtonSalir = new javax.swing.JButton();
+        jLabelEnded = new javax.swing.JLabel();
+        jButtonPlay = new javax.swing.JButton();
+        jButtonExit = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Download Complete!");
         setModal(true);
         getContentPane().setLayout(null);
 
-        jLabelTerminada.setIcon(new javax.swing.ImageIcon("C:\\Users\\ruben\\Documents\\NetBeansProjects\\YouDownloadDefinitivo\\resources\\icons\\icons8-checkmark-120.png")); // NOI18N
-        jLabelTerminada.setText("DOWNLOAD COMPLETED!");
-        getContentPane().add(jLabelTerminada);
-        jLabelTerminada.setBounds(0, 20, 290, 120);
+        jLabelEnded.setIcon(new javax.swing.ImageIcon("C:\\Users\\ruben\\Documents\\NetBeansProjects\\YouDownloadDefinitivo\\resources\\icons\\icons8-checkmark-120.png")); // NOI18N
+        jLabelEnded.setText("DOWNLOAD COMPLETED!");
+        getContentPane().add(jLabelEnded);
+        jLabelEnded.setBounds(0, 20, 290, 120);
 
-        jButtonReproducir.setText("Play it!");
-        jButtonReproducir.addActionListener(new java.awt.event.ActionListener() {
+        jButtonPlay.setText("Play it!");
+        jButtonPlay.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButtonReproducirActionPerformed(evt);
+                jButtonPlayActionPerformed(evt);
             }
         });
-        getContentPane().add(jButtonReproducir);
-        jButtonReproducir.setBounds(60, 160, 75, 23);
+        getContentPane().add(jButtonPlay);
+        jButtonPlay.setBounds(60, 160, 75, 23);
 
-        jButtonSalir.setText("Exit");
-        jButtonSalir.addActionListener(new java.awt.event.ActionListener() {
+        jButtonExit.setText("Exit");
+        jButtonExit.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButtonSalirActionPerformed(evt);
+                jButtonExitActionPerformed(evt);
             }
         });
-        getContentPane().add(jButtonSalir);
-        jButtonSalir.setBounds(150, 160, 72, 23);
+        getContentPane().add(jButtonExit);
+        jButtonExit.setBounds(150, 160, 72, 23);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButtonReproducirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonReproducirActionPerformed
+    private void jButtonPlayActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonPlayActionPerformed
         if (downloadFile != null && downloadFile.exists()) {
             try {
             Desktop.getDesktop().open(downloadFile);
@@ -80,16 +94,16 @@ public class DownloadComplete extends javax.swing.JDialog {
         } else {
             JOptionPane.showMessageDialog(this, "File not found.");
         }
-    }//GEN-LAST:event_jButtonReproducirActionPerformed
+    }//GEN-LAST:event_jButtonPlayActionPerformed
 
-    private void jButtonSalirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSalirActionPerformed
+    private void jButtonExitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonExitActionPerformed
         dispose();
-    }//GEN-LAST:event_jButtonSalirActionPerformed
+    }//GEN-LAST:event_jButtonExitActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButtonReproducir;
-    private javax.swing.JButton jButtonSalir;
-    private javax.swing.JLabel jLabelTerminada;
+    private javax.swing.JButton jButtonExit;
+    private javax.swing.JButton jButtonPlay;
+    private javax.swing.JLabel jLabelEnded;
     // End of variables declaration//GEN-END:variables
 }

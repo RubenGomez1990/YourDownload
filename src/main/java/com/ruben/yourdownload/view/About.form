@@ -25,7 +25,7 @@
     <Property name="useNullLayout" type="boolean" value="true"/>
   </Layout>
   <SubComponents>
-    <Component class="javax.swing.JLabel" name="jLabelNombre">
+    <Component class="javax.swing.JLabel" name="jLabelName">
       <Properties>
         <Property name="text" type="java.lang.String" value="Full name: Rub&#xe9;n G&#xf3;mez Hern&#xe1;ndez"/>
       </Properties>
@@ -35,7 +35,7 @@
         </Constraint>
       </Constraints>
     </Component>
-    <Component class="javax.swing.JLabel" name="jLabelCurso">
+    <Component class="javax.swing.JLabel" name="jLabelCourse">
       <Properties>
         <Property name="text" type="java.lang.String" value="Course: 2&#xba; Desarrollo de aplicaciones Multiplataforma"/>
       </Properties>
@@ -45,7 +45,7 @@
         </Constraint>
       </Constraints>
     </Component>
-    <Component class="javax.swing.JLabel" name="jLabelSobre">
+    <Component class="javax.swing.JLabel" name="jLabelAbout">
       <Properties>
         <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
           <Font name="Segoe UI" size="18" style="0"/>
@@ -58,7 +58,7 @@
         </Constraint>
       </Constraints>
     </Component>
-    <Component class="javax.swing.JLabel" name="jLabelFuentes">
+    <Component class="javax.swing.JLabel" name="jLabelFonts">
       <Properties>
         <Property name="text" type="java.lang.String" value="Sources used: yt-dlp, ffmpeg, ffprobe, copilot, stack overflow"/>
       </Properties>
@@ -68,12 +68,12 @@
         </Constraint>
       </Constraints>
     </Component>
-    <Component class="javax.swing.JButton" name="jButtonSalir">
+    <Component class="javax.swing.JButton" name="jButtonExit">
       <Properties>
         <Property name="text" type="java.lang.String" value="Exit"/>
       </Properties>
       <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButtonSalirActionPerformed"/>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButtonExitActionPerformed"/>
       </Events>
       <Constraints>
         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">

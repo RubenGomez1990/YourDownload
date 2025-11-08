@@ -1,3 +1,5 @@
+package com.ruben.yourdownload.model;
+
 
 import java.util.List;
 

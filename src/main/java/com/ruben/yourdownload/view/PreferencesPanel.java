@@ -1,3 +1,5 @@
+package com.ruben.yourdownload.view;
+
 
 import java.io.File;
 import java.util.prefs.Preferences;
@@ -44,40 +46,40 @@ public class PreferencesPanel extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jPanelTemporales = new javax.swing.JPanel();
-        jLabelTemporales = new javax.swing.JLabel();
-        jButtonTemporales = new javax.swing.JButton();
+        jPanelTemporaly = new javax.swing.JPanel();
+        jLabelTemporaly = new javax.swing.JLabel();
+        jButtonTemporaly = new javax.swing.JButton();
         jPanelPlaylists = new javax.swing.JPanel();
         jLabelPlaylists = new javax.swing.JLabel();
         jCheckBoxPlaylists = new javax.swing.JCheckBox();
-        jPanelLimite = new javax.swing.JPanel();
-        jLabelLimite = new javax.swing.JLabel();
-        jComboBoxLimite = new javax.swing.JComboBox<>();
+        jPanelLimit = new javax.swing.JPanel();
+        jLabelLimit = new javax.swing.JLabel();
+        jComboBoxLimit = new javax.swing.JComboBox<>();
         jPanelBinaries = new javax.swing.JPanel();
         jLabelBinaries = new javax.swing.JLabel();
         jButtonBinaries = new javax.swing.JButton();
-        jButtonVolver = new javax.swing.JButton();
+        jButtonBack = new javax.swing.JButton();
 
         setPreferredSize(new java.awt.Dimension(800, 600));
         setLayout(null);
 
-        jPanelTemporales.setLayout(null);
+        jPanelTemporaly.setLayout(null);
 
-        jLabelTemporales.setText("Temporary files path:");
-        jPanelTemporales.add(jLabelTemporales);
-        jLabelTemporales.setBounds(0, 0, 320, 20);
+        jLabelTemporaly.setText("Temporary files path:");
+        jPanelTemporaly.add(jLabelTemporaly);
+        jLabelTemporaly.setBounds(0, 0, 320, 20);
 
-        jButtonTemporales.setText("Choose");
-        jButtonTemporales.addActionListener(new java.awt.event.ActionListener() {
+        jButtonTemporaly.setText("Choose");
+        jButtonTemporaly.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButtonTemporalesActionPerformed(evt);
+                jButtonTemporalyActionPerformed(evt);
             }
         });
-        jPanelTemporales.add(jButtonTemporales);
-        jButtonTemporales.setBounds(430, 0, 75, 23);
+        jPanelTemporaly.add(jButtonTemporaly);
+        jButtonTemporaly.setBounds(430, 0, 75, 23);
 
-        add(jPanelTemporales);
-        jPanelTemporales.setBounds(10, 20, 650, 30);
+        add(jPanelTemporaly);
+        jPanelTemporaly.setBounds(10, 20, 650, 30);
 
         jPanelPlaylists.setLayout(null);
 
@@ -96,23 +98,23 @@ public class PreferencesPanel extends javax.swing.JPanel {
         add(jPanelPlaylists);
         jPanelPlaylists.setBounds(10, 60, 580, 20);
 
-        jPanelLimite.setLayout(null);
+        jPanelLimit.setLayout(null);
 
-        jLabelLimite.setText("Limit download speed:");
-        jPanelLimite.add(jLabelLimite);
-        jLabelLimite.setBounds(0, 0, 130, 20);
+        jLabelLimit.setText("Limit download speed:");
+        jPanelLimit.add(jLabelLimit);
+        jLabelLimit.setBounds(0, 0, 130, 20);
 
-        jComboBoxLimite.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Unlimited", "100 MB/s", "10 MB/s", "1 MB/s", " " }));
-        jComboBoxLimite.addActionListener(new java.awt.event.ActionListener() {
+        jComboBoxLimit.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Unlimited", "100 MB/s", "10 MB/s", "1 MB/s", " " }));
+        jComboBoxLimit.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jComboBoxLimiteActionPerformed(evt);
+                jComboBoxLimitActionPerformed(evt);
             }
         });
-        jPanelLimite.add(jComboBoxLimite);
-        jComboBoxLimite.setBounds(430, 0, 100, 22);
+        jPanelLimit.add(jComboBoxLimit);
+        jComboBoxLimit.setBounds(430, 0, 100, 22);
 
-        add(jPanelLimite);
-        jPanelLimite.setBounds(10, 100, 640, 30);
+        add(jPanelLimit);
+        jPanelLimit.setBounds(10, 100, 640, 30);
 
         jPanelBinaries.setLayout(null);
 
@@ -132,17 +134,17 @@ public class PreferencesPanel extends javax.swing.JPanel {
         add(jPanelBinaries);
         jPanelBinaries.setBounds(10, 140, 830, 30);
 
-        jButtonVolver.setText("Go back");
-        jButtonVolver.addActionListener(new java.awt.event.ActionListener() {
+        jButtonBack.setText("Go back");
+        jButtonBack.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButtonVolverActionPerformed(evt);
+                jButtonBackActionPerformed(evt);
             }
         });
-        add(jButtonVolver);
-        jButtonVolver.setBounds(10, 180, 73, 23);
+        add(jButtonBack);
+        jButtonBack.setBounds(10, 180, 73, 23);
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButtonTemporalesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonTemporalesActionPerformed
+    private void jButtonTemporalyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonTemporalyActionPerformed
     JFileChooser chooser = new JFileChooser();
     chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 
@@ -152,24 +154,24 @@ public class PreferencesPanel extends javax.swing.JPanel {
         String temporalPath = selectedFolder.getAbsolutePath();
 
     // Guarda la ruta donde quieras
-    jLabelTemporales.setText(temporalPath); // ejemplo visual
+    jLabelTemporaly.setText(temporalPath); // ejemplo visual
     this.destinyPath = temporalPath;     // ejemplo funcional
 }
 
     
-    }//GEN-LAST:event_jButtonTemporalesActionPerformed
+    }//GEN-LAST:event_jButtonTemporalyActionPerformed
 
     private void jCheckBoxPlaylistsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBoxPlaylistsActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_jCheckBoxPlaylistsActionPerformed
 
-    private void jButtonVolverActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonVolverActionPerformed
+    private void jButtonBackActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonBackActionPerformed
         
         mainScreen.setContentPane(originalPanel);
         mainScreen.revalidate();
         mainScreen.repaint();
 
-    }//GEN-LAST:event_jButtonVolverActionPerformed
+    }//GEN-LAST:event_jButtonBackActionPerformed
 
     private void jButtonBinariesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonBinariesActionPerformed
         JFileChooser chooser = new JFileChooser();
@@ -186,23 +188,23 @@ public class PreferencesPanel extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_jButtonBinariesActionPerformed
 
-    private void jComboBoxLimiteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBoxLimiteActionPerformed
+    private void jComboBoxLimitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBoxLimitActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jComboBoxLimiteActionPerformed
+    }//GEN-LAST:event_jComboBoxLimitActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton jButtonBack;
     private javax.swing.JButton jButtonBinaries;
-    private javax.swing.JButton jButtonTemporales;
-    private javax.swing.JButton jButtonVolver;
+    private javax.swing.JButton jButtonTemporaly;
     private javax.swing.JCheckBox jCheckBoxPlaylists;
-    private javax.swing.JComboBox<String> jComboBoxLimite;
+    private javax.swing.JComboBox<String> jComboBoxLimit;
     private javax.swing.JLabel jLabelBinaries;
-    private javax.swing.JLabel jLabelLimite;
+    private javax.swing.JLabel jLabelLimit;
     private javax.swing.JLabel jLabelPlaylists;
-    private javax.swing.JLabel jLabelTemporales;
+    private javax.swing.JLabel jLabelTemporaly;
     private javax.swing.JPanel jPanelBinaries;
-    private javax.swing.JPanel jPanelLimite;
+    private javax.swing.JPanel jPanelLimit;
     private javax.swing.JPanel jPanelPlaylists;
-    private javax.swing.JPanel jPanelTemporales;
+    private javax.swing.JPanel jPanelTemporaly;
     // End of variables declaration//GEN-END:variables
 }

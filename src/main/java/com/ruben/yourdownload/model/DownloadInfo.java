@@ -1,3 +1,5 @@
+package com.ruben.yourdownload.model;
+
 
 import java.io.File;
 import java.util.Date;

@@ -1,4 +1,8 @@
+package com.ruben.yourdownload.view;
 
+
+import com.ruben.yourdownload.model.DownloadInfoTableModel;
+import com.ruben.yourdownload.model.DownloadInfo;
 import java.util.List;
 import javax.swing.JPanel;
 
@@ -48,11 +52,11 @@ public class MediaLibrary extends javax.swing.JPanel {
 
         jScrollPaneMedia = new javax.swing.JScrollPane();
         jTableMedia = new javax.swing.JTable();
-        jLabelFiltro = new javax.swing.JLabel();
-        jComboBoxFiltro = new javax.swing.JComboBox<>();
-        jButtonEliminar = new javax.swing.JButton();
-        jButtonVolver = new javax.swing.JButton();
-        jButtonBusqueda = new javax.swing.JButton();
+        jLabelFilter = new javax.swing.JLabel();
+        jComboBoxFilter = new javax.swing.JComboBox<>();
+        jButtonDelete = new javax.swing.JButton();
+        jButtonBack = new javax.swing.JButton();
+        jButtonSearch = new javax.swing.JButton();
 
         setEnabled(false);
         setPreferredSize(new java.awt.Dimension(1024, 768));
@@ -74,55 +78,55 @@ public class MediaLibrary extends javax.swing.JPanel {
         add(jScrollPaneMedia);
         jScrollPaneMedia.setBounds(0, 0, 930, 220);
 
-        jLabelFiltro.setText("Filter by:");
-        add(jLabelFiltro);
-        jLabelFiltro.setBounds(10, 230, 70, 30);
+        jLabelFilter.setText("Filter by:");
+        add(jLabelFilter);
+        jLabelFilter.setBounds(10, 230, 70, 30);
 
-        jComboBoxFiltro.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-        jComboBoxFiltro.addActionListener(new java.awt.event.ActionListener() {
+        jComboBoxFilter.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        jComboBoxFilter.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jComboBoxFiltroActionPerformed(evt);
+                jComboBoxFilterActionPerformed(evt);
             }
         });
-        add(jComboBoxFiltro);
-        jComboBoxFiltro.setBounds(130, 230, 120, 30);
+        add(jComboBoxFilter);
+        jComboBoxFilter.setBounds(130, 230, 120, 30);
 
-        jButtonEliminar.setText("Delete");
-        jButtonEliminar.addActionListener(new java.awt.event.ActionListener() {
+        jButtonDelete.setText("Delete");
+        jButtonDelete.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButtonEliminarActionPerformed(evt);
+                jButtonDeleteActionPerformed(evt);
             }
         });
-        add(jButtonEliminar);
-        jButtonEliminar.setBounds(400, 230, 120, 30);
+        add(jButtonDelete);
+        jButtonDelete.setBounds(400, 230, 120, 30);
 
-        jButtonVolver.setText("Return");
-        jButtonVolver.setName(""); // NOI18N
-        jButtonVolver.addActionListener(new java.awt.event.ActionListener() {
+        jButtonBack.setText("Return");
+        jButtonBack.setName(""); // NOI18N
+        jButtonBack.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButtonVolverActionPerformed(evt);
+                jButtonBackActionPerformed(evt);
             }
         });
-        add(jButtonVolver);
-        jButtonVolver.setBounds(690, 230, 120, 30);
+        add(jButtonBack);
+        jButtonBack.setBounds(690, 230, 120, 30);
 
-        jButtonBusqueda.setText("Search by text");
-        jButtonBusqueda.addActionListener(new java.awt.event.ActionListener() {
+        jButtonSearch.setText("Search by text");
+        jButtonSearch.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButtonBusquedaActionPerformed(evt);
+                jButtonSearchActionPerformed(evt);
             }
         });
-        add(jButtonBusqueda);
-        jButtonBusqueda.setBounds(130, 280, 120, 30);
+        add(jButtonSearch);
+        jButtonSearch.setBounds(130, 280, 120, 30);
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButtonVolverActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonVolverActionPerformed
+    private void jButtonBackActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonBackActionPerformed
         principal.setContentPane(originalPanel);
         principal.revalidate();
         principal.repaint();
-    }//GEN-LAST:event_jButtonVolverActionPerformed
+    }//GEN-LAST:event_jButtonBackActionPerformed
 
-    private void jButtonEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonEliminarActionPerformed
+    private void jButtonDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonDeleteActionPerformed
        // Obtiene la fila seleccionada
        Object[] options = {"Yes", "No"};
         int selectedRow = jTableMedia.getSelectedRow();
@@ -156,9 +160,9 @@ public class MediaLibrary extends javax.swing.JPanel {
             } else {
             javax.swing.JOptionPane.showMessageDialog(this, "Select a file to delete", "Warning", javax.swing.JOptionPane.WARNING_MESSAGE);
         }
-    }//GEN-LAST:event_jButtonEliminarActionPerformed
+    }//GEN-LAST:event_jButtonDeleteActionPerformed
 
-    private void jComboBoxFiltroActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBoxFiltroActionPerformed
+    private void jComboBoxFilterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBoxFilterActionPerformed
 
     
     @SuppressWarnings("unchecked")
@@ -166,7 +170,7 @@ public class MediaLibrary extends javax.swing.JPanel {
     (javax.swing.table.TableRowSorter<DownloadInfoTableModel>) jTableMedia.getRowSorter();
     
         if (sorter == null) return; 
-        String selectedFilter = (String) jComboBoxFiltro.getSelectedItem();
+        String selectedFilter = (String) jComboBoxFilter.getSelectedItem();
     
         if (selectedFilter.equals("All Types")) {
             // CASO A: Mostrar todas las filas.
@@ -189,9 +193,9 @@ public class MediaLibrary extends javax.swing.JPanel {
             
         sorter.setRowFilter(rf);
     }
-    }//GEN-LAST:event_jComboBoxFiltroActionPerformed
+    }//GEN-LAST:event_jComboBoxFilterActionPerformed
 
-    private void jButtonBusquedaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonBusquedaActionPerformed
+    private void jButtonSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSearchActionPerformed
         javax.swing.JFrame parentFrame = principal;
     
     try {
@@ -208,7 +212,7 @@ public class MediaLibrary extends javax.swing.JPanel {
         // Esta línea es crucial para ver la traza de error completa en la consola
         e.printStackTrace(); 
         }
-    }//GEN-LAST:event_jButtonBusquedaActionPerformed
+    }//GEN-LAST:event_jButtonSearchActionPerformed
 
     private void initFiltroComboBox() {
         // 1. Definimos las opciones de filtro con nombres amigables para el usuario
@@ -221,13 +225,13 @@ public class MediaLibrary extends javax.swing.JPanel {
 
         // 2. Asignamos las opciones al JComboBox
         javax.swing.DefaultComboBoxModel<String> filterModel = new javax.swing.DefaultComboBoxModel<>(filterTypes);
-        jComboBoxFiltro.setModel(filterModel); 
+        jComboBoxFilter.setModel(filterModel); 
     
         // 3. Conectamos el JComboBox a la lógica de acción
-        jComboBoxFiltro.addActionListener(new java.awt.event.ActionListener() {
+        jComboBoxFilter.addActionListener(new java.awt.event.ActionListener() {
         public void actionPerformed(java.awt.event.ActionEvent evt) {
             // Llama al método que contiene la lógica del RowFilter
-            jComboBoxFiltroActionPerformed(evt);
+            jComboBoxFilterActionPerformed(evt);
         }
     });
 }
@@ -237,11 +241,11 @@ public class MediaLibrary extends javax.swing.JPanel {
     
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButtonBusqueda;
-    private javax.swing.JButton jButtonEliminar;
-    private javax.swing.JButton jButtonVolver;
-    private javax.swing.JComboBox<String> jComboBoxFiltro;
-    private javax.swing.JLabel jLabelFiltro;
+    private javax.swing.JButton jButtonBack;
+    private javax.swing.JButton jButtonDelete;
+    private javax.swing.JButton jButtonSearch;
+    private javax.swing.JComboBox<String> jComboBoxFilter;
+    private javax.swing.JLabel jLabelFilter;
     private javax.swing.JScrollPane jScrollPaneMedia;
     private javax.swing.JTable jTableMedia;
     // End of variables declaration//GEN-END:variables

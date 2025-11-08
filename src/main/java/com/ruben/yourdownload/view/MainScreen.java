@@ -1,4 +1,7 @@
+package com.ruben.yourdownload.view;
 
+
+import com.ruben.yourdownload.model.DownloadInfo;
 import java.util.List;
 import java.io.BufferedReader;
 import java.io.File;
@@ -64,25 +67,25 @@ public class MainScreen extends javax.swing.JFrame {
         jLabelUrl = new javax.swing.JLabel();
         jTextFieldUrl = new javax.swing.JTextField();
         jPanelQuality = new javax.swing.JPanel();
-        jLabelCalidad = new javax.swing.JLabel();
+        jLabelQuality = new javax.swing.JLabel();
         jRadioButton1080 = new javax.swing.JRadioButton();
         jRadioButton720 = new javax.swing.JRadioButton();
         jRadioButton480 = new javax.swing.JRadioButton();
         jPanelSubtitle = new javax.swing.JPanel();
-        jLabelSubtitulos = new javax.swing.JLabel();
+        jLabelSubtitles = new javax.swing.JLabel();
         jCheckBoxSubtitlesYes = new javax.swing.JCheckBox();
         jPanelFormat = new javax.swing.JPanel();
-        jLabelFormato = new javax.swing.JLabel();
-        jComboBoxFormato = new javax.swing.JComboBox<>();
+        jLabelFormat = new javax.swing.JLabel();
+        jComboBoxFormat = new javax.swing.JComboBox<>();
         jPanelSave = new javax.swing.JPanel();
         jLabelSave = new javax.swing.JLabel();
         jButtonSavePath = new javax.swing.JButton();
         jButtonChange = new javax.swing.JButton();
         jPanelProgress = new javax.swing.JPanel();
-        jLabelProgreso = new javax.swing.JLabel();
+        jLabelProgress = new javax.swing.JLabel();
         jProgressBar = new javax.swing.JProgressBar();
         jPanelConsole = new javax.swing.JPanel();
-        jScrollPaneConsola = new javax.swing.JScrollPane();
+        jScrollPaneConsole = new javax.swing.JScrollPane();
         jTextAreaConsole = new javax.swing.JTextArea();
         jPanelDownload = new javax.swing.JPanel();
         jButtonDownload = new javax.swing.JButton();
@@ -127,9 +130,9 @@ public class MainScreen extends javax.swing.JFrame {
 
         jPanelQuality.setLayout(null);
 
-        jLabelCalidad.setText("Output Resolution:");
-        jPanelQuality.add(jLabelCalidad);
-        jLabelCalidad.setBounds(0, 0, 100, 20);
+        jLabelQuality.setText("Output Resolution:");
+        jPanelQuality.add(jLabelQuality);
+        jLabelQuality.setBounds(0, 0, 100, 20);
 
         buttonGroupQuality.add(jRadioButton1080);
         jRadioButton1080.setText("1080p");
@@ -161,9 +164,9 @@ public class MainScreen extends javax.swing.JFrame {
 
         jPanelSubtitle.setLayout(null);
 
-        jLabelSubtitulos.setText("Download Subtitles:");
-        jPanelSubtitle.add(jLabelSubtitulos);
-        jLabelSubtitulos.setBounds(0, 0, 110, 20);
+        jLabelSubtitles.setText("Download Subtitles:");
+        jPanelSubtitle.add(jLabelSubtitles);
+        jLabelSubtitles.setBounds(0, 0, 110, 20);
 
         jCheckBoxSubtitlesYes.setText("Yes");
         jCheckBoxSubtitlesYes.addActionListener(new java.awt.event.ActionListener() {
@@ -179,18 +182,18 @@ public class MainScreen extends javax.swing.JFrame {
 
         jPanelFormat.setLayout(null);
 
-        jLabelFormato.setText("Output Format:");
-        jPanelFormat.add(jLabelFormato);
-        jLabelFormato.setBounds(0, 0, 90, 20);
+        jLabelFormat.setText("Output Format:");
+        jPanelFormat.add(jLabelFormat);
+        jLabelFormat.setBounds(0, 0, 90, 20);
 
-        jComboBoxFormato.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { ".mp4", ".avi", ".mp3" }));
-        jComboBoxFormato.addActionListener(new java.awt.event.ActionListener() {
+        jComboBoxFormat.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { ".mp4", ".avi", ".mp3" }));
+        jComboBoxFormat.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jComboBoxFormatoActionPerformed(evt);
+                jComboBoxFormatActionPerformed(evt);
             }
         });
-        jPanelFormat.add(jComboBoxFormato);
-        jComboBoxFormato.setBounds(110, 0, 72, 22);
+        jPanelFormat.add(jComboBoxFormat);
+        jComboBoxFormat.setBounds(110, 0, 72, 22);
 
         getContentPane().add(jPanelFormat);
         jPanelFormat.setBounds(10, 130, 190, 30);
@@ -224,10 +227,10 @@ public class MainScreen extends javax.swing.JFrame {
 
         jPanelProgress.setLayout(null);
 
-        jLabelProgreso.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
-        jLabelProgreso.setText("Completed:");
-        jPanelProgress.add(jLabelProgreso);
-        jLabelProgreso.setBounds(0, -10, 100, 40);
+        jLabelProgress.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        jLabelProgress.setText("Completed:");
+        jPanelProgress.add(jLabelProgress);
+        jLabelProgress.setBounds(0, -10, 100, 40);
         jPanelProgress.add(jProgressBar);
         jProgressBar.setBounds(110, 0, 670, 20);
 
@@ -238,10 +241,10 @@ public class MainScreen extends javax.swing.JFrame {
 
         jTextAreaConsole.setColumns(20);
         jTextAreaConsole.setRows(5);
-        jScrollPaneConsola.setViewportView(jTextAreaConsole);
+        jScrollPaneConsole.setViewportView(jTextAreaConsole);
 
-        jPanelConsole.add(jScrollPaneConsola);
-        jScrollPaneConsola.setBounds(0, 0, 990, 470);
+        jPanelConsole.add(jScrollPaneConsole);
+        jScrollPaneConsole.setBounds(0, 0, 990, 470);
 
         getContentPane().add(jPanelConsole);
         jPanelConsole.setBounds(10, 250, 990, 470);
@@ -443,7 +446,7 @@ public class MainScreen extends javax.swing.JFrame {
                 command.add(binariesPath);
                 command.add("--force-overwrites");
                 command.add("--restrict-filenames");
-                String outputFormat = jComboBoxFormato.getSelectedItem().toString();
+                String outputFormat = jComboBoxFormat.getSelectedItem().toString();
 
                 if (outputFormat.contains(".mp3")) {
                     // no se especifica -f para audio
@@ -558,9 +561,9 @@ public class MainScreen extends javax.swing.JFrame {
         }).start();
     }//GEN-LAST:event_jButtonDownloadActionPerformed
 
-    private void jComboBoxFormatoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBoxFormatoActionPerformed
+    private void jComboBoxFormatActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBoxFormatActionPerformed
         // 1. Obtener el formato seleccionado (ej: ".mp3" o ".mp4")
-        String outputFormat = jComboBoxFormato.getSelectedItem().toString();
+        String outputFormat = jComboBoxFormat.getSelectedItem().toString();
 
         // 2. Comprobar si es audio
         boolean isAudio = outputFormat.contains(".mp3");
@@ -573,7 +576,7 @@ public class MainScreen extends javax.swing.JFrame {
             buttonGroupAQ.clearSelection();
         }
 
-    }//GEN-LAST:event_jComboBoxFormatoActionPerformed
+    }//GEN-LAST:event_jComboBoxFormatActionPerformed
 
     private void jButtonChangeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonChangeActionPerformed
     JFileChooser pathSelector = new JFileChooser();
@@ -705,13 +708,13 @@ public class MainScreen extends javax.swing.JFrame {
     private javax.swing.JButton jButtonLibrary;
     private javax.swing.JButton jButtonSavePath;
     private javax.swing.JCheckBox jCheckBoxSubtitlesYes;
-    private javax.swing.JComboBox<String> jComboBoxFormato;
+    private javax.swing.JComboBox<String> jComboBoxFormat;
     private javax.swing.JLabel jLabelAQ;
-    private javax.swing.JLabel jLabelCalidad;
-    private javax.swing.JLabel jLabelFormato;
-    private javax.swing.JLabel jLabelProgreso;
+    private javax.swing.JLabel jLabelFormat;
+    private javax.swing.JLabel jLabelProgress;
+    private javax.swing.JLabel jLabelQuality;
     private javax.swing.JLabel jLabelSave;
-    private javax.swing.JLabel jLabelSubtitulos;
+    private javax.swing.JLabel jLabelSubtitles;
     private javax.swing.JLabel jLabelUrl;
     private javax.swing.JLabel jLabelWelcome;
     private javax.swing.JMenuBar jMenuBar;
@@ -737,7 +740,7 @@ public class MainScreen extends javax.swing.JFrame {
     private javax.swing.JRadioButton jRadioButton720;
     private javax.swing.JRadioButton jRadioButtonHQ;
     private javax.swing.JRadioButton jRadioButtonHigh;
-    private javax.swing.JScrollPane jScrollPaneConsola;
+    private javax.swing.JScrollPane jScrollPaneConsole;
     private javax.swing.JTextArea jTextAreaConsole;
     private javax.swing.JTextField jTextFieldUrl;
     // End of variables declaration//GEN-END:variables

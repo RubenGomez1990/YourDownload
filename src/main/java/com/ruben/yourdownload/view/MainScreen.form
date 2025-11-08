@@ -136,7 +136,7 @@
         <Property name="useNullLayout" type="boolean" value="true"/>
       </Layout>
       <SubComponents>
-        <Component class="javax.swing.JLabel" name="jLabelCalidad">
+        <Component class="javax.swing.JLabel" name="jLabelQuality">
           <Properties>
             <Property name="text" type="java.lang.String" value="Output Resolution:"/>
           </Properties>
@@ -204,7 +204,7 @@
         <Property name="useNullLayout" type="boolean" value="true"/>
       </Layout>
       <SubComponents>
-        <Component class="javax.swing.JLabel" name="jLabelSubtitulos">
+        <Component class="javax.swing.JLabel" name="jLabelSubtitles">
           <Properties>
             <Property name="text" type="java.lang.String" value="Download Subtitles:"/>
           </Properties>
@@ -240,7 +240,7 @@
         <Property name="useNullLayout" type="boolean" value="true"/>
       </Layout>
       <SubComponents>
-        <Component class="javax.swing.JLabel" name="jLabelFormato">
+        <Component class="javax.swing.JLabel" name="jLabelFormat">
           <Properties>
             <Property name="text" type="java.lang.String" value="Output Format:"/>
           </Properties>
@@ -250,7 +250,7 @@
             </Constraint>
           </Constraints>
         </Component>
-        <Component class="javax.swing.JComboBox" name="jComboBoxFormato">
+        <Component class="javax.swing.JComboBox" name="jComboBoxFormat">
           <Properties>
             <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
               <StringArray count="3">
@@ -261,7 +261,7 @@
             </Property>
           </Properties>
           <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jComboBoxFormatoActionPerformed"/>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jComboBoxFormatActionPerformed"/>
           </Events>
           <AuxValues>
             <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
@@ -334,7 +334,7 @@
         <Property name="useNullLayout" type="boolean" value="true"/>
       </Layout>
       <SubComponents>
-        <Component class="javax.swing.JLabel" name="jLabelProgreso">
+        <Component class="javax.swing.JLabel" name="jLabelProgress">
           <Properties>
             <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
               <Font name="Arial" size="14" style="0"/>
@@ -367,7 +367,7 @@
         <Property name="useNullLayout" type="boolean" value="true"/>
       </Layout>
       <SubComponents>
-        <Container class="javax.swing.JScrollPane" name="jScrollPaneConsola">
+        <Container class="javax.swing.JScrollPane" name="jScrollPaneConsole">
           <AuxValues>
             <AuxValue name="autoScrollPane" type="java.lang.Boolean" value="true"/>
           </AuxValues>
