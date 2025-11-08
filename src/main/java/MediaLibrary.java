@@ -15,13 +15,13 @@ import javax.swing.event.DocumentListener;
  * @author LionKeriot
  */
 public class MediaLibrary extends javax.swing.JPanel {
-    private final PantallaPrincipal principal;
+    private final MainScreen principal;
     private final JPanel panelOriginal;
     private final List<InformacionDescargas> listaRecursos;
     private InformacionDescargasTableModel tableModel;
 
     
-    public MediaLibrary (PantallaPrincipal principal, JPanel panelOriginal, List<InformacionDescargas> listaRecursos){
+    public MediaLibrary (MainScreen principal, JPanel panelOriginal, List<InformacionDescargas> listaRecursos){
         this.principal = principal;
         this.panelOriginal = panelOriginal;
         this.listaRecursos = listaRecursos;

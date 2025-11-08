@@ -23,9 +23,9 @@ import javax.swing.SwingUtilities;
  *
  * @author LionKeriot
  */
-public class PantallaPrincipal extends javax.swing.JFrame {
+public class MainScreen extends javax.swing.JFrame {
     
-    private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(PantallaPrincipal.class.getName());
+    private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(MainScreen.class.getName());
     private String rutaDestino = "";
     private JPanel panelOriginal;
     private String rutaBinarios = "";
@@ -36,7 +36,7 @@ public class PantallaPrincipal extends javax.swing.JFrame {
     /**
      * Creates new form PantallaPrincipal
      */
-    public PantallaPrincipal() {
+    public MainScreen() {
     initComponents();
     this.setLocationRelativeTo(null);
     
@@ -505,7 +505,22 @@ public class PantallaPrincipal extends javax.swing.JFrame {
     }//GEN-LAST:event_jButtonDescargaActionPerformed
 
     private void jComboBoxFormatoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBoxFormatoActionPerformed
-        // TODO add your handling code here:
+        // 1. Obtener el formato seleccionado (ej: ".mp3" o ".mp4")
+        String formatoSalida = jComboBoxFormato.getSelectedItem().toString();
+
+        // 2. Comprobar si es audio
+        boolean esAudio = formatoSalida.contains(".mp3");
+    
+        // 3. Habilitar/Deshabilitar los componentes de calidad
+        jRadioButton1080.setEnabled(!esAudio);
+        jRadioButton720.setEnabled(!esAudio);
+        jRadioButton480.setEnabled(!esAudio);
+        jLabelCalidad.setEnabled(!esAudio); // Deshabilitar la etiqueta de "Output Resolution"
+    
+        // 4. Si se selecciona audio, asegurar que no haya ninguna calidad seleccionada.
+        if (esAudio) {
+            buttonGroupCalidad.clearSelection();
+        }
     }//GEN-LAST:event_jComboBoxFormatoActionPerformed
 
     private void jButtonCambiarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonCambiarActionPerformed
@@ -553,7 +568,7 @@ public class PantallaPrincipal extends javax.swing.JFrame {
         //</editor-fold>
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(() -> new PantallaPrincipal().setVisible(true));
+        java.awt.EventQueue.invokeLater(() -> new MainScreen().setVisible(true));
     }
     
     private void actualizarBarraProgreso(String line) {
