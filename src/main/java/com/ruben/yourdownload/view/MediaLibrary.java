@@ -59,7 +59,7 @@ public class MediaLibrary extends javax.swing.JPanel {
         jButtonSearch = new javax.swing.JButton();
 
         setEnabled(false);
-        setPreferredSize(new java.awt.Dimension(1024, 768));
+        setPreferredSize(new java.awt.Dimension(937, 371));
         setLayout(null);
 
         jTableMedia.setModel(new javax.swing.table.DefaultTableModel(

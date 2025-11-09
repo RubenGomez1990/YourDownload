@@ -2,6 +2,7 @@ package com.ruben.yourdownload.view;
 
 
 import com.ruben.yourdownload.model.DownloadInfo;
+import com.ruben.yourdownload.service.DownloadService;
 import java.util.List;
 import javax.swing.DefaultListModel;
 import javax.swing.JOptionPane;
@@ -78,7 +79,7 @@ public class SearchDialog extends javax.swing.JDialog {
         jScrollPaneList.setViewportView(jListSearchList);
 
         getContentPane().add(jScrollPaneList);
-        jScrollPaneList.setBounds(30, 81, 888, 146);
+        jScrollPaneList.setBounds(30, 81, 450, 146);
 
         jButtonPlay.setText("Play it!");
         jButtonPlay.addActionListener(new java.awt.event.ActionListener() {
@@ -162,6 +163,7 @@ public class SearchDialog extends javax.swing.JDialog {
         java.io.File file = new java.io.File(resourceToDelete.getAbsolutePath());
             if (file.delete()) {
                 resourcesList.remove(resourceToDelete);
+                DownloadService.saveHistory(resourcesList);
                 applySearchingFilter(jTextFieldIntroduce.getText());
                 javax.swing.JOptionPane.showMessageDialog(this, "File deleted successfully.", "Success!", javax.swing.JOptionPane.INFORMATION_MESSAGE); 
             } else {
@@ -170,6 +172,8 @@ public class SearchDialog extends javax.swing.JDialog {
                     "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
             }
         }
+    
+   
     }//GEN-LAST:event_jButtonDeleteActionPerformed
 
     private void jTextFieldIntroduceActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextFieldIntroduceActionPerformed

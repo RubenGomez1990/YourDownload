@@ -43,8 +43,26 @@ public class MainScreen extends javax.swing.JFrame {
     public MainScreen() {
     resourcesList = DownloadService.loadHistory(); 
     initComponents();
-    this.setSize(1024,768);
+    this.setSize(1024,800);
     this.setLocationRelativeTo(null);
+    this.setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
+    
+    this.addWindowListener(new java.awt.event.WindowAdapter() {
+        @Override
+        public void windowClosing(java.awt.event.WindowEvent e) {
+            String[] options = {"Yes", "No"};
+            int result = JOptionPane.showOptionDialog(MainScreen.this, 
+                    "Are you sure you want to exit?",
+                    "Exit", JOptionPane.YES_NO_OPTION, 
+                    JOptionPane.QUESTION_MESSAGE, null, 
+                    options, options[0]);
+            
+            if (result == 0) { 
+                com.ruben.yourdownload.service.DownloadService.saveHistory(resourcesList);
+                System.exit(0);
+            }
+        }
+    });
     
     
     originalPanel = (JPanel) getContentPane();
@@ -249,7 +267,7 @@ public class MainScreen extends javax.swing.JFrame {
         jScrollPaneConsole.setBounds(0, 0, 990, 470);
 
         getContentPane().add(jPanelConsole);
-        jPanelConsole.setBounds(10, 250, 990, 470);
+        jPanelConsole.setBounds(10, 250, 990, 490);
 
         jPanelDownload.setLayout(null);
 
