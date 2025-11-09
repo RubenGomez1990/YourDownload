@@ -1,4 +1,4 @@
-package com.ruben.yourdownload.view;
+package com.gomez.yourdownload.view;
 
 
 import java.awt.Desktop;

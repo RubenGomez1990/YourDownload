@@ -1,8 +1,8 @@
-package com.ruben.yourdownload.view;
+package com.gomez.yourdownload.view;
 
 
-import com.ruben.yourdownload.model.DownloadInfoTableModel;
-import com.ruben.yourdownload.model.DownloadInfo;
+import com.gomez.yourdownload.model.DownloadInfoTableModel;
+import com.gomez.yourdownload.model.DownloadInfo;
 import java.util.List;
 import javax.swing.JPanel;
 

@@ -1,4 +1,4 @@
-package com.ruben.yourdownload.model;
+package com.gomez.yourdownload.model;
 
 
 import java.io.File;

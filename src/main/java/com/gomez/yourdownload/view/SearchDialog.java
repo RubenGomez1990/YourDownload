@@ -1,8 +1,8 @@
-package com.ruben.yourdownload.view;
+package com.gomez.yourdownload.view;
 
 
-import com.ruben.yourdownload.model.DownloadInfo;
-import com.ruben.yourdownload.service.DownloadService;
+import com.gomez.yourdownload.model.DownloadInfo;
+import com.gomez.yourdownload.service.DownloadService;
 import java.util.List;
 import javax.swing.DefaultListModel;
 import javax.swing.JOptionPane;

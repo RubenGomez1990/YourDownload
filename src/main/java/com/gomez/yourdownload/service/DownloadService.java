@@ -1,9 +1,9 @@
-package com.ruben.yourdownload.service;
+package com.gomez.yourdownload.service;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
-import com.ruben.yourdownload.model.DownloadInfo; // Asumiendo este nombre para el Modelo
+import com.gomez.yourdownload.model.DownloadInfo; // Asumiendo este nombre para el Modelo
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;

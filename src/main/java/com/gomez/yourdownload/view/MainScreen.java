@@ -1,8 +1,8 @@
-package com.ruben.yourdownload.view;
+package com.gomez.yourdownload.view;
 
 
-import com.ruben.yourdownload.model.DownloadInfo;
-import com.ruben.yourdownload.service.DownloadService;
+import com.gomez.yourdownload.model.DownloadInfo;
+import com.gomez.yourdownload.service.DownloadService;
 import java.util.List;
 import java.io.BufferedReader;
 import java.io.File;
@@ -58,7 +58,7 @@ public class MainScreen extends javax.swing.JFrame {
                     options, options[0]);
             
             if (result == 0) { 
-                com.ruben.yourdownload.service.DownloadService.saveHistory(resourcesList);
+                    com.gomez.yourdownload.service.DownloadService.saveHistory(resourcesList);
                 System.exit(0);
             }
         }

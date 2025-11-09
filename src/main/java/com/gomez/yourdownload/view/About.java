@@ -1,4 +1,4 @@
-package com.ruben.yourdownload.view;
+package com.gomez.yourdownload.view;
 
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
