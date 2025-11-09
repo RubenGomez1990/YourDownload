@@ -77,4 +77,6 @@ Object selectedValue = jListSearchList.getSelectedValue();
 
 So we told to the program that value was an Object and then we cast it into a DownloadInfo to allow the program to work with it. 
 
-5. Followed the idea for allowing to load the download files of the past. Looked to the video tutorial. 
+5. Followed the idea for allowing to load the download files of the past. Looked to the video tutorial. Added the GSON dependency. 
+
+6. We i have more time i will update the app with better visuals. 
