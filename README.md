@@ -60,3 +60,21 @@ for investigation but i think that using other codes won't help me because i'm n
 variables but the logic behind the use of every button was impossible to understand. In any case, every single time i used external code o looked for a solution, it was because i needed how to figure
 out the logic of the code and still was impossible for me because we have 0 acknowledge about java swing. 
 
+// Update for task 1_2
+
+1. I have been able to learn something from first task but there is still a long way to go. 
+
+2. Some problems with commit / push. Forgot to do some of them, i'm sorry. 
+
+3. Update many things from task 1_1
+
+4. Had some problems with the JList. Used gemini for that because my program wasn't getting the files and i've found that following the code that gemini gave me the problem was with that the JList
+was getting List<String> when i needed an object... so after a hard looking up for the solution found at stack overflow that
+
+Object selectedValue = jListSearchList.getSelectedValue();
+        DownloadInfo resource = (DownloadInfo) selectedValue; // Cast explícito
+
+
+So we told to the program that value was an Object and then we cast it into a DownloadInfo to allow the program to work with it. 
+
+5. Followed the idea for allowing to load the download files of the past. Looked to the video tutorial. 
