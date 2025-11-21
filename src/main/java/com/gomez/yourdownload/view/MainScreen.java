@@ -43,7 +43,14 @@ public class MainScreen extends javax.swing.JFrame {
         this.setSize(1024, 800);
         this.setLocationRelativeTo(null);
         this.setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
+        jPanelAudioQuality.setVisible(false);
+        jPanelQuality.setVisible(true);
+        jRadioButton480.setSelected(true);
+        jRadioButtonHQ.setSelected(true);
 
+        this.setSize(1024, 800);  // Establece el tamaño
+        this.setLocationRelativeTo(null); // Centra la ventana (debe ir después del setSize)
+        this.setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         this.addWindowListener(new java.awt.event.WindowAdapter() {
             @Override
             public void windowClosing(java.awt.event.WindowEvent e) {
@@ -312,7 +319,7 @@ public class MainScreen extends javax.swing.JFrame {
             }
         });
         jPanelAudioQuality.add(jRadioButtonHigh);
-        jRadioButtonHigh.setBounds(150, 0, 120, 21);
+        jRadioButtonHigh.setBounds(140, 0, 120, 21);
 
         jLabelAQ.setText("Audio:");
         jPanelAudioQuality.add(jLabelAQ);
@@ -694,37 +701,30 @@ public class MainScreen extends javax.swing.JFrame {
     }
 
     private String getBinariesPath() {
-    Preferences prefs = Preferences.userRoot().node("PreferencesPanel");
-    final String PREFS_KEY = "binariesPath";
-    
-    String storedPath = prefs.get(PREFS_KEY, "");
-    
-    // Si tenemos una ruta guardada, no es la de "ruben" y el archivo EXISTE físicamente:
-    if (!storedPath.isEmpty() && !storedPath.contains("C:\\Users\\ruben\\") && new File(storedPath).exists()) {
-        return storedPath; // ¡Perfecto, usamos la guardada!
-    }
+        Preferences prefs = Preferences.userRoot().node("PreferencesPanel");
+        final String PREFS_KEY = "binariesPath";
 
-    String localAppData = System.getenv("LOCALAPPDATA");
-    if (localAppData != null) {
-        // Nota: Asegúrate de si tu carpeta se llama "YourDownload" o "YourDownloadApp"
-        String appDataPath = localAppData + File.separator + "yt-dlp.exe";
-        if (new File(appDataPath).exists()) {
-            // ¡Encontrado! Lo guardamos en preferencias para la próxima y lo devolvemos
-            prefs.put(PREFS_KEY, appDataPath); 
-            return appDataPath;
+        String storedPath = prefs.get(PREFS_KEY, "");
+        if (!storedPath.isEmpty() && new File(storedPath).exists()) {
+            return storedPath; // ¡La configuración manual funciona!
         }
-    }
 
-    String userHomePath = System.getProperty("user.home") + File.separator + "yt-dlp.exe";
-    if (new File(userHomePath).exists()) {
-        // ¡Encontrado! Lo guardamos y lo devolvemos
-        prefs.put(PREFS_KEY, userHomePath);
-        return userHomePath;
-    }
+        String localAppData = System.getenv("LOCALAPPDATA");
+        if (localAppData != null && !localAppData.isEmpty()) {
+            String appDataPath = localAppData + File.separator + "yt-dlp.exe";
+            if (new File(appDataPath).exists()) {
+                prefs.put(PREFS_KEY, appDataPath);
+                return appDataPath;
+            }
+        }
 
-    // 4. Si no aparece en ningún lado, devolvemos vacío para que salte el error.
-    return "";
-}
+        String userHomePath = System.getProperty("user.home") + File.separator + "yt-dlp.exe";
+        if (new File(userHomePath).exists()) {
+            prefs.put(PREFS_KEY, userHomePath);
+            return userHomePath;
+        }
+        return "";
+    }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup buttonGroupAQ;
     private javax.swing.ButtonGroup buttonGroupQuality;

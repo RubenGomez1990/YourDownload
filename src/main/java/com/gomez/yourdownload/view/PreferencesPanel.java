@@ -32,8 +32,13 @@ public class PreferencesPanel extends javax.swing.JPanel {
         this.mainScreen = mainScreen;
         this.originalPanel = originalPanel;
         
-        Preferences prefs = Preferences.userRoot().node(this.getClass().getName());
-        this.binariesPath = prefs.get("rutaBinarios", "C:\\Users\\ruben\\AppData\\Local\\yt-dlp.exe");
+        // CORRECCIÓN 1: Usar el nombre exacto del nodo "PreferencesPanel"
+        Preferences prefs = Preferences.userRoot().node("PreferencesPanel");
+        
+        // CORRECCIÓN 2: Usar la clave exacta "binariesPath"
+        // CORRECCIÓN 3: Quitar la ruta hardcodeada de ruben, poner "" por defecto
+        this.binariesPath = prefs.get("binariesPath", ""); 
+        
         jLabelBinaries.setText("Binaries path: " + binariesPath);
     }
 
@@ -175,17 +180,29 @@ public class PreferencesPanel extends javax.swing.JPanel {
 
     private void jButtonBinariesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonBinariesActionPerformed
         JFileChooser chooser = new JFileChooser();
-        chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+    chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
 
-        int result = chooser.showOpenDialog(this);
-        if (result == JFileChooser.APPROVE_OPTION) {
+    int result = chooser.showOpenDialog(this);
+    if (result == JFileChooser.APPROVE_OPTION) {
         File selectedFile = chooser.getSelectedFile();
         binariesPath = selectedFile.getAbsolutePath();
 
         jLabelBinaries.setText("Binaries path: " + binariesPath);
-        Preferences prefs = Preferences.userRoot().node(this.getClass().getName());
-        prefs.put("Binaries Path", binariesPath);
+        
+        // --- INICIO CODIGO DEBUG ---
+        System.out.println("DEBUG (PreferencesPanel): Intentando guardar ruta: " + binariesPath);
+        
+        Preferences prefs = Preferences.userRoot().node("PreferencesPanel");
+        prefs.put("binariesPath", binariesPath);
+        
+        try { 
+            prefs.flush(); 
+            System.out.println("DEBUG (PreferencesPanel): Guardado EXITOSO en nodo 'PreferencesPanel' clave 'binariesPath'");
+        } catch (Exception e) {
+            System.out.println("DEBUG (PreferencesPanel): ERROR al guardar: " + e.getMessage());
         }
+        // --- FIN CODIGO DEBUG ---
+    }
     }//GEN-LAST:event_jButtonBinariesActionPerformed
 
     private void jComboBoxLimitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBoxLimitActionPerformed
