@@ -38,40 +38,54 @@ public class MainScreen extends javax.swing.JFrame {
      * Creates new form PantallaPrincipal
      */
     public MainScreen() {
-        resourcesList = DownloadService.loadHistory();
-        initComponents();
-        this.setSize(1024, 800);
-        this.setLocationRelativeTo(null);
-        this.setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
-        jPanelAudioQuality.setVisible(false);
-        jPanelQuality.setVisible(true);
-        jRadioButton480.setSelected(true);
-        jRadioButtonHQ.setSelected(true);
+    // 1. Cargar datos y componentes
+    resourcesList = DownloadService.loadHistory();
+    initComponents(); 
+    originalPanel = (JPanel) getContentPane();
 
-        this.setSize(1024, 800);  // Establece el tamaño
-        this.setLocationRelativeTo(null); // Centra la ventana (debe ir después del setSize)
-        this.setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
-        this.addWindowListener(new java.awt.event.WindowAdapter() {
-            @Override
-            public void windowClosing(java.awt.event.WindowEvent e) {
-                String[] options = {"Yes", "No"};
-                int result = JOptionPane.showOptionDialog(MainScreen.this,
-                        "Are you sure you want to exit?",
-                        "Exit", JOptionPane.YES_NO_OPTION,
-                        JOptionPane.QUESTION_MESSAGE, null,
-                        options, options[0]);
+   
+    jPanelAudioQuality.setVisible(false);
+    jPanelQuality.setVisible(true);
+    jRadioButton480.setSelected(true);
+    jRadioButtonHQ.setSelected(true);
 
-                if (result == 0) {
-                    com.gomez.yourdownload.service.DownloadService.saveHistory(resourcesList);
-                    System.exit(0);
-                }
-            }
-        });
 
-        originalPanel = (JPanel) getContentPane();
-        jButtonChange.setVisible(false); // Ocultar botón de cambiar al inicio
-        jLabelSave.setText("No folder selected"); // Texto inicial
+    String userHome = System.getProperty("user.home");
+    File downloadsFolder = new File(userHome + File.separator + "Downloads");
+    File desktopFolder = new File(userHome + File.separator + "Desktop");
+    if (downloadsFolder.exists()) {
+        this.destinyPath = downloadsFolder.getAbsolutePath();
+    } else if (desktopFolder.exists()) {
+        this.destinyPath = desktopFolder.getAbsolutePath();
+    } else {
+        this.destinyPath = userHome;
     }
+
+    jLabelSave.setText("Saved at: " + this.destinyPath);
+    jButtonSavePath.setVisible(false); 
+    jButtonChange.setVisible(true);    
+
+    this.setSize(1024, 800);
+    this.setLocationRelativeTo(null);
+    this.setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
+
+    this.addWindowListener(new java.awt.event.WindowAdapter() {
+        @Override
+        public void windowClosing(java.awt.event.WindowEvent e) {
+             String[] options = {"Yes", "No"};
+             int result = JOptionPane.showOptionDialog(MainScreen.this, 
+                    "Are you sure you want to exit?",
+                    "Exit", JOptionPane.YES_NO_OPTION, 
+                    JOptionPane.QUESTION_MESSAGE, null, 
+                    options, options[0]);
+
+            if (result == 0) { 
+                com.gomez.yourdownload.service.DownloadService.saveHistory(resourcesList);
+                System.exit(0);
+            }
+        }
+    });
+}
 
     /**
      * This method is called from within the constructor to initialize the form.
