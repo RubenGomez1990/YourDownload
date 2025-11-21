@@ -463,7 +463,7 @@ public class MainScreen extends javax.swing.JFrame {
                 }
                 String binariesPathNormalized = binariesPath.replace(File.separator, "/");
                 List<String> command = new ArrayList<>();
-                command.add(binariesPathNormalized); // ¡Usamos la normalizada!
+                command.add(binariesPathNormalized);
                 command.add("--force-overwrites");
                 command.add("--restrict-filenames");
                 String outputFormat = jComboBoxFormat.getSelectedItem().toString();
@@ -694,38 +694,37 @@ public class MainScreen extends javax.swing.JFrame {
     }
 
     private String getBinariesPath() {
-        Preferences prefs = Preferences.userRoot().node("PreferencesPanel");
-        String binariesPath = prefs.get("binariesPath", ""); // 1. Lee la preferencia guardada
-
-        // --- BÚSQUEDA SECUENCIAL (Solo si la preferencia está vacía) ---
-        // 2. CHEQUEO: Buscar en AppData/Local (Ubicación de instalación estándar)
-        if (binariesPath.isEmpty()) {
-            String appDataPath = System.getenv("LOCALAPPDATA") + File.separator + "yt-dlp.exe";
-            File appDataFile = new File(appDataPath);
-
-            if (appDataFile.exists()) {
-                binariesPath = appDataFile.getAbsolutePath();
-                prefs.put("binariesPath", binariesPath); // Guarda la ruta
-                return binariesPath; // ¡Sale si lo encuentra!
-            }
-        }
-
-        // 3. CHEQUEO: Buscar en user.home (Ubicación de respaldo)
-        if (binariesPath.isEmpty()) {
-            String homePath = System.getProperty("user.home") + File.separator + "yt-dlp.exe";
-            File homeFile = new File(homePath);
-
-            if (homeFile.exists()) {
-                binariesPath = homeFile.getAbsolutePath();
-                prefs.put("binariesPath", binariesPath);
-                return binariesPath; // ¡Sale si lo encuentra!
-            }
-        }
-
-        // Si no se encuentra en ninguna parte, devuelve la cadena vacía.
-        return binariesPath;
+    Preferences prefs = Preferences.userRoot().node("PreferencesPanel");
+    final String PREFS_KEY = "binariesPath";
+    
+    String storedPath = prefs.get(PREFS_KEY, "");
+    
+    // Si tenemos una ruta guardada, no es la de "ruben" y el archivo EXISTE físicamente:
+    if (!storedPath.isEmpty() && !storedPath.contains("C:\\Users\\ruben\\") && new File(storedPath).exists()) {
+        return storedPath; // ¡Perfecto, usamos la guardada!
     }
 
+    String localAppData = System.getenv("LOCALAPPDATA");
+    if (localAppData != null) {
+        // Nota: Asegúrate de si tu carpeta se llama "YourDownload" o "YourDownloadApp"
+        String appDataPath = localAppData + File.separator + "yt-dlp.exe";
+        if (new File(appDataPath).exists()) {
+            // ¡Encontrado! Lo guardamos en preferencias para la próxima y lo devolvemos
+            prefs.put(PREFS_KEY, appDataPath); 
+            return appDataPath;
+        }
+    }
+
+    String userHomePath = System.getProperty("user.home") + File.separator + "yt-dlp.exe";
+    if (new File(userHomePath).exists()) {
+        // ¡Encontrado! Lo guardamos y lo devolvemos
+        prefs.put(PREFS_KEY, userHomePath);
+        return userHomePath;
+    }
+
+    // 4. Si no aparece en ningún lado, devolvemos vacío para que salte el error.
+    return "";
+}
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup buttonGroupAQ;
     private javax.swing.ButtonGroup buttonGroupQuality;
