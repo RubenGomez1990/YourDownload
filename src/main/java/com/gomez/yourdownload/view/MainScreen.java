@@ -1,6 +1,5 @@
 package com.gomez.yourdownload.view;
 
-
 import com.gomez.yourdownload.model.DownloadInfo;
 import com.gomez.yourdownload.service.DownloadService;
 import java.util.List;
@@ -22,54 +21,50 @@ import javax.swing.SwingUtilities;
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
-
 /**
  *
  * @author LionKeriot
  */
 public class MainScreen extends javax.swing.JFrame {
-    
+
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(MainScreen.class.getName());
     private String destinyPath = "";
     private JPanel originalPanel;
     private String binariesPath = "";
     private PreferencesPanel preferencesPanel;
     private List<DownloadInfo> resourcesList;
-  
 
     /**
      * Creates new form PantallaPrincipal
      */
     public MainScreen() {
-    resourcesList = DownloadService.loadHistory(); 
-    initComponents();
-    this.setSize(1024,800);
-    this.setLocationRelativeTo(null);
-    this.setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
-    
-    this.addWindowListener(new java.awt.event.WindowAdapter() {
-        @Override
-        public void windowClosing(java.awt.event.WindowEvent e) {
-            String[] options = {"Yes", "No"};
-            int result = JOptionPane.showOptionDialog(MainScreen.this, 
-                    "Are you sure you want to exit?",
-                    "Exit", JOptionPane.YES_NO_OPTION, 
-                    JOptionPane.QUESTION_MESSAGE, null, 
-                    options, options[0]);
-            
-            if (result == 0) { 
-                    com.gomez.yourdownload.service.DownloadService.saveHistory(resourcesList);
-                System.exit(0);
-            }
-        }
-    });
-    
-    
-    originalPanel = (JPanel) getContentPane();
-    jButtonChange.setVisible(false); // Ocultar botón de cambiar al inicio
-    jLabelSave.setText("No folder selected"); // Texto inicial
-}
+        resourcesList = DownloadService.loadHistory();
+        initComponents();
+        this.setSize(1024, 800);
+        this.setLocationRelativeTo(null);
+        this.setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
 
+        this.addWindowListener(new java.awt.event.WindowAdapter() {
+            @Override
+            public void windowClosing(java.awt.event.WindowEvent e) {
+                String[] options = {"Yes", "No"};
+                int result = JOptionPane.showOptionDialog(MainScreen.this,
+                        "Are you sure you want to exit?",
+                        "Exit", JOptionPane.YES_NO_OPTION,
+                        JOptionPane.QUESTION_MESSAGE, null,
+                        options, options[0]);
+
+                if (result == 0) {
+                    com.gomez.yourdownload.service.DownloadService.saveHistory(resourcesList);
+                    System.exit(0);
+                }
+            }
+        });
+
+        originalPanel = (JPanel) getContentPane();
+        jButtonChange.setVisible(false); // Ocultar botón de cambiar al inicio
+        jLabelSave.setText("No folder selected"); // Texto inicial
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -391,21 +386,21 @@ public class MainScreen extends javax.swing.JFrame {
 
             jLabelSave.setText("Saved at: " + destinyPath);
 
-            jButtonSavePath.setVisible(false); 
-            jButtonChange.setVisible(true);  
+            jButtonSavePath.setVisible(false);
+            jButtonChange.setVisible(true);
         }
     }//GEN-LAST:event_jButtonSavePathActionPerformed
 
     private void jMenuItemExitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemExitActionPerformed
         String[] options = {"Yes", "No"};
         int result = JOptionPane.showOptionDialog(this, "Are you sure you want to exit?",
-                "Exit", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, 
+                "Exit", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null,
                 options, options[0]);
-        
-            if (result == 0) {
-                DownloadService.saveHistory(resourcesList);
-                System.exit(0);
-            } 
+
+        if (result == 0) {
+            DownloadService.saveHistory(resourcesList);
+            System.exit(0);
+        }
     }//GEN-LAST:event_jMenuItemExitActionPerformed
 
     private void jMenuItemAboutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemAboutActionPerformed
@@ -415,56 +410,60 @@ public class MainScreen extends javax.swing.JFrame {
     }//GEN-LAST:event_jMenuItemAboutActionPerformed
 
     private void jMenuItemPreferencesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemPreferencesActionPerformed
-    setContentPane(new PreferencesPanel(this, originalPanel));
-    revalidate();
-    repaint();
+        setContentPane(new PreferencesPanel(this, originalPanel));
+        revalidate();
+        repaint();
     }//GEN-LAST:event_jMenuItemPreferencesActionPerformed
 
     private void jButtonDownloadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonDownloadActionPerformed
         final String url = jTextFieldUrl.getText().trim(); // Le indicamos que coja el texto del TextField
-        
-        if (url.isEmpty()){
+
+        if (url.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Introduce una URL válida"); //En caso de que no se introduzca una URL correcta.
             return;
         }
-        
+
         jButtonDownload.setEnabled(false);
         jTextAreaConsole.setText("");
         jProgressBar.setValue(0);
-        
+
         // Asignar calidad al video. Simple IF para escoger la calidad. 
         String selectedFormat = "bestvideo+bestaudio"; // Default: la mejor calidad disponible
 
-            if (jRadioButton1080.isSelected()) {
-                // Busca el mejor video de 1080p o menos, más el mejor audio
-                selectedFormat = "bestvideo[height<=1080]+bestaudio";
-            } else if (jRadioButton720.isSelected()) {
-                // Busca el mejor video de 720p o menos, más el mejor audio
-                selectedFormat = "bestvideo[height<=720]+bestaudio";
-            } else if (jRadioButton480.isSelected()) {
-                // Busca el mejor video de 480p o menos, más el mejor audio
-                selectedFormat = "bestvideo[height<=480]+bestaudio";
-            }
+        if (jRadioButton1080.isSelected()) {
+            // Busca el mejor video de 1080p o menos, más el mejor audio
+            selectedFormat = "bestvideo[height<=1080]+bestaudio";
+        } else if (jRadioButton720.isSelected()) {
+            // Busca el mejor video de 720p o menos, más el mejor audio
+            selectedFormat = "bestvideo[height<=720]+bestaudio";
+        } else if (jRadioButton480.isSelected()) {
+            // Busca el mejor video de 480p o menos, más el mejor audio
+            selectedFormat = "bestvideo[height<=480]+bestaudio";
+        }
 
-            // El resto del código que usa 'finalFormat' permanece igual
-            boolean downloadSubtitle = jCheckBoxSubtitlesYes.isSelected();
-            final String finalFormat = selectedFormat; // Igualamos a selectedFormat ya que el uso de Thread no permite el cambio de la variable que debe ser final.
-        
+        // El resto del código que usa 'finalFormat' permanece igual
+        boolean downloadSubtitle = jCheckBoxSubtitlesYes.isSelected();
+        final String finalFormat = selectedFormat; // Igualamos a selectedFormat ya que el uso de Thread no permite el cambio de la variable que debe ser final.
+
         new Thread(() -> {
-            
-            final File[] downloadFile = new File [1];
-            try {
-                
-                // 1. LLAMAR AL SERVICIO DE RUTAS (MVC)
-                String binariesPath = getBinariesPath(); 
 
-                // 2. CHEQUEO DE SEGURIDAD FINAL
-                if (binariesPath.isEmpty()) {
-                   JOptionPane.showMessageDialog(this, "yt-dlp.exe binary path is not configured.", "Config error", JOptionPane.ERROR_MESSAGE);
-                return; 
-}
+            final File[] downloadFile = new File[1];
+            try {
+
+                // 1. LLAMAR AL SERVICIO DE RUTAS (MVC)
+                String binariesPath = getBinariesPath();
+
+                if (binariesPath.isEmpty() || !new File(binariesPath).exists()) {
+                    SwingUtilities.invokeLater(() -> {
+                        JOptionPane.showMessageDialog(this,
+                                "yt-dlp.exe not found at:\n" + binariesPath + "\nPlease check Preferences.",
+                                "Config error", JOptionPane.ERROR_MESSAGE);
+                    });
+                    return; // Detenemos el hilo aquí
+                }
+                String binariesPathNormalized = binariesPath.replace(File.separator, "/");
                 List<String> command = new ArrayList<>();
-                command.add(binariesPath);
+                command.add(binariesPathNormalized); // ¡Usamos la normalizada!
                 command.add("--force-overwrites");
                 command.add("--restrict-filenames");
                 String outputFormat = jComboBoxFormat.getSelectedItem().toString();
@@ -474,20 +473,20 @@ public class MainScreen extends javax.swing.JFrame {
                     command.add("-x");
                     command.add("--audio-format");
                     command.add("mp3");
-                    
+
                     String audioQuality = "best";
-                    
+
                     if (jRadioButtonHQ.isSelected()) {
                         audioQuality = "0";
-                    } else if (jRadioButtonHigh.isSelected()){
+                    } else if (jRadioButtonHigh.isSelected()) {
                         audioQuality = "5";
                     }
-                    
+
                     if (!audioQuality.equals("best")) {
                         command.add("--audio-quality");
                         command.add(audioQuality);
                     }
-                
+
                 } else {
                     // se especifica -f 
                     command.add("-f");
@@ -503,8 +502,9 @@ public class MainScreen extends javax.swing.JFrame {
                 }
                 if (!destinyPath.isEmpty()) {
                     command.add("-o");
-                    command.add(destinyPath + File.separator + "%(title)s - %(epoch)s.%(ext)s");
-                }   
+                    String destinyPathNormalized = destinyPath.replace(File.separator, "/"); // Normalizar destino
+                    command.add(destinyPathNormalized + File.separator + "%(title)s - %(epoch)s.%(ext)s");
+                }
 
                 command.add(url);
 
@@ -515,14 +515,13 @@ public class MainScreen extends javax.swing.JFrame {
                     command.add("--convert-subs");
                     command.add("srt");               // formato .srt
                 }
-                
+
                 System.out.println("Comando final: " + String.join(" ", command));
                 ProcessBuilder builder = new ProcessBuilder(command); // Añadimos -f para que seleccione formato.
                 builder.redirectErrorStream(true);
                 Process process = builder.start();
-                
-                
-                BufferedReader reader = new BufferedReader (new InputStreamReader(process.getInputStream()));
+
+                BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
                 String line;
                 while ((line = reader.readLine()) != null) {
                     final String outputLine = line;
@@ -543,42 +542,49 @@ public class MainScreen extends javax.swing.JFrame {
                             downloadFile[0] = new File(path);
                             System.out.println("Archivo detectado (Deleted original): " + path);
                         }
-                    }   
+                    }
 
-                    
                     SwingUtilities.invokeLater(() -> {
-                        jTextAreaConsole.append (outputLine + "\n");
+                        jTextAreaConsole.append(outputLine + "\n");
                         jTextAreaConsole.setCaretPosition(jTextAreaConsole.getDocument().getLength());
                         updateProgressBar(outputLine);
                     });
                 }
-                    process.waitFor();
-            } catch (IOException | InterruptedException e){
+                process.waitFor();
+            } catch (IOException | InterruptedException e) {
                 SwingUtilities.invokeLater(() -> jTextAreaConsole.append("Error: " + e.getMessage() + "\n"));
             } finally {
                 SwingUtilities.invokeLater(() -> {
-                jButtonDownload.setEnabled(true);
-                
-                //Recogemos las propiedades del archivo descargado
-                File finalFile = downloadFile[0];
-                System.out.println("DEBUG (Descarga): Ruta de archivo final: " + finalFile.getAbsolutePath());
-                System.out.println("DEBUG (Descarga): ¿Existe el archivo?: " + finalFile.exists());
-                if (finalFile != null && finalFile.exists()){
-                    String rutaAbsoluta = finalFile.getAbsolutePath();
-                    long tamanyo = finalFile.length();
-                    String mimeType = obtainMimeSimple(finalFile.getName());
-                // Y lo añadimos a la resourcesList
-                    DownloadInfo nuevaDescarga = new DownloadInfo(rutaAbsoluta, new Date(), tamanyo, mimeType);
-                    resourcesList.add(nuevaDescarga);
-                }
+                    jButtonDownload.setEnabled(true);
 
-                // Muestra el Jdialog de descarga completada
-                DownloadComplete dialog = new DownloadComplete(null, true, downloadFile[0]);
-                dialog.setSize(300, 250);               
-                dialog.setLocationRelativeTo(null);     
-                dialog.setVisible(true);                
-            });
-        }
+                    // CORRECCIÓN DEL NULL POINTER EXCEPTION
+                    File finalFile = downloadFile[0];
+
+                    if (finalFile != null && finalFile.exists()) {
+                        // 1. Lógica de éxito
+                        System.out.println("DEBUG: Archivo encontrado: " + finalFile.getAbsolutePath());
+
+                        // Añadir al historial
+                        String rutaAbsoluta = finalFile.getAbsolutePath();
+                        long tamanyo = finalFile.length();
+                        String mimeType = obtainMimeSimple(finalFile.getName());
+                        DownloadInfo nuevaDescarga = new DownloadInfo(rutaAbsoluta, new Date(), tamanyo, mimeType);
+                        resourcesList.add(nuevaDescarga);
+
+                        // Abrir diálogo
+                        DownloadComplete dialog = new DownloadComplete(null, true, finalFile);
+                        dialog.setSize(300, 250);
+                        dialog.setLocationRelativeTo(null);
+                        dialog.setVisible(true);
+                    } else {
+                        // 2. Lógica de fallo (Evita el crash)
+                        // Si llegamos aquí, yt-dlp falló silenciosamente o no se parseó la salida.
+                        JOptionPane.showMessageDialog(this,
+                                "The download process finished, but the file was not detected.\nCheck the console for errors.",
+                                "Download Error", JOptionPane.WARNING_MESSAGE);
+                    }
+                });
+            }
         }).start();
     }//GEN-LAST:event_jButtonDownloadActionPerformed
 
@@ -590,8 +596,8 @@ public class MainScreen extends javax.swing.JFrame {
         boolean isAudio = outputFormat.contains(".mp3");
         jPanelAudioQuality.setVisible(isAudio);
         jPanelQuality.setVisible(!isAudio);
-        
-        if (isAudio){
+
+        if (isAudio) {
             buttonGroupQuality.clearSelection();
         } else {
             buttonGroupAQ.clearSelection();
@@ -600,10 +606,10 @@ public class MainScreen extends javax.swing.JFrame {
     }//GEN-LAST:event_jComboBoxFormatActionPerformed
 
     private void jButtonChangeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonChangeActionPerformed
-    JFileChooser pathSelector = new JFileChooser();
-    pathSelector.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        JFileChooser pathSelector = new JFileChooser();
+        pathSelector.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 
-    int result = pathSelector.showOpenDialog(this);
+        int result = pathSelector.showOpenDialog(this);
         if (result == JFileChooser.APPROVE_OPTION) {
             File folder = pathSelector.getSelectedFile();
             destinyPath = folder.getAbsolutePath();
@@ -614,8 +620,8 @@ public class MainScreen extends javax.swing.JFrame {
     }//GEN-LAST:event_jButtonChangeActionPerformed
 
     private void jButtonLibraryActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonLibraryActionPerformed
-        MediaLibrary libraryPanel=  new MediaLibrary(this, originalPanel, resourcesList);
-        
+        MediaLibrary libraryPanel = new MediaLibrary(this, originalPanel, resourcesList);
+
         setContentPane(libraryPanel);
         revalidate();
         repaint();
@@ -657,69 +663,68 @@ public class MainScreen extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(() -> new MainScreen().setVisible(true));
     }
-    
+
     private void updateProgressBar(String line) {
-    Pattern pattern = Pattern.compile("\\[download\\]\\s+(\\d+\\.\\d+)%");
-    Matcher matcher = pattern.matcher(line);
+        Pattern pattern = Pattern.compile("\\[download\\]\\s+(\\d+\\.\\d+)%");
+        Matcher matcher = pattern.matcher(line);
         if (matcher.find()) {
             double percent = Double.parseDouble(matcher.group(1));
             jProgressBar.setValue((int) percent);
         }
     }
-    
-    
+
     /**
-    * Determina un tipo MIME (formato de contenido) simple basado en la extensión del archivo.
-    * * Esta función es auxiliar para categorizar el archivo descargado 
-     * (MP4, AVI, MP3) para la biblioteca.
-    *
+     * Determina un tipo MIME (formato de contenido) simple basado en la
+     * extensión del archivo. * Esta función es auxiliar para categorizar el
+     * archivo descargado (MP4, AVI, MP3) para la biblioteca.
+     *
      * @param fileName El nombre completo del archivo (e.g., "MiVideo.mp4").
-    * @return El String que representa el tipo MIME estándar (e.g., "video/mp4").
+     * @return El String que representa el tipo MIME estándar (e.g.,
+     * "video/mp4").
      */
-    private String obtainMimeSimple(String fileName){
+    private String obtainMimeSimple(String fileName) {
         if (fileName.toLowerCase().endsWith(".mp4")) {
             return "video/mp4";
-        } else if (fileName.toLowerCase().endsWith (".avi")) {
+        } else if (fileName.toLowerCase().endsWith(".avi")) {
             return "video/x-msvideo";
-        } else if (fileName.toLowerCase().endsWith (".mp3")) {
+        } else if (fileName.toLowerCase().endsWith(".mp3")) {
             return "audio/mpeg";
         }
         return "application/octet-stream";
     }
-    
+
     private String getBinariesPath() {
-    Preferences prefs = Preferences.userRoot().node("PreferencesPanel");
-    String binariesPath = prefs.get("binariesPath", ""); // 1. Lee la preferencia guardada
+        Preferences prefs = Preferences.userRoot().node("PreferencesPanel");
+        String binariesPath = prefs.get("binariesPath", ""); // 1. Lee la preferencia guardada
 
-    // --- BÚSQUEDA SECUENCIAL (Solo si la preferencia está vacía) ---
+        // --- BÚSQUEDA SECUENCIAL (Solo si la preferencia está vacía) ---
+        // 2. CHEQUEO: Buscar en AppData/Local (Ubicación de instalación estándar)
+        if (binariesPath.isEmpty()) {
+            String appDataPath = System.getenv("LOCALAPPDATA") + File.separator + "yt-dlp.exe";
+            File appDataFile = new File(appDataPath);
 
-    // 2. CHEQUEO: Buscar en AppData/Local (Ubicación de instalación estándar)
-    if (binariesPath.isEmpty()) { 
-        String appDataPath = System.getenv("LOCALAPPDATA") + File.separator + "yt-dlp.exe";
-        File appDataFile = new File(appDataPath);
-        
-        if (appDataFile.exists()) {
-            binariesPath = appDataFile.getAbsolutePath();
-            prefs.put("binariesPath", binariesPath); // Guarda la ruta
-            return binariesPath; // ¡Sale si lo encuentra!
+            if (appDataFile.exists()) {
+                binariesPath = appDataFile.getAbsolutePath();
+                prefs.put("binariesPath", binariesPath); // Guarda la ruta
+                return binariesPath; // ¡Sale si lo encuentra!
+            }
         }
-    }
-    
-    // 3. CHEQUEO: Buscar en user.home (Ubicación de respaldo)
-    if (binariesPath.isEmpty()) { 
-        String homePath = System.getProperty("user.home") + File.separator + "yt-dlp.exe";
-        File homeFile = new File(homePath);
 
-        if (homeFile.exists()) {
-            binariesPath = homeFile.getAbsolutePath();
-            prefs.put("binariesPath", binariesPath);
-            return binariesPath; // ¡Sale si lo encuentra!
+        // 3. CHEQUEO: Buscar en user.home (Ubicación de respaldo)
+        if (binariesPath.isEmpty()) {
+            String homePath = System.getProperty("user.home") + File.separator + "yt-dlp.exe";
+            File homeFile = new File(homePath);
+
+            if (homeFile.exists()) {
+                binariesPath = homeFile.getAbsolutePath();
+                prefs.put("binariesPath", binariesPath);
+                return binariesPath; // ¡Sale si lo encuentra!
+            }
         }
+
+        // Si no se encuentra en ninguna parte, devuelve la cadena vacía.
+        return binariesPath;
     }
-    
-    // Si no se encuentra en ninguna parte, devuelve la cadena vacía.
-    return binariesPath; 
-}
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup buttonGroupAQ;
@@ -766,4 +771,3 @@ public class MainScreen extends javax.swing.JFrame {
     private javax.swing.JTextField jTextFieldUrl;
     // End of variables declaration//GEN-END:variables
 }
-
