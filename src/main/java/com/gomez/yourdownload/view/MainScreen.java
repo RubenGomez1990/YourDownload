@@ -141,6 +141,7 @@ public class MainScreen extends javax.swing.JFrame {
         jMenuBar = new javax.swing.JMenuBar();
         jMenuFile = new javax.swing.JMenu();
         jMenuItemExit = new javax.swing.JMenuItem();
+        jMenuItemLogout = new javax.swing.JMenuItem();
         jMenuEdit = new javax.swing.JMenu();
         jMenuItemPreferences = new javax.swing.JMenuItem();
         jMenuHelp = new javax.swing.JMenu();
@@ -358,6 +359,14 @@ public class MainScreen extends javax.swing.JFrame {
             }
         });
         jMenuFile.add(jMenuItemExit);
+
+        jMenuItemLogout.setText("Logout");
+        jMenuItemLogout.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItemLogoutActionPerformed(evt);
+            }
+        });
+        jMenuFile.add(jMenuItemLogout);
 
         jMenuBar.add(jMenuFile);
 
@@ -667,6 +676,28 @@ public class MainScreen extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_jRadioButtonHQActionPerformed
 
+    private void jMenuItemLogoutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemLogoutActionPerformed
+
+    // 1. Borrar la persistencia de la sesión (eliminar el token guardado)
+    java.util.prefs.Preferences prefs = java.util.prefs.Preferences.userRoot().node("YourDownloadApp");
+    prefs.remove("jwt_token");
+    prefs.remove("remembered_email"); // Limpiamos también el email guardado
+    
+    // 2. Cerrar la ventana MainScreen actual
+    this.dispose();
+    
+    // 3. Crear y mostrar la ventana de Login
+    JFrame loginFrame = new JFrame("Login - YourDownload");
+    loginFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    // Usamos las dimensiones finales que ajustamos:
+    loginFrame.setSize(500, 300); 
+    loginFrame.setLocationRelativeTo(null);
+    
+    // Añadimos el panel de Login e iniciamos el flujo
+    loginFrame.add(new LoginPanel(loginFrame)); 
+    loginFrame.setVisible(true);
+    }//GEN-LAST:event_jMenuItemLogoutActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -700,7 +731,7 @@ public static void main(String args[]) {
                 //Token no existe -> Abrir el formulario de Login
                 JFrame loginFrame = new JFrame("Login - YourDownload");
                 loginFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-                loginFrame.setSize(400, 300);
+                loginFrame.setSize(500, 300);
                 loginFrame.setLocationRelativeTo(null);
                 
                 loginFrame.add(new LoginPanel(loginFrame)); 
@@ -794,6 +825,7 @@ public static void main(String args[]) {
     private javax.swing.JMenu jMenuHelp;
     private javax.swing.JMenuItem jMenuItemAbout;
     private javax.swing.JMenuItem jMenuItemExit;
+    private javax.swing.JMenuItem jMenuItemLogout;
     private javax.swing.JMenuItem jMenuItemPreferences;
     private javax.swing.JPanel jPanelAudioQuality;
     private javax.swing.JPanel jPanelConsole;

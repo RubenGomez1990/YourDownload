@@ -35,7 +35,7 @@ public class LoginPanel extends JPanel {
         this.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 30));
         JPanel formPanel = new JPanel(new GridLayout(4, 2, 10, 10));
         formPanel.setBorder(new EmptyBorder(10, 10, 10, 10)); 
-        formPanel.setPreferredSize(new Dimension(300, 150));
+        formPanel.setPreferredSize(new Dimension(420, 200));
 
         txtEmail = new JTextField(15);
         txtPassword = new JPasswordField(15);
