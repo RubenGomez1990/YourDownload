@@ -98,3 +98,5 @@ try {
 4. Tried to fix the problem with the dynamic JSON but couldn't, if you can give me some tips... Because it saves the path of the downloads always.
 
 5. I think that actually it's portable.
+
+6. The logout button it's in file --> Logout. For me it's logic and a good place to place it. 
