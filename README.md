@@ -80,3 +80,21 @@ So we told to the program that value was an Object and then we cast it into a Do
 5. Followed the idea for allowing to load the download files of the past. Looked to the video tutorial. Added the GSON dependency. 
 
 6. We i have more time i will update the app with better visuals. 
+
+// Update for task 3_1
+
+1. Forgot to commit.
+
+2. Implemented login and improved many things
+
+3. I personally use prefs.remove("jwt_token") to do tests with the token for deleting it
+
+try { 
+            // Intentamos leer el token guardado
+            java.util.prefs.Preferences prefs = java.util.prefs.Preferences.userRoot().node("YourDownloadApp");
+            prefs.remove("jwt_token");
+            String token = prefs.get("jwt_token", null); 
+
+4. Tried to fix the problem with the dynamic JSON but couldn't, if you can give me some tips... Because it saves the path of the downloads always.
+
+5. I think that actually it's portable.

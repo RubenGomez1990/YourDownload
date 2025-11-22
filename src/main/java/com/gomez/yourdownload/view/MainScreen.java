@@ -13,6 +13,7 @@ import java.util.prefs.Preferences;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.swing.JFileChooser;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
@@ -33,26 +34,28 @@ public class MainScreen extends javax.swing.JFrame {
     private String binariesPath = "";
     private PreferencesPanel preferencesPanel;
     private List<DownloadInfo> resourcesList;
+    private String jwtToken;
 
-    /**
-     * Creates new form PantallaPrincipal
-     */
     public MainScreen() {
-    // 1. Cargar datos y componentes
-    resourcesList = DownloadService.loadHistory();
-    initComponents(); 
-    originalPanel = (JPanel) getContentPane();
+        this(null); // Llama a tu constructor existente (MainScreen(String token)) pasando un token nulo.
+    }
+    public MainScreen(String token) {
+    this.jwtToken = token; // Almacenamos el token JWT para usarlo en descargas, etc.
 
-   
+    // 1. Carga de Datos y Creación de UI
+    resourcesList = DownloadService.loadHistory(); 
+    initComponents(); 
+    originalPanel = (JPanel) getContentPane(); 
+
     jPanelAudioQuality.setVisible(false);
     jPanelQuality.setVisible(true);
     jRadioButton480.setSelected(true);
-    jRadioButtonHQ.setSelected(true);
-
+    jRadioButtonHQ.setSelected(true); 
 
     String userHome = System.getProperty("user.home");
     File downloadsFolder = new File(userHome + File.separator + "Downloads");
     File desktopFolder = new File(userHome + File.separator + "Desktop");
+    
     if (downloadsFolder.exists()) {
         this.destinyPath = downloadsFolder.getAbsolutePath();
     } else if (desktopFolder.exists()) {
@@ -62,27 +65,31 @@ public class MainScreen extends javax.swing.JFrame {
     }
 
     jLabelSave.setText("Saved at: " + this.destinyPath);
-    jButtonSavePath.setVisible(false); 
-    jButtonChange.setVisible(true);    
+    jButtonSavePath.setVisible(false);
+    jButtonChange.setVisible(true);
 
     this.setSize(1024, 800);
     this.setLocationRelativeTo(null);
     this.setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
 
+    if (token == null || token.isEmpty()) {
+        jButtonDownload.setEnabled(false);
+    }
+    
     this.addWindowListener(new java.awt.event.WindowAdapter() {
         @Override
         public void windowClosing(java.awt.event.WindowEvent e) {
-             String[] options = {"Yes", "No"};
-             int result = JOptionPane.showOptionDialog(MainScreen.this, 
-                    "Are you sure you want to exit?",
-                    "Exit", JOptionPane.YES_NO_OPTION, 
-                    JOptionPane.QUESTION_MESSAGE, null, 
-                    options, options[0]);
+            String[] options = {"Yes", "No"};
+            int result = JOptionPane.showOptionDialog(MainScreen.this, 
+                   "Are you sure you want to exit?",
+                   "Exit", JOptionPane.YES_NO_OPTION, 
+                   JOptionPane.QUESTION_MESSAGE, null, 
+                   options, options[0]);
 
-            if (result == 0) { 
-                com.gomez.yourdownload.service.DownloadService.saveHistory(resourcesList);
-                System.exit(0);
-            }
+           if (result == 0) { 
+               com.gomez.yourdownload.service.DownloadService.saveHistory(resourcesList);
+               System.exit(0);
+           }
         }
     });
 }
@@ -663,27 +670,52 @@ public class MainScreen extends javax.swing.JFrame {
     /**
      * @param args the command line arguments
      */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
+public static void main(String args[]) {
+    
+    try {
+        for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+            if ("Nimbus".equals(info.getName())) { 
+                javax.swing.UIManager.setLookAndFeel(info.getClassName());
+                break;
             }
-        } catch (ReflectiveOperationException | javax.swing.UnsupportedLookAndFeelException ex) {
-            logger.log(java.util.logging.Level.SEVERE, null, ex);
         }
-        //</editor-fold>
-
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(() -> new MainScreen().setVisible(true));
+    } catch (Exception ex) {
+        logger.log(java.util.logging.Level.SEVERE, "L&F Setup Failed", ex);
     }
+
+    // 2. LÓGICA DE ARRANQUE Y SESIÓN (Dentro del invokeLater)
+    java.awt.EventQueue.invokeLater(() -> {
+        
+        try { 
+            // Intentamos leer el token guardado
+            java.util.prefs.Preferences prefs = java.util.prefs.Preferences.userRoot().node("YourDownloadApp");
+            String token = prefs.get("jwt_token", null); 
+            
+            boolean tokenExists = (token != null && !token.isEmpty());
+            
+            if (tokenExists) {
+                //Token guardado -> Abrir MainScreen
+                new MainScreen(token).setVisible(true);
+            } else {
+                //Token no existe -> Abrir el formulario de Login
+                JFrame loginFrame = new JFrame("Login - YourDownload");
+                loginFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                loginFrame.setSize(400, 300);
+                loginFrame.setLocationRelativeTo(null);
+                
+                loginFrame.add(new LoginPanel(loginFrame)); 
+                loginFrame.setVisible(true);
+            }
+        } catch (Exception e) {
+             // Capturamos cualquier error en la lógica de sesión
+             JOptionPane.showMessageDialog(null, 
+                 "Error al iniciar la aplicación: " + e.getMessage(), 
+                 "FATAL STARTUP ERROR", JOptionPane.ERROR_MESSAGE);
+             logger.log(java.util.logging.Level.SEVERE, "Startup Logic Failed", e);
+             System.exit(1);
+        }
+    });
+}
 
     private void updateProgressBar(String line) {
         Pattern pattern = Pattern.compile("\\[download\\]\\s+(\\d+\\.\\d+)%");
