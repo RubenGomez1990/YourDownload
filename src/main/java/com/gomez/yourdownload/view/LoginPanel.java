@@ -1,6 +1,6 @@
 package com.gomez.yourdownload.view;
 
-import com.gomez.yourdownload.service.ApiClient; // Importa tu cliente API
+import com.gomez.component.MediaPoller; // IMPORTANTE: Importamos el componente
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -10,9 +10,6 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.io.IOException;
 
-/**
- * Panel de Login con UI construida manualmente (sin diseñador).
- */
 public class LoginPanel extends JPanel {
 
     // Componentes del formulario
@@ -23,11 +20,14 @@ public class LoginPanel extends JPanel {
     
     private JFrame parentFrame; 
     
-    // API's URL
-    private final String API_URL = "https://dimedianetapi9.azurewebsites.net"; 
+    // VARIABLE PARA EL POLLER
+    private MediaPoller mediaPoller; 
 
-    public LoginPanel(JFrame frame) {
+    // CONSTRUCTOR MODIFICADO (Aquí es donde daba el error)
+    // Ahora acepta (JFrame frame, MediaPoller poller)
+    public LoginPanel(JFrame frame, MediaPoller poller) {
         this.parentFrame = frame;
+        this.mediaPoller = poller; // Guardamos la referencia que nos pasa MainScreen
         initComponentsManual();
     }
 
@@ -80,35 +80,35 @@ public class LoginPanel extends JPanel {
 
         new Thread(() -> {
             try {
-                ApiClient client = new ApiClient(API_URL);
-                String token = client.login(email, password); 
+                // USAMOS EL COMPONENTE (mediaPoller.login) EN VEZ DE ApiClient
+                String token = this.mediaPoller.login(email, password); 
 
                 if (token != null && !token.isEmpty()) {
                     
-                    // 1. Guardar token para la sesión actual y futuras
+                    // Configuramos el token en el componente único
+                    this.mediaPoller.setToken(token);
+
+                    // Guardar preferencias
                     Preferences prefs = Preferences.userRoot().node("YourDownloadApp");
                     prefs.put("jwt_token", token);
                     
-                    // 2. Gestionar la persistencia del email y token
                     if (chkRemember.isSelected()) {
-                        prefs.put("jwt_token", token);
                         prefs.put("remembered_email", email);
                     } else {
-                        prefs.remove("jwt_token");
                         prefs.remove("remembered_email");
                     }
 
                     SwingUtilities.invokeLater(() -> {
-                        new MainScreen(token).setVisible(true); // Abrir MainScreen y pasar el token
+                        // Pasamos el componente YA CONFIGURADO al MainScreen
+                        new MainScreen(token, this.mediaPoller).setVisible(true); 
                         parentFrame.dispose(); 
                     });
                     
                 } else {
-                    throw new IOException("Token vacío recibido de la API.");
+                    throw new IOException("Empty token from api");
                 }
 
             } catch (Exception ex) {
-                //Error de red, credenciales inválidas, etc.
                 SwingUtilities.invokeLater(() -> {
                     JOptionPane.showMessageDialog(this, 
                         "Login Failed: " + ex.getMessage() + "\nCheck credentials.", 

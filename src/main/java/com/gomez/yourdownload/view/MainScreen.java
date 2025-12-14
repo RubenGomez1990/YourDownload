@@ -37,12 +37,9 @@ public class MainScreen extends javax.swing.JFrame {
     private String jwtToken;
     private MediaPoller mediaPoller;
 
-    public MainScreen() {
-        this(null); // Llama a tu constructor existente (MainScreen(String token)) pasando un token nulo.
-    }
-
-    public MainScreen(String token) {
-        this.jwtToken = token; // Almacenamos el token JWT para usarlo en descargas, etc.
+    public MainScreen(String token, MediaPoller pollerInstance) {
+        this.jwtToken = token;// Almacenamos el token JWT para usarlo en descargas, etc.
+        this.mediaPoller = pollerInstance;
 
         // 1. Carga de Datos y Creación de UI
         resourcesList = DownloadService.loadHistory();
@@ -721,7 +718,7 @@ public class MainScreen extends javax.swing.JFrame {
         loginFrame.setLocationRelativeTo(null);
 
         // Añadimos el panel de Login e iniciamos el flujo
-        loginFrame.add(new LoginPanel(loginFrame));
+        loginFrame.add(new LoginPanel(loginFrame, this.mediaPoller));
         loginFrame.setVisible(true);
     }//GEN-LAST:event_jMenuItemLogoutActionPerformed
 
@@ -749,6 +746,9 @@ public class MainScreen extends javax.swing.JFrame {
         } catch (Exception ex) {
             logger.log(java.util.logging.Level.SEVERE, "L&F Setup Failed", ex);
         }
+        
+        final MediaPoller globalPoller = new MediaPoller();
+        globalPoller.setApiUrl("https://dimedianetapi9.azurewebsites.net/");
 
         // 2. LÓGICA DE ARRANQUE Y SESIÓN (Dentro del invokeLater)
         java.awt.EventQueue.invokeLater(() -> {
@@ -762,7 +762,8 @@ public class MainScreen extends javax.swing.JFrame {
 
                 if (tokenExists) {
                     //Token guardado -> Abrir MainScreen
-                    new MainScreen(token).setVisible(true);
+                    globalPoller.setToken(token);
+                    new MainScreen(token, globalPoller).setVisible(true);
                 } else {
                     //Token no existe -> Abrir el formulario de Login
                     JFrame loginFrame = new JFrame("Login - YourDownload");
@@ -770,13 +771,13 @@ public class MainScreen extends javax.swing.JFrame {
                     loginFrame.setSize(500, 300);
                     loginFrame.setLocationRelativeTo(null);
 
-                    loginFrame.add(new LoginPanel(loginFrame));
+                    loginFrame.add(new LoginPanel(loginFrame, globalPoller));
                     loginFrame.setVisible(true);
                 }
             } catch (Exception e) {
                 // Capturamos cualquier error en la lógica de sesión
                 JOptionPane.showMessageDialog(null,
-                        "Error al iniciar la aplicación: " + e.getMessage(),
+                        "Error starting the app " + e.getMessage(),
                         "FATAL STARTUP ERROR", JOptionPane.ERROR_MESSAGE);
                 logger.log(java.util.logging.Level.SEVERE, "Startup Logic Failed", e);
                 System.exit(1);
@@ -848,17 +849,23 @@ public class MainScreen extends javax.swing.JFrame {
     }
     
     private void initMediaPoller(String token) {
-    this.mediaPoller = new MediaPoller();
-    this.mediaPoller.setApiUrl("https://dimedianetapi9.azurewebsites.net/");
-    this.mediaPoller.setToken(token);
-    this.mediaPoller.setRunning(true);
+    if (this.mediaPoller == null){
+        System.err.println("Mediapoller is null");
+        return;
+    }
     
+    if (token != null && !token.isEmpty()) {
+        this.mediaPoller.setToken(token);
+    }
+    
+    this.mediaPoller.setRunning(true);
     this.mediaPoller.addNewMediaListener(new com.gomez.component.NewMediaListener() {
         @Override
         public void onNewMediaDetected(com.gomez.component.NewMediaEvent event) {
             handleNewFilesFound(event);
         }
     });
+    this.jPanelPollerContainer.removeAll();
     this.jPanelPollerContainer.setLayout(new java.awt.BorderLayout());
     this.jPanelPollerContainer.add(this.mediaPoller, java.awt.BorderLayout.NORTH);
     this.jPanelPollerContainer.revalidate();
