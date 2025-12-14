@@ -35,11 +35,10 @@ public class MainScreen extends javax.swing.JFrame {
     private PreferencesPanel preferencesPanel;
     private List<DownloadInfo> resourcesList;
     private String jwtToken;
-    private MediaPoller mediaPoller;
 
     public MainScreen(String token, MediaPoller pollerInstance) {
         this.jwtToken = token;// Almacenamos el token JWT para usarlo en descargas, etc.
-        this.mediaPoller = pollerInstance;
+        this.mediaPoller1 = pollerInstance;
 
         // 1. Carga de Datos y Creación de UI
         resourcesList = DownloadService.loadHistory();
@@ -143,6 +142,7 @@ public class MainScreen extends javax.swing.JFrame {
         jButtonStart = new javax.swing.JButton();
         jButtonStop = new javax.swing.JButton();
         jPanelPollerContainer = new javax.swing.JPanel();
+        mediaPoller1 = new com.gomez.component.MediaPoller();
         jMenuBar = new javax.swing.JMenuBar();
         jMenuFile = new javax.swing.JMenu();
         jMenuItemExit = new javax.swing.JMenuItem();
@@ -377,6 +377,10 @@ public class MainScreen extends javax.swing.JFrame {
         jPanelPollerContainer.setLayout(new java.awt.BorderLayout());
         getContentPane().add(jPanelPollerContainer);
         jPanelPollerContainer.setBounds(830, 200, 170, 30);
+
+        mediaPoller1.setApiUrl("https://difreenet9.azurewebsites.net");
+        getContentPane().add(mediaPoller1);
+        mediaPoller1.setBounds(310, 10, 150, 18);
 
         jMenuFile.setText("File");
 
@@ -718,18 +722,18 @@ public class MainScreen extends javax.swing.JFrame {
         loginFrame.setLocationRelativeTo(null);
 
         // Añadimos el panel de Login e iniciamos el flujo
-        loginFrame.add(new LoginPanel(loginFrame, this.mediaPoller));
+        loginFrame.add(new LoginPanel(loginFrame, this.mediaPoller1));
         loginFrame.setVisible(true);
     }//GEN-LAST:event_jMenuItemLogoutActionPerformed
 
     private void jButtonStopActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonStopActionPerformed
         System.out.println("Poller: Stopped by button.");
-        this.mediaPoller.setRunning(false);
+        this.mediaPoller1.setRunning(false);
     }//GEN-LAST:event_jButtonStopActionPerformed
 
     private void jButtonStartActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonStartActionPerformed
         System.out.println("Poller: Started by button.");
-        this.mediaPoller.setRunning(true);
+        this.mediaPoller1.setRunning(true);
     }//GEN-LAST:event_jButtonStartActionPerformed
 
     /**
@@ -841,7 +845,7 @@ public class MainScreen extends javax.swing.JFrame {
     }
 
     private void showLibrary() {
-        MediaLibrary libraryPanel = new MediaLibrary(this, originalPanel, resourcesList, this.mediaPoller);
+        MediaLibrary libraryPanel = new MediaLibrary(this, originalPanel, resourcesList, this.mediaPoller1);
 
         setContentPane(libraryPanel);
         revalidate();
@@ -849,17 +853,17 @@ public class MainScreen extends javax.swing.JFrame {
     }
     
     private void initMediaPoller(String token) {
-    if (this.mediaPoller == null){
+    if (this.mediaPoller1 == null){
         System.err.println("Mediapoller is null");
         return;
     }
     
     if (token != null && !token.isEmpty()) {
-        this.mediaPoller.setToken(token);
+        this.mediaPoller1.setToken(token);
     }
     
-    this.mediaPoller.setRunning(true);
-    this.mediaPoller.addNewMediaListener(new com.gomez.component.NewMediaListener() {
+    this.mediaPoller1.setRunning(true);
+    this.mediaPoller1.addNewMediaListener(new com.gomez.component.NewMediaListener() {
         @Override
         public void onNewMediaDetected(com.gomez.component.NewMediaEvent event) {
             handleNewFilesFound(event);
@@ -867,7 +871,7 @@ public class MainScreen extends javax.swing.JFrame {
     });
     this.jPanelPollerContainer.removeAll();
     this.jPanelPollerContainer.setLayout(new java.awt.BorderLayout());
-    this.jPanelPollerContainer.add(this.mediaPoller, java.awt.BorderLayout.NORTH);
+    this.jPanelPollerContainer.add(this.mediaPoller1, java.awt.BorderLayout.NORTH);
     this.jPanelPollerContainer.revalidate();
     this.jPanelPollerContainer.repaint();
 }
@@ -921,7 +925,7 @@ public class MainScreen extends javax.swing.JFrame {
                         for (com.gomez.model.Media mediaFile : event.getNewFiles()) {
                             try {
                                 java.io.File destino = new java.io.File(destinyPath, mediaFile.mediaFileName);
-                                mediaPoller.download(mediaFile.id, destino);
+                                mediaPoller1.download(mediaFile.id, destino);
                                 
                                 com.gomez.yourdownload.model.DownloadInfo newDownload = new com.gomez.yourdownload.model.DownloadInfo(
                                         destino.getAbsolutePath(),
@@ -1004,5 +1008,6 @@ public class MainScreen extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPaneConsole;
     private javax.swing.JTextArea jTextAreaConsole;
     private javax.swing.JTextField jTextFieldUrl;
+    private com.gomez.component.MediaPoller mediaPoller1;
     // End of variables declaration//GEN-END:variables
 }
