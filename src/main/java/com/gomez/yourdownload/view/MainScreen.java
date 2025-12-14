@@ -748,7 +748,7 @@ public class MainScreen extends javax.swing.JFrame {
         }
         
         final MediaPoller globalPoller = new MediaPoller();
-        globalPoller.setApiUrl("https://dimedianetapi9.azurewebsites.net/");
+        globalPoller.setApiUrl("https://difreenet9.azurewebsites.net/");
 
         // 2. LÓGICA DE ARRANQUE Y SESIÓN (Dentro del invokeLater)
         java.awt.EventQueue.invokeLater(() -> {
@@ -841,7 +841,7 @@ public class MainScreen extends javax.swing.JFrame {
     }
 
     private void showLibrary() {
-        MediaLibrary libraryPanel = new MediaLibrary(this, originalPanel, resourcesList);
+        MediaLibrary libraryPanel = new MediaLibrary(this, originalPanel, resourcesList, this.mediaPoller);
 
         setContentPane(libraryPanel);
         revalidate();
