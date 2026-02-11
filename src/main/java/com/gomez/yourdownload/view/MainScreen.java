@@ -711,6 +711,7 @@ public class MainScreen extends javax.swing.JFrame {
 // 1. Borrar la persistencia de la sesión
         java.util.prefs.Preferences prefs = java.util.prefs.Preferences.userRoot().node("YourDownloadApp");
         prefs.remove("jwt_token");
+        prefs.remove("email");
 
         // 2. EN LUGAR DE CERRAR, CAMBIAMOS EL PANEL
         // No hagas dispose(). Simplemente muestra el panel de login.
