@@ -732,16 +732,11 @@ public class MainScreen extends javax.swing.JFrame {
      * @param args the command line arguments
      */
     public static void main(String args[]) {
-        // 1. Configuración del Look and Feel (Nimbus)
         try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
+            // Al quitar el 'scope' del pom.xml, esto ya no saldrá en rojo
+            com.formdev.flatlaf.FlatLightLaf.setup();
         } catch (Exception ex) {
-            java.util.logging.Logger.getLogger(MainScreen.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            System.err.println("Error al cargar el tema moderno");
         }
 
         // 2. Ejecución de la aplicación
@@ -934,7 +929,7 @@ public class MainScreen extends javax.swing.JFrame {
     private void showLoginScreen() {
         LoginPanel login = new LoginPanel(this, this.mediaPoller1);
         this.setContentPane(login);
-        this.setSize(500, 400);
+        this.setSize(500, 320);
         this.setLocationRelativeTo(null);
         this.revalidate();
         this.repaint();
