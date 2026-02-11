@@ -927,6 +927,8 @@ public class MainScreen extends javax.swing.JFrame {
     }
 
     private void showLoginScreen() {
+        this.setJMenuBar(null);
+        this.setResizable(false);
         LoginPanel login = new LoginPanel(this, this.mediaPoller1);
         this.setContentPane(login);
         this.setSize(500, 320);
@@ -937,8 +939,9 @@ public class MainScreen extends javax.swing.JFrame {
 
     public void loginSuccessful(String token) { // Si se pone bien la contraseña llama a este método
         this.jwtToken = token;
-
+            
         //Restauramos el diseño original
+        this.setJMenuBar(jMenuBar);
         this.setContentPane(originalPanel);
         this.setSize(1024, 800);
         this.setLocationRelativeTo(null);
