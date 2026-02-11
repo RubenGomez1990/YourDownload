@@ -860,7 +860,7 @@ public class MainScreen extends javax.swing.JFrame {
         // Imprimimos el mensaje de detección con el detalle del nombre del archivo.
         System.out.println("Poller: Detected " + filesCount + " new files from API.");
         System.out.println("Poller: First file name detected: " + fileName);
-        System.out.flush(); // Forzamos la visualización inmediata.
+        System.out.flush();
 
         final String finalFileName = fileName;
         // 2. Alerta de la Interfaz (SwingUtilities.invokeLater)
@@ -932,38 +932,25 @@ public class MainScreen extends javax.swing.JFrame {
     }
 
     private void showLoginScreen() {
-    LoginPanel login = new LoginPanel(this, this.mediaPoller1);
-    
-    // 1. Inyectamos el panel
-    this.setContentPane(login); 
-    
-    // 2. AJUSTE DE TAMAÑO: Forzamos a la ventana a ser pequeña
-    // Puedes usar un tamaño fijo que te guste (ej. 500x400) o pack()
-    this.setSize(500, 400); 
-    
-    // 3. RE-CENTRAMOS: Al cambiar el tamaño, hay que centrar de nuevo en el monitor
-    this.setLocationRelativeTo(null); 
-    
-    this.revalidate();
-    this.repaint();
-}
+        LoginPanel login = new LoginPanel(this, this.mediaPoller1);
+        this.setContentPane(login);
+        this.setSize(500, 400);
+        this.setLocationRelativeTo(null);
+        this.revalidate();
+        this.repaint();
+    }
 
-// Método que llamará el LoginPanel cuando el usuario acierte la contraseña
-    public void loginSuccessful(String token) {
-    this.jwtToken = token;
-    
-    // 1. Restauramos el diseño original
-    this.setContentPane(originalPanel); 
-    
-    // 2. AGRANDAMOS LA VENTANA
-    this.setSize(1024, 800);
-    this.setLocationRelativeTo(null);
-    
-    this.revalidate();
-    this.repaint();
-    
-    initMediaPoller(token);
-}
+    public void loginSuccessful(String token) { // Si se pone bien la contraseña llama a este método
+        this.jwtToken = token;
+
+        //Restauramos el diseño original
+        this.setContentPane(originalPanel);
+        this.setSize(1024, 800);
+        this.setLocationRelativeTo(null);
+        this.revalidate();
+        this.repaint();
+        initMediaPoller(token);
+    }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup buttonGroupAQ;
     private javax.swing.ButtonGroup buttonGroupQuality;
