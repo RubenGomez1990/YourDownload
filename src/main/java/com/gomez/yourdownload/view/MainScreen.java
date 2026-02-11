@@ -20,8 +20,6 @@ import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import com.gomez.component.MediaPoller;
 
-
-
 /**
  *
  * @author Rubén Gómez Hernández
@@ -43,10 +41,8 @@ public class MainScreen extends javax.swing.JFrame {
         // 1. Carga de Datos y Creación de UI
         resourcesList = DownloadService.loadHistory();
         initComponents();
-        initMediaPoller(token);
-
-
         originalPanel = (JPanel) getContentPane();
+
         jPanelAudioQuality.setVisible(false);
         jPanelQuality.setVisible(true);
         jRadioButton480.setSelected(true);
@@ -68,13 +64,20 @@ public class MainScreen extends javax.swing.JFrame {
         jButtonSavePath.setVisible(false);
         jButtonChange.setVisible(true);
 
-        this.setSize(1024, 800);
-        this.setLocationRelativeTo(null);
         this.setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
 
         if (token == null || token.isEmpty()) {
-            jButtonDownload.setEnabled(false);
+            // --- CASO LOGIN ---
+            showLoginScreen(); // Este método ahora se encargará de encoger la ventana
+        } else {
+            // --- CASO MAIN ---
+            initMediaPoller(token);
+            this.setSize(1024, 800); // Tamaño grande para descargas
+            this.setLocationRelativeTo(null);
         }
+
+        this.setLocationRelativeTo(null);
+        this.setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
 
         this.addWindowListener(new java.awt.event.WindowAdapter() {
             @Override
@@ -145,8 +148,8 @@ public class MainScreen extends javax.swing.JFrame {
         mediaPoller1 = new com.gomez.component.MediaPoller();
         jMenuBar = new javax.swing.JMenuBar();
         jMenuFile = new javax.swing.JMenu();
-        jMenuItemExit = new javax.swing.JMenuItem();
         jMenuItemLogout = new javax.swing.JMenuItem();
+        jMenuItemExit = new javax.swing.JMenuItem();
         jMenuEdit = new javax.swing.JMenu();
         jMenuItemPreferences = new javax.swing.JMenuItem();
         jMenuHelp = new javax.swing.JMenu();
@@ -384,14 +387,6 @@ public class MainScreen extends javax.swing.JFrame {
 
         jMenuFile.setText("File");
 
-        jMenuItemExit.setText("Exit");
-        jMenuItemExit.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenuItemExitActionPerformed(evt);
-            }
-        });
-        jMenuFile.add(jMenuItemExit);
-
         jMenuItemLogout.setText("Logout");
         jMenuItemLogout.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -399,6 +394,14 @@ public class MainScreen extends javax.swing.JFrame {
             }
         });
         jMenuFile.add(jMenuItemLogout);
+
+        jMenuItemExit.setText("Exit");
+        jMenuItemExit.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItemExitActionPerformed(evt);
+            }
+        });
+        jMenuFile.add(jMenuItemExit);
 
         jMenuBar.add(jMenuFile);
 
@@ -705,25 +708,13 @@ public class MainScreen extends javax.swing.JFrame {
     }//GEN-LAST:event_jRadioButtonHQActionPerformed
 
     private void jMenuItemLogoutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemLogoutActionPerformed
-
-        // 1. Borrar la persistencia de la sesión (eliminar el token guardado)
+// 1. Borrar la persistencia de la sesión
         java.util.prefs.Preferences prefs = java.util.prefs.Preferences.userRoot().node("YourDownloadApp");
         prefs.remove("jwt_token");
-        prefs.remove("remembered_email"); // Limpiamos también el email guardado
 
-        // 2. Cerrar la ventana MainScreen actual
-        this.dispose();
-
-        // 3. Crear y mostrar la ventana de Login
-        JFrame loginFrame = new JFrame("Login - YourDownload");
-        loginFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        // Usamos las dimensiones finales que ajustamos:
-        loginFrame.setSize(500, 300);
-        loginFrame.setLocationRelativeTo(null);
-
-        // Añadimos el panel de Login e iniciamos el flujo
-        loginFrame.add(new LoginPanel(loginFrame, this.mediaPoller1));
-        loginFrame.setVisible(true);
+        // 2. EN LUGAR DE CERRAR, CAMBIAMOS EL PANEL
+        // No hagas dispose(). Simplemente muestra el panel de login.
+        showLoginScreen();
     }//GEN-LAST:event_jMenuItemLogoutActionPerformed
 
     private void jButtonStopActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonStopActionPerformed
@@ -740,6 +731,7 @@ public class MainScreen extends javax.swing.JFrame {
      * @param args the command line arguments
      */
     public static void main(String args[]) {
+        // 1. Configuración del Look and Feel (Nimbus)
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
                 if ("Nimbus".equals(info.getName())) {
@@ -748,44 +740,21 @@ public class MainScreen extends javax.swing.JFrame {
                 }
             }
         } catch (Exception ex) {
-            logger.log(java.util.logging.Level.SEVERE, "L&F Setup Failed", ex);
+            java.util.logging.Logger.getLogger(MainScreen.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
-        
-        final MediaPoller globalPoller = new MediaPoller();
-        globalPoller.setApiUrl("https://difreenet9.azurewebsites.net/");
 
-        // 2. LÓGICA DE ARRANQUE Y SESIÓN (Dentro del invokeLater)
+        // 2. Ejecución de la aplicación
         java.awt.EventQueue.invokeLater(() -> {
+            // Obtenemos el token guardado
+            java.util.prefs.Preferences prefs = java.util.prefs.Preferences.userRoot().node("YourDownloadApp");
+            String token = prefs.get("jwt_token", null);
 
-            try {
-                // Intentamos leer el token guardado
-                java.util.prefs.Preferences prefs = java.util.prefs.Preferences.userRoot().node("YourDownloadApp");
-                String token = prefs.get("jwt_token", null);
+            // CREACIÓN DEL POLLER (Asegúrate de que el nombre de la clase coincida con tu componente)
+            com.gomez.component.MediaPoller globalPoller = new com.gomez.component.MediaPoller();
+            globalPoller.setApiUrl("https://difreenet9.azurewebsites.net/");
 
-                boolean tokenExists = (token != null && !token.isEmpty());
-
-                if (tokenExists) {
-                    //Token guardado -> Abrir MainScreen
-                    globalPoller.setToken(token);
-                    new MainScreen(token, globalPoller).setVisible(true);
-                } else {
-                    //Token no existe -> Abrir el formulario de Login
-                    JFrame loginFrame = new JFrame("Login - YourDownload");
-                    loginFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-                    loginFrame.setSize(500, 300);
-                    loginFrame.setLocationRelativeTo(null);
-
-                    loginFrame.add(new LoginPanel(loginFrame, globalPoller));
-                    loginFrame.setVisible(true);
-                }
-            } catch (Exception e) {
-                // Capturamos cualquier error en la lógica de sesión
-                JOptionPane.showMessageDialog(null,
-                        "Error starting the app " + e.getMessage(),
-                        "FATAL STARTUP ERROR", JOptionPane.ERROR_MESSAGE);
-                logger.log(java.util.logging.Level.SEVERE, "Startup Logic Failed", e);
-                System.exit(1);
-            }
+            // Abrimos la pantalla principal
+            new MainScreen(token, globalPoller).setVisible(true);
         });
     }
 
@@ -851,114 +820,148 @@ public class MainScreen extends javax.swing.JFrame {
         revalidate();
         repaint();
     }
-    
+
     private void initMediaPoller(String token) {
-    if (this.mediaPoller1 == null){
-        System.err.println("Mediapoller is null");
-        return;
-    }
-    
-    if (token != null && !token.isEmpty()) {
-        this.mediaPoller1.setToken(token);
-    }
-    
-    this.mediaPoller1.setRunning(true);
-    this.mediaPoller1.addNewMediaListener(new com.gomez.component.NewMediaListener() {
-        @Override
-        public void onNewMediaDetected(com.gomez.component.NewMediaEvent event) {
-            handleNewFilesFound(event);
+        if (this.mediaPoller1 == null) {
+            System.err.println("Mediapoller is null");
+            return;
         }
-    });
-    this.jPanelPollerContainer.removeAll();
-    this.jPanelPollerContainer.setLayout(new java.awt.BorderLayout());
-    this.jPanelPollerContainer.add(this.mediaPoller1, java.awt.BorderLayout.NORTH);
-    this.jPanelPollerContainer.revalidate();
-    this.jPanelPollerContainer.repaint();
-}
-    
-    private void handleNewFilesFound(final com.gomez.component.NewMediaEvent event) {
-    
-    int filesCount = event.getNewFiles().size();
-    String fileName = "N/A";
-    if (filesCount > 0) {
-        // Obtenemos el primer objeto que viene de la API
-        com.gomez.model.Media firstFile = event.getNewFiles().get(0);
 
-        fileName = firstFile.mediaFileName; 
+        if (token != null && !token.isEmpty()) {
+            this.mediaPoller1.setToken(token);
+        }
+
+        this.mediaPoller1.setRunning(true);
+        this.mediaPoller1.addNewMediaListener(new com.gomez.component.NewMediaListener() {
+            @Override
+            public void onNewMediaDetected(com.gomez.component.NewMediaEvent event) {
+                handleNewFilesFound(event);
+            }
+        });
+        this.jPanelPollerContainer.removeAll();
+        this.jPanelPollerContainer.setLayout(new java.awt.BorderLayout());
+        this.jPanelPollerContainer.add(this.mediaPoller1, java.awt.BorderLayout.NORTH);
+        this.jPanelPollerContainer.revalidate();
+        this.jPanelPollerContainer.repaint();
     }
-    
-    // Imprimimos el mensaje de detección con el detalle del nombre del archivo.
-    System.out.println("Poller: Detected " + filesCount + " new files from API.");
-    System.out.println("Poller: First file name detected: " + fileName);
-    System.out.flush(); // Forzamos la visualización inmediata.
-    
-    final String finalFileName = fileName;
-    // 2. Alerta de la Interfaz (SwingUtilities.invokeLater)
-    javax.swing.SwingUtilities.invokeLater(new Runnable() {
-        @Override
-        public void run() {
-            Object[] options = {"Download", "Close"};
 
-            int result = javax.swing.JOptionPane.showOptionDialog(
-                    MainScreen.this,
-                    "Detected " + event.getNewFiles().size() + " new files!" + 
-                    (filesCount > 0 ? "\nFile: " + finalFileName : "") + 
-                    "\nDo you want to download it?",
-                    // =======================================================
-                    "New files detected.",
-                    javax.swing.JOptionPane.YES_NO_OPTION,
-                    javax.swing.JOptionPane.INFORMATION_MESSAGE,
-                    null,
-                    options,
-                    options[0]
-            );
+    private void handleNewFilesFound(final com.gomez.component.NewMediaEvent event) {
 
-            if (result == 0) {
-                // 3. Hilo de Descarga
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        System.err.println( "Poller: Initiating automatic download..."); 
-                        int downloaded = 0;
-                        
-                        // Recorremos la lista de archivos
-                        for (com.gomez.model.Media mediaFile : event.getNewFiles()) {
-                            try {
-                                java.io.File destino = new java.io.File(destinyPath, mediaFile.mediaFileName);
-                                mediaPoller1.download(mediaFile.id, destino);
-                                
-                                com.gomez.yourdownload.model.DownloadInfo newDownload = new com.gomez.yourdownload.model.DownloadInfo(
-                                        destino.getAbsolutePath(),
-                                        new java.util.Date(),
-                                        destino.length(),
-                                        mediaFile.mediaMimeType
-                                );
-                                
-                                resourcesList.add(newDownload);
-                                downloaded++;
-                            } catch (Exception e) {
-                                System.err.println("Error: Download error: " + mediaFile.mediaFileName + ". Message: " + e.getMessage());
+        int filesCount = event.getNewFiles().size();
+        String fileName = "N/A";
+        if (filesCount > 0) {
+            // Obtenemos el primer objeto que viene de la API
+            com.gomez.model.Media firstFile = event.getNewFiles().get(0);
+
+            fileName = firstFile.mediaFileName;
+        }
+
+        // Imprimimos el mensaje de detección con el detalle del nombre del archivo.
+        System.out.println("Poller: Detected " + filesCount + " new files from API.");
+        System.out.println("Poller: First file name detected: " + fileName);
+        System.out.flush(); // Forzamos la visualización inmediata.
+
+        final String finalFileName = fileName;
+        // 2. Alerta de la Interfaz (SwingUtilities.invokeLater)
+        javax.swing.SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                Object[] options = {"Download", "Close"};
+
+                int result = javax.swing.JOptionPane.showOptionDialog(
+                        MainScreen.this,
+                        "Detected " + event.getNewFiles().size() + " new files!"
+                        + (filesCount > 0 ? "\nFile: " + finalFileName : "")
+                        + "\nDo you want to download it?",
+                        // =======================================================
+                        "New files detected.",
+                        javax.swing.JOptionPane.YES_NO_OPTION,
+                        javax.swing.JOptionPane.INFORMATION_MESSAGE,
+                        null,
+                        options,
+                        options[0]
+                );
+
+                if (result == 0) {
+                    // 3. Hilo de Descarga
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            System.err.println("Poller: Initiating automatic download...");
+                            int downloaded = 0;
+
+                            // Recorremos la lista de archivos
+                            for (com.gomez.model.Media mediaFile : event.getNewFiles()) {
+                                try {
+                                    java.io.File destino = new java.io.File(destinyPath, mediaFile.mediaFileName);
+                                    mediaPoller1.download(mediaFile.id, destino);
+
+                                    com.gomez.yourdownload.model.DownloadInfo newDownload = new com.gomez.yourdownload.model.DownloadInfo(
+                                            destino.getAbsolutePath(),
+                                            new java.util.Date(),
+                                            destino.length(),
+                                            mediaFile.mediaMimeType
+                                    );
+
+                                    resourcesList.add(newDownload);
+                                    downloaded++;
+                                } catch (Exception e) {
+                                    System.err.println("Error: Download error: " + mediaFile.mediaFileName + ". Message: " + e.getMessage());
+                                }
+                            }
+
+                            // Guardar y Refrescar
+                            if (downloaded > 0) {
+                                com.gomez.yourdownload.service.DownloadService.saveHistory(resourcesList);
+                                final int totalDownloads = downloaded;
+                                javax.swing.SwingUtilities.invokeLater(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        showLibrary();
+                                        javax.swing.JOptionPane.showMessageDialog(MainScreen.this,
+                                                "Added to library " + totalDownloads + " files.");
+                                    }
+                                });
                             }
                         }
-                        
-                        // Guardar y Refrescar
-                        if (downloaded > 0) {
-                            com.gomez.yourdownload.service.DownloadService.saveHistory(resourcesList);
-                            final int totalDownloads = downloaded;  
-                            javax.swing.SwingUtilities.invokeLater(new Runnable() {
-                                @Override
-                                public void run() {
-                                    showLibrary();  
-                                    javax.swing.JOptionPane.showMessageDialog(MainScreen.this,
-                                            "Added to library " + totalDownloads + " files.");
-                                }
-                            });
-                        }
-                    }
-                }).start();
+                    }).start();
+                }
             }
-        }
-    });
+        });
+    }
+
+    private void showLoginScreen() {
+    LoginPanel login = new LoginPanel(this, this.mediaPoller1);
+    
+    // 1. Inyectamos el panel
+    this.setContentPane(login); 
+    
+    // 2. AJUSTE DE TAMAÑO: Forzamos a la ventana a ser pequeña
+    // Puedes usar un tamaño fijo que te guste (ej. 500x400) o pack()
+    this.setSize(500, 400); 
+    
+    // 3. RE-CENTRAMOS: Al cambiar el tamaño, hay que centrar de nuevo en el monitor
+    this.setLocationRelativeTo(null); 
+    
+    this.revalidate();
+    this.repaint();
+}
+
+// Método que llamará el LoginPanel cuando el usuario acierte la contraseña
+    public void loginSuccessful(String token) {
+    this.jwtToken = token;
+    
+    // 1. Restauramos el diseño original
+    this.setContentPane(originalPanel); 
+    
+    // 2. AGRANDAMOS LA VENTANA
+    this.setSize(1024, 800);
+    this.setLocationRelativeTo(null);
+    
+    this.revalidate();
+    this.repaint();
+    
+    initMediaPoller(token);
 }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup buttonGroupAQ;
