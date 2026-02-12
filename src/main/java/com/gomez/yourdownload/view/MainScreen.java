@@ -24,6 +24,7 @@ import com.gomez.component.MediaPoller;
  *
  * @author Rubén Gómez Hernández
  */
+
 public class MainScreen extends javax.swing.JFrame {
 
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(MainScreen.class.getName());
@@ -47,6 +48,7 @@ public class MainScreen extends javax.swing.JFrame {
         jPanelQuality.setVisible(true);
         jRadioButton480.setSelected(true);
         jRadioButtonHQ.setSelected(true);
+        jPanelConsole.setVisible(false);
 
         String userHome = System.getProperty("user.home");
         File downloadsFolder = new File(userHome + File.separator + "Downloads");
@@ -72,7 +74,7 @@ public class MainScreen extends javax.swing.JFrame {
         } else {
             // --- CASO MAIN ---
             initMediaPoller(token);
-            this.setSize(1024, 800); // Tamaño grande para descargas
+            this.setSize(1024, 330); // Tamaño grande para descargas
             this.setLocationRelativeTo(null);
         }
 
@@ -146,6 +148,7 @@ public class MainScreen extends javax.swing.JFrame {
         jButtonStop = new javax.swing.JButton();
         jPanelPollerContainer = new javax.swing.JPanel();
         mediaPoller1 = new com.gomez.component.MediaPoller();
+        jButtonShowLog = new javax.swing.JButton();
         jMenuBar = new javax.swing.JMenuBar();
         jMenuFile = new javax.swing.JMenu();
         jMenuItemLogout = new javax.swing.JMenuItem();
@@ -384,6 +387,15 @@ public class MainScreen extends javax.swing.JFrame {
         mediaPoller1.setApiUrl("https://difreenet9.azurewebsites.net");
         getContentPane().add(mediaPoller1);
         mediaPoller1.setBounds(310, 10, 150, 18);
+
+        jButtonShowLog.setText("Show Log Details");
+        jButtonShowLog.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonShowLogActionPerformed(evt);
+            }
+        });
+        getContentPane().add(jButtonShowLog);
+        jButtonShowLog.setBounds(10, 240, 130, 23);
 
         jMenuFile.setText("File");
 
@@ -728,40 +740,59 @@ public class MainScreen extends javax.swing.JFrame {
         this.mediaPoller1.setRunning(true);
     }//GEN-LAST:event_jButtonStartActionPerformed
 
+    private void jButtonShowLogActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonShowLogActionPerformed
+
+        if (!jPanelConsole.isVisible()) {
+            // MODO DETALLADO: Mostramos consola y agrandamos ventana
+            jPanelConsole.setVisible(true);
+            this.setSize(1024, 800);
+            jButtonShowLog.setText("Hide Details");
+        } else {
+            // MODO COMPACTO: Ocultamos consola y encogemos ventana
+            jPanelConsole.setVisible(false);
+            this.setSize(1024, 330);
+            jButtonShowLog.setText("Show Details");
+        }
+
+        // Refrescamos la UI para que los cambios se apliquen visualmente
+        this.revalidate();
+        this.repaint(); // TODO add your handling code here:
+    }//GEN-LAST:event_jButtonShowLogActionPerformed
+
     /**
      * @param args the command line arguments
      */
     public static void main(String args[]) {
-        try {
-            // Al quitar el 'scope' del pom.xml, esto ya no saldrá en rojo
-            com.formdev.flatlaf.FlatLightLaf.setup();
-        } catch (Exception ex) {
-            System.err.println("Error al cargar el tema moderno");
-        }
-
-        // 2. Ejecución de la aplicación
-        java.awt.EventQueue.invokeLater(() -> {
-            // Obtenemos el token guardado
-            java.util.prefs.Preferences prefs = java.util.prefs.Preferences.userRoot().node("YourDownloadApp");
-            String token = prefs.get("jwt_token", null);
-
-            // CREACIÓN DEL POLLER (Asegúrate de que el nombre de la clase coincida con tu componente)
-            com.gomez.component.MediaPoller globalPoller = new com.gomez.component.MediaPoller();
-            globalPoller.setApiUrl("https://difreenet9.azurewebsites.net/");
-
-            // Abrimos la pantalla principal
-            new MainScreen(token, globalPoller).setVisible(true);
-        });
+    try {
+        // Al quitar el 'scope' del pom.xml, esto ya no saldrá en rojo
+        com.formdev.flatlaf.FlatLightLaf.setup();
+    } catch (Exception ex) {
+        System.err.println("Error al cargar el tema moderno");
     }
+
+    // 2. Ejecución de la aplicación
+    java.awt.EventQueue.invokeLater(() -> {
+        // Obtenemos el token guardado
+        java.util.prefs.Preferences prefs = java.util.prefs.Preferences.userRoot().node("YourDownloadApp");
+        String token = prefs.get("jwt_token", null);
+
+        // CREACIÓN DEL POLLER (Asegúrate de que el nombre de la clase coincida con tu componente)
+        com.gomez.component.MediaPoller globalPoller = new com.gomez.component.MediaPoller();
+        globalPoller.setApiUrl("https://difreenet9.azurewebsites.net/");
+
+        // Abrimos la pantalla principal
+        new MainScreen(token, globalPoller).setVisible(true);
+    });
+}
 
     private void updateProgressBar(String line) {
-        Pattern pattern = Pattern.compile("\\[download\\]\\s+(\\d+\\.\\d+)%");
-        Matcher matcher = pattern.matcher(line);
-        if (matcher.find()) {
-            double percent = Double.parseDouble(matcher.group(1));
-            jProgressBar.setValue((int) percent);
-        }
+    Pattern pattern = Pattern.compile("\\[download\\]\\s+(\\d+\\.\\d+)%");
+    Matcher matcher = pattern.matcher(line);
+    if (matcher.find()) {
+        double percent = Double.parseDouble(matcher.group(1));
+        jProgressBar.setValue((int) percent);
     }
+}
 
     /**
      * Determina un tipo MIME (formato de contenido) simple basado en la
@@ -773,182 +804,183 @@ public class MainScreen extends javax.swing.JFrame {
      * "video/mp4").
      */
     private String obtainMimeSimple(String fileName) {
-        if (fileName.toLowerCase().endsWith(".mp4")) {
-            return "video/mp4";
-        } else if (fileName.toLowerCase().endsWith(".avi")) {
-            return "video/x-msvideo";
-        } else if (fileName.toLowerCase().endsWith(".mp3")) {
-            return "audio/mpeg";
-        }
-        return "application/octet-stream";
+    if (fileName.toLowerCase().endsWith(".mp4")) {
+        return "video/mp4";
+    } else if (fileName.toLowerCase().endsWith(".avi")) {
+        return "video/x-msvideo";
+    } else if (fileName.toLowerCase().endsWith(".mp3")) {
+        return "audio/mpeg";
     }
+    return "application/octet-stream";
+}
 
     private String getBinariesPath() {
-        Preferences prefs = Preferences.userRoot().node("PreferencesPanel");
-        final String PREFS_KEY = "binariesPath";
+    Preferences prefs = Preferences.userRoot().node("PreferencesPanel");
+    final String PREFS_KEY = "binariesPath";
 
-        String storedPath = prefs.get(PREFS_KEY, "");
-        if (!storedPath.isEmpty() && new File(storedPath).exists()) {
-            return storedPath; // ¡La configuración manual funciona!
-        }
-
-        String localAppData = System.getenv("LOCALAPPDATA");
-        if (localAppData != null && !localAppData.isEmpty()) {
-            String appDataPath = localAppData + File.separator + "yt-dlp.exe";
-            if (new File(appDataPath).exists()) {
-                prefs.put(PREFS_KEY, appDataPath);
-                return appDataPath;
-            }
-        }
-
-        String userHomePath = System.getProperty("user.home") + File.separator + "yt-dlp.exe";
-        if (new File(userHomePath).exists()) {
-            prefs.put(PREFS_KEY, userHomePath);
-            return userHomePath;
-        }
-        return "";
+    String storedPath = prefs.get(PREFS_KEY, "");
+    if (!storedPath.isEmpty() && new File(storedPath).exists()) {
+        return storedPath; // ¡La configuración manual funciona!
     }
+
+    String localAppData = System.getenv("LOCALAPPDATA");
+    if (localAppData != null && !localAppData.isEmpty()) {
+        String appDataPath = localAppData + File.separator + "yt-dlp.exe";
+        if (new File(appDataPath).exists()) {
+            prefs.put(PREFS_KEY, appDataPath);
+            return appDataPath;
+        }
+    }
+
+    String userHomePath = System.getProperty("user.home") + File.separator + "yt-dlp.exe";
+    if (new File(userHomePath).exists()) {
+        prefs.put(PREFS_KEY, userHomePath);
+        return userHomePath;
+    }
+    return "";
+}
 
     private void showLibrary() {
-        MediaLibrary libraryPanel = new MediaLibrary(this, originalPanel, resourcesList, this.mediaPoller1);
+    MediaLibrary libraryPanel = new MediaLibrary(this, originalPanel, resourcesList, this.mediaPoller1);
 
-        setContentPane(libraryPanel);
-        revalidate();
-        repaint();
-    }
+    setContentPane(libraryPanel);
+    revalidate();
+    repaint();
+}
 
     private void initMediaPoller(String token) {
-        if (this.mediaPoller1 == null) {
-            System.err.println("Mediapoller is null");
-            return;
-        }
-
-        if (token != null && !token.isEmpty()) {
-            this.mediaPoller1.setToken(token);
-        }
-
-        this.mediaPoller1.setRunning(true);
-        this.mediaPoller1.addNewMediaListener(new com.gomez.component.NewMediaListener() {
-            @Override
-            public void onNewMediaDetected(com.gomez.component.NewMediaEvent event) {
-                handleNewFilesFound(event);
-            }
-        });
-        this.jPanelPollerContainer.removeAll();
-        this.jPanelPollerContainer.setLayout(new java.awt.BorderLayout());
-        this.jPanelPollerContainer.add(this.mediaPoller1, java.awt.BorderLayout.NORTH);
-        this.jPanelPollerContainer.revalidate();
-        this.jPanelPollerContainer.repaint();
+    if (this.mediaPoller1 == null) {
+        System.err.println("Mediapoller is null");
+        return;
     }
+
+    if (token != null && !token.isEmpty()) {
+        this.mediaPoller1.setToken(token);
+    }
+
+    this.mediaPoller1.setRunning(true);
+    this.mediaPoller1.addNewMediaListener(new com.gomez.component.NewMediaListener() {
+        @Override
+        public void onNewMediaDetected(com.gomez.component.NewMediaEvent event) {
+            handleNewFilesFound(event);
+        }
+    });
+    this.jPanelPollerContainer.removeAll();
+    this.jPanelPollerContainer.setLayout(new java.awt.BorderLayout());
+    this.jPanelPollerContainer.add(this.mediaPoller1, java.awt.BorderLayout.NORTH);
+    this.jPanelPollerContainer.revalidate();
+    this.jPanelPollerContainer.repaint();
+}
 
     private void handleNewFilesFound(final com.gomez.component.NewMediaEvent event) {
 
-        int filesCount = event.getNewFiles().size();
-        String fileName = "N/A";
-        if (filesCount > 0) {
-            // Obtenemos el primer objeto que viene de la API
-            com.gomez.model.Media firstFile = event.getNewFiles().get(0);
+    int filesCount = event.getNewFiles().size();
+    String fileName = "N/A";
+    if (filesCount > 0) {
+        // Obtenemos el primer objeto que viene de la API
+        com.gomez.model.Media firstFile = event.getNewFiles().get(0);
 
-            fileName = firstFile.mediaFileName;
-        }
+        fileName = firstFile.mediaFileName;
+    }
 
-        // Imprimimos el mensaje de detección con el detalle del nombre del archivo.
-        System.out.println("Poller: Detected " + filesCount + " new files from API.");
-        System.out.println("Poller: First file name detected: " + fileName);
-        System.out.flush();
+    // Imprimimos el mensaje de detección con el detalle del nombre del archivo.
+    System.out.println("Poller: Detected " + filesCount + " new files from API.");
+    System.out.println("Poller: First file name detected: " + fileName);
+    System.out.flush();
 
-        final String finalFileName = fileName;
-        // 2. Alerta de la Interfaz (SwingUtilities.invokeLater)
-        javax.swing.SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                Object[] options = {"Download", "Close"};
+    final String finalFileName = fileName;
+    // 2. Alerta de la Interfaz (SwingUtilities.invokeLater)
+    javax.swing.SwingUtilities.invokeLater(new Runnable() {
+        @Override
+        public void run() {
+            Object[] options = {"Download", "Close"};
 
-                int result = javax.swing.JOptionPane.showOptionDialog(
-                        MainScreen.this,
-                        "Detected " + event.getNewFiles().size() + " new files!"
-                        + (filesCount > 0 ? "\nFile: " + finalFileName : "")
-                        + "\nDo you want to download it?",
-                        // =======================================================
-                        "New files detected.",
-                        javax.swing.JOptionPane.YES_NO_OPTION,
-                        javax.swing.JOptionPane.INFORMATION_MESSAGE,
-                        null,
-                        options,
-                        options[0]
-                );
+            int result = javax.swing.JOptionPane.showOptionDialog(
+                    MainScreen.this,
+                    "Detected " + event.getNewFiles().size() + " new files!"
+                    + (filesCount > 0 ? "\nFile: " + finalFileName : "")
+                    + "\nDo you want to download it?",
+                    // =======================================================
+                    "New files detected.",
+                    javax.swing.JOptionPane.YES_NO_OPTION,
+                    javax.swing.JOptionPane.INFORMATION_MESSAGE,
+                    null,
+                    options,
+                    options[0]
+            );
 
-                if (result == 0) {
-                    // 3. Hilo de Descarga
-                    new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            System.err.println("Poller: Initiating automatic download...");
-                            int downloaded = 0;
+            if (result == 0) {
+                // 3. Hilo de Descarga
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        System.err.println("Poller: Initiating automatic download...");
+                        int downloaded = 0;
 
-                            // Recorremos la lista de archivos
-                            for (com.gomez.model.Media mediaFile : event.getNewFiles()) {
-                                try {
-                                    java.io.File destino = new java.io.File(destinyPath, mediaFile.mediaFileName);
-                                    mediaPoller1.download(mediaFile.id, destino);
+                        // Recorremos la lista de archivos
+                        for (com.gomez.model.Media mediaFile : event.getNewFiles()) {
+                            try {
+                                java.io.File destino = new java.io.File(destinyPath, mediaFile.mediaFileName);
+                                mediaPoller1.download(mediaFile.id, destino);
 
-                                    com.gomez.yourdownload.model.DownloadInfo newDownload = new com.gomez.yourdownload.model.DownloadInfo(
-                                            destino.getAbsolutePath(),
-                                            new java.util.Date(),
-                                            destino.length(),
-                                            mediaFile.mediaMimeType
-                                    );
+                                com.gomez.yourdownload.model.DownloadInfo newDownload = new com.gomez.yourdownload.model.DownloadInfo(
+                                        destino.getAbsolutePath(),
+                                        new java.util.Date(),
+                                        destino.length(),
+                                        mediaFile.mediaMimeType
+                                );
 
-                                    resourcesList.add(newDownload);
-                                    downloaded++;
-                                } catch (Exception e) {
-                                    System.err.println("Error: Download error: " + mediaFile.mediaFileName + ". Message: " + e.getMessage());
-                                }
-                            }
-
-                            // Guardar y Refrescar
-                            if (downloaded > 0) {
-                                com.gomez.yourdownload.service.DownloadService.saveHistory(resourcesList);
-                                final int totalDownloads = downloaded;
-                                javax.swing.SwingUtilities.invokeLater(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        showLibrary();
-                                        javax.swing.JOptionPane.showMessageDialog(MainScreen.this,
-                                                "Added to library " + totalDownloads + " files.");
-                                    }
-                                });
+                                resourcesList.add(newDownload);
+                                downloaded++;
+                            } catch (Exception e) {
+                                System.err.println("Error: Download error: " + mediaFile.mediaFileName + ". Message: " + e.getMessage());
                             }
                         }
-                    }).start();
-                }
+
+                        // Guardar y Refrescar
+                        if (downloaded > 0) {
+                            com.gomez.yourdownload.service.DownloadService.saveHistory(resourcesList);
+                            final int totalDownloads = downloaded;
+                            javax.swing.SwingUtilities.invokeLater(new Runnable() {
+                                @Override
+                                public void run() {
+                                    showLibrary();
+                                    javax.swing.JOptionPane.showMessageDialog(MainScreen.this,
+                                            "Added to library " + totalDownloads + " files.");
+                                }
+                            });
+                        }
+                    }
+                }).start();
             }
-        });
-    }
+        }
+    });
+}
 
     private void showLoginScreen() {
-        this.setJMenuBar(null);
-        this.setResizable(false);
-        LoginPanel login = new LoginPanel(this, this.mediaPoller1);
-        this.setContentPane(login);
-        this.setSize(500, 320);
-        this.setLocationRelativeTo(null);
-        this.revalidate();
-        this.repaint();
-    }
+    this.setJMenuBar(null);
+    this.setResizable(false);
+    LoginPanel login = new LoginPanel(this, this.mediaPoller1);
+    this.setContentPane(login);
+    this.setSize(500, 320);
+    this.setLocationRelativeTo(null);
+    this.revalidate();
+    this.repaint();
+}
 
     public void loginSuccessful(String token) { // Si se pone bien la contraseña llama a este método
-        this.jwtToken = token;
-            
-        //Restauramos el diseño original
-        this.setJMenuBar(jMenuBar);
-        this.setContentPane(originalPanel);
-        this.setSize(1024, 800);
-        this.setLocationRelativeTo(null);
-        this.revalidate();
-        this.repaint();
-        initMediaPoller(token);
-    }
+    this.jwtToken = token;
+
+    //Restauramos el diseño original
+    this.setJMenuBar(jMenuBar);
+    this.setContentPane(originalPanel);
+    jPanelConsole.setVisible(false);
+    this.setSize(1024, 330);
+    this.setLocationRelativeTo(null);
+    this.revalidate();
+    this.repaint();
+    initMediaPoller(token);
+}
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup buttonGroupAQ;
     private javax.swing.ButtonGroup buttonGroupQuality;
@@ -956,6 +988,7 @@ public class MainScreen extends javax.swing.JFrame {
     private javax.swing.JButton jButtonDownload;
     private javax.swing.JButton jButtonLibrary;
     private javax.swing.JButton jButtonSavePath;
+    private javax.swing.JButton jButtonShowLog;
     private javax.swing.JButton jButtonStart;
     private javax.swing.JButton jButtonStop;
     private javax.swing.JCheckBox jCheckBoxSubtitlesYes;
