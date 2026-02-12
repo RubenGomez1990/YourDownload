@@ -24,7 +24,6 @@ import com.gomez.component.MediaPoller;
  *
  * @author Rubén Gómez Hernández
  */
-
 public class MainScreen extends javax.swing.JFrame {
 
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(MainScreen.class.getName());
@@ -77,7 +76,7 @@ public class MainScreen extends javax.swing.JFrame {
             this.setSize(1024, 330); // Tamaño grande para descargas
             this.setLocationRelativeTo(null);
         }
-
+        updateIconState(this.mediaPoller1.isRunning());
         this.setLocationRelativeTo(null);
         this.setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
 
@@ -143,12 +142,9 @@ public class MainScreen extends javax.swing.JFrame {
         jRadioButtonHQ = new javax.swing.JRadioButton();
         jRadioButtonHigh = new javax.swing.JRadioButton();
         jLabelAQ = new javax.swing.JLabel();
-        jPanelButtonsPolling = new javax.swing.JPanel();
-        jButtonStart = new javax.swing.JButton();
-        jButtonStop = new javax.swing.JButton();
-        jPanelPollerContainer = new javax.swing.JPanel();
         mediaPoller1 = new com.gomez.component.MediaPoller();
         jButtonShowLog = new javax.swing.JButton();
+        jLabelStatus = new javax.swing.JLabel();
         jMenuBar = new javax.swing.JMenuBar();
         jMenuFile = new javax.swing.JMenu();
         jMenuItemLogout = new javax.swing.JMenuItem();
@@ -361,29 +357,6 @@ public class MainScreen extends javax.swing.JFrame {
         getContentPane().add(jPanelAudioQuality);
         jPanelAudioQuality.setBounds(10, 90, 270, 20);
 
-        jButtonStart.setText("Start");
-        jButtonStart.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButtonStartActionPerformed(evt);
-            }
-        });
-        jPanelButtonsPolling.add(jButtonStart);
-
-        jButtonStop.setText("Stop");
-        jButtonStop.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButtonStopActionPerformed(evt);
-            }
-        });
-        jPanelButtonsPolling.add(jButtonStop);
-
-        getContentPane().add(jPanelButtonsPolling);
-        jPanelButtonsPolling.setBounds(820, 240, 180, 40);
-
-        jPanelPollerContainer.setLayout(new java.awt.BorderLayout());
-        getContentPane().add(jPanelPollerContainer);
-        jPanelPollerContainer.setBounds(830, 200, 170, 30);
-
         mediaPoller1.setApiUrl("https://difreenet9.azurewebsites.net");
         getContentPane().add(mediaPoller1);
         mediaPoller1.setBounds(310, 10, 150, 18);
@@ -396,6 +369,15 @@ public class MainScreen extends javax.swing.JFrame {
         });
         getContentPane().add(jButtonShowLog);
         jButtonShowLog.setBounds(10, 240, 130, 23);
+
+        jLabelStatus.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        jLabelStatus.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jLabelStatusMouseClicked(evt);
+            }
+        });
+        getContentPane().add(jLabelStatus);
+        jLabelStatus.setBounds(980, 10, 0, 0);
 
         jMenuFile.setText("File");
 
@@ -730,16 +712,6 @@ public class MainScreen extends javax.swing.JFrame {
         showLoginScreen();
     }//GEN-LAST:event_jMenuItemLogoutActionPerformed
 
-    private void jButtonStopActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonStopActionPerformed
-        System.out.println("Poller: Stopped by button.");
-        this.mediaPoller1.setRunning(false);
-    }//GEN-LAST:event_jButtonStopActionPerformed
-
-    private void jButtonStartActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonStartActionPerformed
-        System.out.println("Poller: Started by button.");
-        this.mediaPoller1.setRunning(true);
-    }//GEN-LAST:event_jButtonStartActionPerformed
-
     private void jButtonShowLogActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonShowLogActionPerformed
 
         if (!jPanelConsole.isVisible()) {
@@ -759,40 +731,44 @@ public class MainScreen extends javax.swing.JFrame {
         this.repaint(); // TODO add your handling code here:
     }//GEN-LAST:event_jButtonShowLogActionPerformed
 
+    private void jLabelStatusMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabelStatusMouseClicked
+        togglePolling();// TODO add your handling code here:
+    }//GEN-LAST:event_jLabelStatusMouseClicked
+
     /**
      * @param args the command line arguments
      */
     public static void main(String args[]) {
-    try {
-        // Al quitar el 'scope' del pom.xml, esto ya no saldrá en rojo
-        com.formdev.flatlaf.FlatLightLaf.setup();
-    } catch (Exception ex) {
-        System.err.println("Error al cargar el tema moderno");
+        try {
+            // Al quitar el 'scope' del pom.xml, esto ya no saldrá en rojo
+            com.formdev.flatlaf.FlatLightLaf.setup();
+        } catch (Exception ex) {
+            System.err.println("Error al cargar el tema moderno");
+        }
+
+        // 2. Ejecución de la aplicación
+        java.awt.EventQueue.invokeLater(() -> {
+            // Obtenemos el token guardado
+            java.util.prefs.Preferences prefs = java.util.prefs.Preferences.userRoot().node("YourDownloadApp");
+            String token = prefs.get("jwt_token", null);
+
+            // CREACIÓN DEL POLLER (Asegúrate de que el nombre de la clase coincida con tu componente)
+            com.gomez.component.MediaPoller globalPoller = new com.gomez.component.MediaPoller();
+            globalPoller.setApiUrl("https://difreenet9.azurewebsites.net/");
+
+            // Abrimos la pantalla principal
+            new MainScreen(token, globalPoller).setVisible(true);
+        });
     }
-
-    // 2. Ejecución de la aplicación
-    java.awt.EventQueue.invokeLater(() -> {
-        // Obtenemos el token guardado
-        java.util.prefs.Preferences prefs = java.util.prefs.Preferences.userRoot().node("YourDownloadApp");
-        String token = prefs.get("jwt_token", null);
-
-        // CREACIÓN DEL POLLER (Asegúrate de que el nombre de la clase coincida con tu componente)
-        com.gomez.component.MediaPoller globalPoller = new com.gomez.component.MediaPoller();
-        globalPoller.setApiUrl("https://difreenet9.azurewebsites.net/");
-
-        // Abrimos la pantalla principal
-        new MainScreen(token, globalPoller).setVisible(true);
-    });
-}
 
     private void updateProgressBar(String line) {
-    Pattern pattern = Pattern.compile("\\[download\\]\\s+(\\d+\\.\\d+)%");
-    Matcher matcher = pattern.matcher(line);
-    if (matcher.find()) {
-        double percent = Double.parseDouble(matcher.group(1));
-        jProgressBar.setValue((int) percent);
+        Pattern pattern = Pattern.compile("\\[download\\]\\s+(\\d+\\.\\d+)%");
+        Matcher matcher = pattern.matcher(line);
+        if (matcher.find()) {
+            double percent = Double.parseDouble(matcher.group(1));
+            jProgressBar.setValue((int) percent);
+        }
     }
-}
 
     /**
      * Determina un tipo MIME (formato de contenido) simple basado en la
@@ -804,183 +780,216 @@ public class MainScreen extends javax.swing.JFrame {
      * "video/mp4").
      */
     private String obtainMimeSimple(String fileName) {
-    if (fileName.toLowerCase().endsWith(".mp4")) {
-        return "video/mp4";
-    } else if (fileName.toLowerCase().endsWith(".avi")) {
-        return "video/x-msvideo";
-    } else if (fileName.toLowerCase().endsWith(".mp3")) {
-        return "audio/mpeg";
+        if (fileName.toLowerCase().endsWith(".mp4")) {
+            return "video/mp4";
+        } else if (fileName.toLowerCase().endsWith(".avi")) {
+            return "video/x-msvideo";
+        } else if (fileName.toLowerCase().endsWith(".mp3")) {
+            return "audio/mpeg";
+        }
+        return "application/octet-stream";
     }
-    return "application/octet-stream";
-}
 
     private String getBinariesPath() {
-    Preferences prefs = Preferences.userRoot().node("PreferencesPanel");
-    final String PREFS_KEY = "binariesPath";
+        Preferences prefs = Preferences.userRoot().node("PreferencesPanel");
+        final String PREFS_KEY = "binariesPath";
 
-    String storedPath = prefs.get(PREFS_KEY, "");
-    if (!storedPath.isEmpty() && new File(storedPath).exists()) {
-        return storedPath; // ¡La configuración manual funciona!
-    }
-
-    String localAppData = System.getenv("LOCALAPPDATA");
-    if (localAppData != null && !localAppData.isEmpty()) {
-        String appDataPath = localAppData + File.separator + "yt-dlp.exe";
-        if (new File(appDataPath).exists()) {
-            prefs.put(PREFS_KEY, appDataPath);
-            return appDataPath;
+        String storedPath = prefs.get(PREFS_KEY, "");
+        if (!storedPath.isEmpty() && new File(storedPath).exists()) {
+            return storedPath; // ¡La configuración manual funciona!
         }
-    }
 
-    String userHomePath = System.getProperty("user.home") + File.separator + "yt-dlp.exe";
-    if (new File(userHomePath).exists()) {
-        prefs.put(PREFS_KEY, userHomePath);
-        return userHomePath;
+        String localAppData = System.getenv("LOCALAPPDATA");
+        if (localAppData != null && !localAppData.isEmpty()) {
+            String appDataPath = localAppData + File.separator + "yt-dlp.exe";
+            if (new File(appDataPath).exists()) {
+                prefs.put(PREFS_KEY, appDataPath);
+                return appDataPath;
+            }
+        }
+
+        String userHomePath = System.getProperty("user.home") + File.separator + "yt-dlp.exe";
+        if (new File(userHomePath).exists()) {
+            prefs.put(PREFS_KEY, userHomePath);
+            return userHomePath;
+        }
+        return "";
     }
-    return "";
-}
 
     private void showLibrary() {
-    MediaLibrary libraryPanel = new MediaLibrary(this, originalPanel, resourcesList, this.mediaPoller1);
+        this.setSize(1024, 600);
+        this.setLocationRelativeTo(null);
+        MediaLibrary libraryPanel = new MediaLibrary(this, originalPanel, resourcesList, this.mediaPoller1);
 
-    setContentPane(libraryPanel);
-    revalidate();
-    repaint();
-}
+        setContentPane(libraryPanel);
+        revalidate();
+        repaint();
+    }
 
     private void initMediaPoller(String token) {
-    if (this.mediaPoller1 == null) {
-        System.err.println("Mediapoller is null");
-        return;
-    }
-
-    if (token != null && !token.isEmpty()) {
-        this.mediaPoller1.setToken(token);
-    }
-
-    this.mediaPoller1.setRunning(true);
-    this.mediaPoller1.addNewMediaListener(new com.gomez.component.NewMediaListener() {
-        @Override
-        public void onNewMediaDetected(com.gomez.component.NewMediaEvent event) {
-            handleNewFilesFound(event);
+        if (this.mediaPoller1 == null) {
+            System.err.println("Mediapoller is null");
+            return;
         }
-    });
-    this.jPanelPollerContainer.removeAll();
-    this.jPanelPollerContainer.setLayout(new java.awt.BorderLayout());
-    this.jPanelPollerContainer.add(this.mediaPoller1, java.awt.BorderLayout.NORTH);
-    this.jPanelPollerContainer.revalidate();
-    this.jPanelPollerContainer.repaint();
-}
+
+        if (token != null && !token.isEmpty()) {
+            this.mediaPoller1.setToken(token);
+        }
+
+        this.mediaPoller1.setRunning(true);
+        this.mediaPoller1.addNewMediaListener(new com.gomez.component.NewMediaListener() {
+            @Override
+            public void onNewMediaDetected(com.gomez.component.NewMediaEvent event) {
+                handleNewFilesFound(event);
+            }
+        });
+        mediaPoller1.setSize(0, 0);
+        updateIconState(this.mediaPoller1.isRunning());
+    }
 
     private void handleNewFilesFound(final com.gomez.component.NewMediaEvent event) {
 
-    int filesCount = event.getNewFiles().size();
-    String fileName = "N/A";
-    if (filesCount > 0) {
-        // Obtenemos el primer objeto que viene de la API
-        com.gomez.model.Media firstFile = event.getNewFiles().get(0);
+        int filesCount = event.getNewFiles().size();
+        String fileName = "N/A";
+        if (filesCount > 0) {
+            // Obtenemos el primer objeto que viene de la API
+            com.gomez.model.Media firstFile = event.getNewFiles().get(0);
 
-        fileName = firstFile.mediaFileName;
-    }
+            fileName = firstFile.mediaFileName;
+        }
 
-    // Imprimimos el mensaje de detección con el detalle del nombre del archivo.
-    System.out.println("Poller: Detected " + filesCount + " new files from API.");
-    System.out.println("Poller: First file name detected: " + fileName);
-    System.out.flush();
+        // Imprimimos el mensaje de detección con el detalle del nombre del archivo.
+        System.out.println("Poller: Detected " + filesCount + " new files from API.");
+        System.out.println("Poller: First file name detected: " + fileName);
+        System.out.flush();
 
-    final String finalFileName = fileName;
-    // 2. Alerta de la Interfaz (SwingUtilities.invokeLater)
-    javax.swing.SwingUtilities.invokeLater(new Runnable() {
-        @Override
-        public void run() {
-            Object[] options = {"Download", "Close"};
+        final String finalFileName = fileName;
+        // 2. Alerta de la Interfaz (SwingUtilities.invokeLater)
+        javax.swing.SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                Object[] options = {"Download", "Close"};
 
-            int result = javax.swing.JOptionPane.showOptionDialog(
-                    MainScreen.this,
-                    "Detected " + event.getNewFiles().size() + " new files!"
-                    + (filesCount > 0 ? "\nFile: " + finalFileName : "")
-                    + "\nDo you want to download it?",
-                    // =======================================================
-                    "New files detected.",
-                    javax.swing.JOptionPane.YES_NO_OPTION,
-                    javax.swing.JOptionPane.INFORMATION_MESSAGE,
-                    null,
-                    options,
-                    options[0]
-            );
+                int result = javax.swing.JOptionPane.showOptionDialog(
+                        MainScreen.this,
+                        "Detected " + event.getNewFiles().size() + " new files!"
+                        + (filesCount > 0 ? "\nFile: " + finalFileName : "")
+                        + "\nDo you want to download it?",
+                        // =======================================================
+                        "New files detected.",
+                        javax.swing.JOptionPane.YES_NO_OPTION,
+                        javax.swing.JOptionPane.INFORMATION_MESSAGE,
+                        null,
+                        options,
+                        options[0]
+                );
 
-            if (result == 0) {
-                // 3. Hilo de Descarga
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        System.err.println("Poller: Initiating automatic download...");
-                        int downloaded = 0;
+                if (result == 0) {
+                    // 3. Hilo de Descarga
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            System.err.println("Poller: Initiating automatic download...");
+                            int downloaded = 0;
 
-                        // Recorremos la lista de archivos
-                        for (com.gomez.model.Media mediaFile : event.getNewFiles()) {
-                            try {
-                                java.io.File destino = new java.io.File(destinyPath, mediaFile.mediaFileName);
-                                mediaPoller1.download(mediaFile.id, destino);
+                            // Recorremos la lista de archivos
+                            for (com.gomez.model.Media mediaFile : event.getNewFiles()) {
+                                try {
+                                    java.io.File destino = new java.io.File(destinyPath, mediaFile.mediaFileName);
+                                    mediaPoller1.download(mediaFile.id, destino);
 
-                                com.gomez.yourdownload.model.DownloadInfo newDownload = new com.gomez.yourdownload.model.DownloadInfo(
-                                        destino.getAbsolutePath(),
-                                        new java.util.Date(),
-                                        destino.length(),
-                                        mediaFile.mediaMimeType
-                                );
+                                    com.gomez.yourdownload.model.DownloadInfo newDownload = new com.gomez.yourdownload.model.DownloadInfo(
+                                            destino.getAbsolutePath(),
+                                            new java.util.Date(),
+                                            destino.length(),
+                                            mediaFile.mediaMimeType
+                                    );
 
-                                resourcesList.add(newDownload);
-                                downloaded++;
-                            } catch (Exception e) {
-                                System.err.println("Error: Download error: " + mediaFile.mediaFileName + ". Message: " + e.getMessage());
+                                    resourcesList.add(newDownload);
+                                    downloaded++;
+                                } catch (Exception e) {
+                                    System.err.println("Error: Download error: " + mediaFile.mediaFileName + ". Message: " + e.getMessage());
+                                }
+                            }
+
+                            // Guardar y Refrescar
+                            if (downloaded > 0) {
+                                com.gomez.yourdownload.service.DownloadService.saveHistory(resourcesList);
+                                final int totalDownloads = downloaded;
+                                javax.swing.SwingUtilities.invokeLater(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        showLibrary();
+                                        javax.swing.JOptionPane.showMessageDialog(MainScreen.this,
+                                                "Added to library " + totalDownloads + " files.");
+                                    }
+                                });
                             }
                         }
-
-                        // Guardar y Refrescar
-                        if (downloaded > 0) {
-                            com.gomez.yourdownload.service.DownloadService.saveHistory(resourcesList);
-                            final int totalDownloads = downloaded;
-                            javax.swing.SwingUtilities.invokeLater(new Runnable() {
-                                @Override
-                                public void run() {
-                                    showLibrary();
-                                    javax.swing.JOptionPane.showMessageDialog(MainScreen.this,
-                                            "Added to library " + totalDownloads + " files.");
-                                }
-                            });
-                        }
-                    }
-                }).start();
+                    }).start();
+                }
             }
-        }
-    });
-}
+        });
+    }
 
     private void showLoginScreen() {
-    this.setJMenuBar(null);
-    this.setResizable(false);
-    LoginPanel login = new LoginPanel(this, this.mediaPoller1);
-    this.setContentPane(login);
-    this.setSize(500, 320);
-    this.setLocationRelativeTo(null);
-    this.revalidate();
-    this.repaint();
-}
+        this.setJMenuBar(null);
+        this.setResizable(false);
+        LoginPanel login = new LoginPanel(this, this.mediaPoller1);
+        this.setContentPane(login);
+        this.setSize(500, 320);
+        this.setLocationRelativeTo(null);
+        this.revalidate();
+        this.repaint();
+    }
 
     public void loginSuccessful(String token) { // Si se pone bien la contraseña llama a este método
-    this.jwtToken = token;
+        this.jwtToken = token;
 
-    //Restauramos el diseño original
-    this.setJMenuBar(jMenuBar);
-    this.setContentPane(originalPanel);
-    jPanelConsole.setVisible(false);
-    this.setSize(1024, 330);
-    this.setLocationRelativeTo(null);
-    this.revalidate();
-    this.repaint();
-    initMediaPoller(token);
-}
+        //Restauramos el diseño original
+        this.setJMenuBar(jMenuBar);
+        this.setContentPane(originalPanel);
+        jPanelConsole.setVisible(false);
+        this.setSize(1024, 330);
+        this.setLocationRelativeTo(null);
+        this.revalidate();
+        this.repaint();
+        initMediaPoller(token);
+    }
+
+    private void togglePolling() {
+        // 1. Consultamos el estado actual del componente que ya tienes
+        boolean estaCorriendo = this.mediaPoller1.isRunning();
+
+        // 2. Invertimos el estado
+        boolean nuevoEstado = !estaCorriendo;
+        this.mediaPoller1.setRunning(nuevoEstado);
+
+        // 3. Actualizamos el icono visualmente
+        updateIconState(nuevoEstado);
+
+        // Debug para que lo veas en consola (puedes quitarlo luego)
+        System.out.println("Poller cambiado a: " + (nuevoEstado ? "ENCENDIDO" : "APAGADO"));
+    }
+
+    private void updateIconState(boolean on) {
+        String iconPath = on ? "/icons/status_on.png" : "/icons/status_off.png";
+        try {
+            java.net.URL imgURL = getClass().getResource(iconPath);
+            if (imgURL != null) {
+                javax.swing.ImageIcon icon = new javax.swing.ImageIcon(imgURL);
+                jLabelStatus.setIcon(icon);
+
+                jLabelStatus.setSize(24, 24);
+                jLabelStatus.setBounds(960, 10, 24, 24);
+
+                jLabelStatus.setToolTipText(on ? "Server Sync: ACTIVE" : "Server Sync: STOPPED");
+                jLabelStatus.setText("");
+            }
+        } catch (Exception e) {
+            jLabelStatus.setText(on ? "V" : "X");
+        }
+    }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup buttonGroupAQ;
     private javax.swing.ButtonGroup buttonGroupQuality;
@@ -989,8 +998,6 @@ public class MainScreen extends javax.swing.JFrame {
     private javax.swing.JButton jButtonLibrary;
     private javax.swing.JButton jButtonSavePath;
     private javax.swing.JButton jButtonShowLog;
-    private javax.swing.JButton jButtonStart;
-    private javax.swing.JButton jButtonStop;
     private javax.swing.JCheckBox jCheckBoxSubtitlesYes;
     private javax.swing.JComboBox<String> jComboBoxFormat;
     private javax.swing.JLabel jLabelAQ;
@@ -998,6 +1005,7 @@ public class MainScreen extends javax.swing.JFrame {
     private javax.swing.JLabel jLabelProgress;
     private javax.swing.JLabel jLabelQuality;
     private javax.swing.JLabel jLabelSave;
+    private javax.swing.JLabel jLabelStatus;
     private javax.swing.JLabel jLabelSubtitles;
     private javax.swing.JLabel jLabelUrl;
     private javax.swing.JLabel jLabelWelcome;
@@ -1010,12 +1018,10 @@ public class MainScreen extends javax.swing.JFrame {
     private javax.swing.JMenuItem jMenuItemLogout;
     private javax.swing.JMenuItem jMenuItemPreferences;
     private javax.swing.JPanel jPanelAudioQuality;
-    private javax.swing.JPanel jPanelButtonsPolling;
     private javax.swing.JPanel jPanelConsole;
     private javax.swing.JPanel jPanelDownload;
     private javax.swing.JPanel jPanelFormat;
     private javax.swing.JPanel jPanelLibrary;
-    private javax.swing.JPanel jPanelPollerContainer;
     private javax.swing.JPanel jPanelProgress;
     private javax.swing.JPanel jPanelQuality;
     private javax.swing.JPanel jPanelSave;

@@ -23,14 +23,14 @@ import javax.swing.SwingUtilities;
  */
 public class MediaLibrary extends javax.swing.JPanel {
 
-    private final MainScreen principal;
+    private final MainScreen mainScreen;
     private final JPanel originalPanel;
     private final List<DownloadInfo> resourcesList;
     private DownloadInfoTableModel tableModel;
     private final MediaPoller mediaPoller;
 
     public MediaLibrary(MainScreen principal, JPanel originalPanel, List<DownloadInfo> resourcesList, MediaPoller mediaPoller) {
-        this.principal = principal;
+        this.mainScreen = principal;
         this.originalPanel = originalPanel;
         this.resourcesList = resourcesList;
         this.mediaPoller = mediaPoller;
@@ -50,7 +50,7 @@ public class MediaLibrary extends javax.swing.JPanel {
         new Thread(() -> {
             // Verificación de seguridad
             if (this.mediaPoller == null) {
-                SwingUtilities.invokeLater(() -> JOptionPane.showMessageDialog(principal,
+                SwingUtilities.invokeLater(() -> JOptionPane.showMessageDialog(mainScreen,
                         "Error: MediaPoller instance is missing. Cannot sync.", "Fatal Error", JOptionPane.ERROR_MESSAGE));
                 return;
             }
@@ -114,14 +114,14 @@ public class MediaLibrary extends javax.swing.JPanel {
                 // 5. TERMINADO: Actualizar la UI
                 SwingUtilities.invokeLater(() -> {
                     this.tableModel.fireTableDataChanged();
-                    JOptionPane.showMessageDialog(principal,
+                    JOptionPane.showMessageDialog(mainScreen,
                             "Library updated! Found " + networkFiles.size() + " total network files.",
                             "Sync Complete", JOptionPane.INFORMATION_MESSAGE);
                 });
 
             } catch (Exception e) {
                 SwingUtilities.invokeLater(() -> {
-                    JOptionPane.showMessageDialog(principal,
+                    JOptionPane.showMessageDialog(mainScreen,
                             "Error loading network media. Check token/connection: " + e.getMessage(),
                             "API Error", JOptionPane.ERROR_MESSAGE);
                     System.err.println("API Error in MediaLibrary: " + e.getMessage());
@@ -231,9 +231,10 @@ public class MediaLibrary extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButtonBackActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonBackActionPerformed
-        principal.setContentPane(originalPanel);
-        principal.revalidate();
-        principal.repaint();
+        mainScreen.setContentPane(originalPanel);
+        mainScreen.setSize(1024, 330); // Reajuste de tamaño al volver
+        mainScreen.revalidate();
+        mainScreen.repaint();
     }//GEN-LAST:event_jButtonBackActionPerformed
 
     private void jButtonDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonDeleteActionPerformed
@@ -307,7 +308,7 @@ public class MediaLibrary extends javax.swing.JPanel {
     }//GEN-LAST:event_jComboBoxFilterActionPerformed
 
     private void jButtonSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSearchActionPerformed
-        javax.swing.JFrame parentFrame = principal;
+        javax.swing.JFrame parentFrame = mainScreen;
 
         try {
             // La ejecución crítica que puede fallar:
@@ -316,7 +317,7 @@ public class MediaLibrary extends javax.swing.JPanel {
 
         } catch (Exception e) {
             // Capturamos la excepción (NPE, error de componente, etc.)
-            javax.swing.JOptionPane.showMessageDialog(principal,
+            javax.swing.JOptionPane.showMessageDialog(mainScreen,
                     "Error opening search: " + e.getMessage(),
                     "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
 
@@ -341,7 +342,7 @@ public class MediaLibrary extends javax.swing.JPanel {
             if (!downloadFolder.exists()) {
                 downloadFolder.mkdirs(); // Crea la carpeta si no existe
             }
-            
+
             java.io.File destinationFile = new java.io.File(downloadFolder, fileToDownload.getFileName());
 
             if (destinationFile.exists()) {
