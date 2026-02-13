@@ -1,6 +1,5 @@
 package com.gomez.yourdownload.view;
 
-
 import java.io.File;
 import java.util.prefs.Preferences;
 import javax.swing.JFileChooser;
@@ -11,34 +10,31 @@ import javax.swing.JPanel;
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JPanel.java to edit this template
  */
-
 /**
  *
  * @author LionKeriot
  */
 public class PreferencesPanel extends javax.swing.JPanel {
-    
+
     private JFrame mainScreen;
     private JPanel originalPanel;
     private String destinyPath = "";
     private String binariesPath;
+
     /**
-    *
-    * @param mainScreen la ventana principal que contiene este panel
-    */
+     *
+     * @param mainScreen la ventana principal que contiene este panel
+     */
 
     public PreferencesPanel(JFrame mainScreen, JPanel originalPanel) {
         initComponents();
         this.mainScreen = mainScreen;
         this.originalPanel = originalPanel;
-        
-        // CORRECCIÓN 1: Usar el nombre exacto del nodo "PreferencesPanel"
+
         Preferences prefs = Preferences.userRoot().node("PreferencesPanel");
-        
-        // CORRECCIÓN 2: Usar la clave exacta "binariesPath"
-        // CORRECCIÓN 3: Quitar la ruta hardcodeada de ruben, poner "" por defecto
-        this.binariesPath = prefs.get("binariesPath", ""); 
-        
+
+        this.binariesPath = prefs.get("binariesPath", "");
+
         jLabelBinaries.setText("Binaries path: " + binariesPath);
     }
 
@@ -150,20 +146,20 @@ public class PreferencesPanel extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButtonTemporalyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonTemporalyActionPerformed
-    JFileChooser chooser = new JFileChooser();
-    chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        JFileChooser chooser = new JFileChooser();
+        chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 
-    int result = chooser.showOpenDialog(this);
-    if (result == JFileChooser.APPROVE_OPTION) {
-        File selectedFolder = chooser.getSelectedFile();
-        String temporalPath = selectedFolder.getAbsolutePath();
+        int result = chooser.showOpenDialog(this);
+        if (result == JFileChooser.APPROVE_OPTION) {
+            File selectedFolder = chooser.getSelectedFile();
+            String temporalPath = selectedFolder.getAbsolutePath();
 
-    // Guarda la ruta donde quieras
-    jLabelTemporaly.setText(temporalPath); // ejemplo visual
-    this.destinyPath = temporalPath;     // ejemplo funcional
-}
+            // Guarda la ruta donde quieras
+            jLabelTemporaly.setText(temporalPath); // ejemplo visual
+            this.destinyPath = temporalPath;     // ejemplo funcional
+        }
 
-    
+
     }//GEN-LAST:event_jButtonTemporalyActionPerformed
 
     private void jCheckBoxPlaylistsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBoxPlaylistsActionPerformed
@@ -171,7 +167,7 @@ public class PreferencesPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_jCheckBoxPlaylistsActionPerformed
 
     private void jButtonBackActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonBackActionPerformed
-        
+
         mainScreen.setContentPane(originalPanel);
         mainScreen.revalidate();
         mainScreen.repaint();
@@ -180,29 +176,23 @@ public class PreferencesPanel extends javax.swing.JPanel {
 
     private void jButtonBinariesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonBinariesActionPerformed
         JFileChooser chooser = new JFileChooser();
-    chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+        chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
 
-    int result = chooser.showOpenDialog(this);
-    if (result == JFileChooser.APPROVE_OPTION) {
-        File selectedFile = chooser.getSelectedFile();
-        binariesPath = selectedFile.getAbsolutePath();
+        int result = chooser.showOpenDialog(this);
+        if (result == JFileChooser.APPROVE_OPTION) {
+            File selectedFile = chooser.getSelectedFile();
+            binariesPath = selectedFile.getAbsolutePath();
+            jLabelBinaries.setText("Binaries path: " + binariesPath);
 
-        jLabelBinaries.setText("Binaries path: " + binariesPath);
-        
-        // --- INICIO CODIGO DEBUG ---
-        System.out.println("DEBUG (PreferencesPanel): Intentando guardar ruta: " + binariesPath);
-        
-        Preferences prefs = Preferences.userRoot().node("PreferencesPanel");
-        prefs.put("binariesPath", binariesPath);
-        
-        try { 
-            prefs.flush(); 
-            System.out.println("DEBUG (PreferencesPanel): Guardado EXITOSO en nodo 'PreferencesPanel' clave 'binariesPath'");
-        } catch (Exception e) {
-            System.out.println("DEBUG (PreferencesPanel): ERROR al guardar: " + e.getMessage());
+            Preferences prefs = Preferences.userRoot().node("PreferencesPanel");
+            prefs.put("binariesPath", binariesPath);
+
+            try {
+                prefs.flush();
+            } catch (Exception e) {
+                System.err.println("Error saving preferences: " + e.getMessage());
+            }
         }
-        // --- FIN CODIGO DEBUG ---
-    }
     }//GEN-LAST:event_jButtonBinariesActionPerformed
 
     private void jComboBoxLimitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBoxLimitActionPerformed

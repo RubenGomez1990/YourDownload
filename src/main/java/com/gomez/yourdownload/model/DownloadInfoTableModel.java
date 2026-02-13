@@ -4,77 +4,67 @@ import java.text.SimpleDateFormat;
 import java.util.List;
 import javax.swing.table.AbstractTableModel;
 
-/**
- * Table Model para manejar la lista híbrida de archivos (Local, Red, Ambos).
- */
 public class DownloadInfoTableModel extends AbstractTableModel {
-    
-    private final List<DownloadInfo> resources;
-    // 🛑 CAMBIO 1: Añadimos la columna "Status"
-    private final String[] columnName = {"Name", "Size", "Format", "Download Date", "Status"};
-    
-    // Formateador para la fecha
-    private final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-    
-    public DownloadInfoTableModel(List<DownloadInfo> resources){
-        this.resources = resources;
+
+    private final List<DownloadInfo> downloads;
+    private final String[] columnNames = {"ID", "Name", "Size", "Format", "Download Date", "Status"};
+    private final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+    public DownloadInfoTableModel(List<DownloadInfo> downloads) {
+        this.downloads = downloads;
     }
-    
-    
+
     @Override
-    public int getRowCount(){
-        return resources.size();
+    public int getRowCount() { return downloads.size(); }
+
+    @Override
+    public int getColumnCount() { return columnNames.length; }
+
+    @Override
+    public String getColumnName(int column) { return columnNames[column]; }
+
+    // CRÍTICO: Esto arregla el orden (3 después de 28) indicando que la col 0 es numérica
+    @Override
+    public Class<?> getColumnClass(int columnIndex) {
+        if (columnIndex == 0) return Integer.class; 
+        return Object.class;
     }
-    
+
     @Override
-    public int getColumnCount() {
-        // 🛑 CAMBIO 2: Aseguramos que se devuelve la longitud del array de nombres (5 columnas)
-        return columnName.length;
-    }
-    
-    @Override
-    public String getColumnName(int columnIndex){
-        return columnName[columnIndex];
-    }
-    
-    @Override
-    public Object getValueAt(int rowIndex, int columnIndex){
-        DownloadInfo resource = resources.get(rowIndex);
-        
+    public Object getValueAt(int rowIndex, int columnIndex) {
+        if (rowIndex < 0 || rowIndex >= downloads.size()) return null;
+        DownloadInfo resource = downloads.get(rowIndex);
+
         switch (columnIndex) {
-            case 0: return resource.getFileName();
-            case 1: return resource.getFormatedSize();
-            case 2: 
-                // Usamos solo el tipo principal (ej: video/mp4 -> video)
-                if (resource.getMimeType() != null) {
-                    return resource.getMimeType().split("/")[0];
-                }
-                return "N/A";
+            case 0:
+                // Retornamos el Integer puro para que el ordenador funcione bien
+                return resource.getNetworkId(); 
+            case 1:
+                return resource.getFileName();
+            case 2:
+                return resource.getFormatedSize();
+            case 3:
+                return (resource.getMimeType() != null) ? resource.getMimeType().split("/")[0] : "Unknown";
+            case 4:
+                return (resource.getDownloadDate() != null) ? dateFormat.format(resource.getDownloadDate()) : "N/A (No Local)";
+            case 5:
+                // --- Etiquetas de Estado Personalizadas ---
                 
-            case 3: 
-                // 🛑 CORRECCIÓN 3: Manejo de Null para archivos Solo Red
-                if (resource.getDownloadDate() != null) {
-                    return dateFormat.format(resource.getDownloadDate());
+                // 1. Está en ambos (Local + Net)
+                if (resource.getAbsolutePath() != null && resource.isInNetwork()) {
+                    return "Local + Net";
                 }
-                return "N/A (No Local)"; // Indica que no tiene fecha de descarga local
-                
-            case 4: 
-                // 🛑 CORRECCIÓN 4: Lógica para la Columna de Estado
-                if (resource.isNetworkOnly()) {
+                // 2. Solo en la API
+                if (resource.isNetworkOnly() || (resource.getAbsolutePath() == null && resource.isInNetwork())) {
                     return "Network Only";
-                } 
-                if (resource.isInNetwork()) {
-                    return "Local & Network";
                 }
-                // Si no está en Red y tiene ruta local
+                // 3. Solo en el ordenador
                 if (resource.getAbsolutePath() != null) {
                     return "Local Only";
                 }
-                return "Unknown/Broken"; // Estado para archivos huérfanos sin ruta
-                
-            default: return null;
+                return "Unknown";
+            default:
+                return null;
         }
     }
 }
-
-

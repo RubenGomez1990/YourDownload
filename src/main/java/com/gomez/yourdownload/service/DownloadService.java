@@ -24,15 +24,25 @@ public class DownloadService {
     // --- LÓGICA DE PERSISTENCIA JSON ---
     
     public static void saveHistory(List<DownloadInfo> historyList) {
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        File historyFile = new File(System.getProperty("user.home"), HISTORY_FILE_NAME);
+    Gson gson = new GsonBuilder().setPrettyPrinting().create();
+    File historyFile = new File(System.getProperty("user.home"), HISTORY_FILE_NAME);
 
-        try (FileWriter writer = new FileWriter(historyFile)) {
-            gson.toJson(historyList, writer);
-        } catch (IOException e) {
-            logger.log(Level.SEVERE, "Error al guardar historial JSON.", e);
-        }
+    // FILTRO ANTI-DUPLICADOS: Usamos un Mapa para quedarnos solo con un registro por cada ID o Nombre
+    java.util.Map<String, DownloadInfo> uniqueMap = new java.util.LinkedHashMap<>();
+    
+    for (DownloadInfo info : historyList) {
+        // Usamos el ID como clave si existe, si no, el nombre del archivo
+        String key = (info.getNetworkId() != null) ? info.getNetworkId().toString() : info.getFileName();
+        uniqueMap.put(key, info);
     }
+
+    try (FileWriter writer = new FileWriter(historyFile)) {
+        // Guardamos solo los valores únicos del mapa
+        gson.toJson(new java.util.ArrayList<>(uniqueMap.values()), writer);
+    } catch (IOException e) {
+        logger.log(Level.SEVERE, "Error saving the JSON historial.", e);
+    }
+}
 
     public static List<DownloadInfo> loadHistory() {
         File historyFile = new File(System.getProperty("user.home"), HISTORY_FILE_NAME);

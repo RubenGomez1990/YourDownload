@@ -5,6 +5,7 @@ import com.gomez.yourdownload.model.DownloadInfoTableModel;
 import com.gomez.yourdownload.model.DownloadInfo;
 import com.gomez.model.Media;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,97 +37,106 @@ public class MediaLibrary extends javax.swing.JPanel {
         this.mediaPoller = mediaPoller;
 
         initComponents();
+
+        // 1. Inicializamos el modelo
         tableModel = new DownloadInfoTableModel(resourcesList);
         jTableMedia.setModel(tableModel);
 
-        javax.swing.table.TableRowSorter<DownloadInfoTableModel> sorter = new javax.swing.table.TableRowSorter<>(tableModel);
+        // 2. CREACIÓN MANUAL DEL SORTER (Para que no sea null)
+        javax.swing.table.TableRowSorter<DownloadInfoTableModel> sorter
+                = new javax.swing.table.TableRowSorter<>(tableModel);
         jTableMedia.setRowSorter(sorter);
+        jTableMedia.getColumnModel().getColumn(0).setCellRenderer(new javax.swing.table.DefaultTableCellRenderer() {
+            @Override
+            protected void setValue(Object value) {
+                setText((value == null) ? "N/A" : value.toString());
+            }
+        });
 
+        // 3. CONFIGURACIÓN DEL ORDEN INICIAL POR ID (Columna 0)
+        java.util.List<javax.swing.RowSorter.SortKey> sortKeys = new java.util.ArrayList<>();
+        sortKeys.add(new javax.swing.RowSorter.SortKey(0, javax.swing.SortOrder.ASCENDING));
+        sorter.setSortKeys(sortKeys);
+        sorter.sort();
+
+        // 4. Inits de filtros y carga
         initFiltroComboBox();
+        loadAllMediaInfo();
     }
 
     private void loadAllMediaInfo() {
-        // Lanzamos la operación de red en un hilo secundario para no bloquear la UI
         new Thread(() -> {
-            // Verificación de seguridad
             if (this.mediaPoller == null) {
-                SwingUtilities.invokeLater(() -> JOptionPane.showMessageDialog(mainScreen,
-                        "Error: MediaPoller instance is missing. Cannot sync.", "Fatal Error", JOptionPane.ERROR_MESSAGE));
                 return;
             }
 
             try {
-                // 1. OBTENER ARCHIVOS DE LA RED DI MEDIA
-                List<Media> networkFiles = this.mediaPoller.getAllMedia();
-
-                // 2. CREAR UN MAPA para buscar rápidamente los archivos de la red por su nombre
-                Map<String, Media> networkMap = new HashMap<>();
-                for (Media media : networkFiles) {
-                    // 🛑 CORRECCIÓN: Usamos el campo directo del modelo del componente
-                    networkMap.put(media.mediaFileName.toLowerCase(), media);
+                List<com.gomez.model.Media> networkFiles = this.mediaPoller.getAllMedia();
+                if (networkFiles == null) {
+                    return;
                 }
 
-                // 3. FUSIONAR LISTAS: Iterar sobre la lista LOCAL (resourcesList)
-                for (DownloadInfo localInfo : this.resourcesList) {
-                    // 💥 ATENCIÓN: Usamos java.io.File para no depender de import incorrecto
-                    if (localInfo.getAbsolutePath() != null && new File(localInfo.getAbsolutePath()).exists()) {
-                        String localFileName = localInfo.getFileName().toLowerCase();
-
-                        if (networkMap.containsKey(localFileName)) {
-                            // Estado: AMBOS (Local y en Red)
-                            Media networkMedia = networkMap.get(localFileName);
-
-                            // 🛑 CORRECCIÓN: Usamos los campos directos para la asignación
-                            localInfo.setNetworkId(networkMedia.id);
-                            localInfo.setIsInNetwork(true);
-                            localInfo.setIsNetworkOnly(false);
-
-                            networkMap.remove(localFileName);
-                        } else {
-                            // Estado: SOLO LOCAL (Limpieza de estado de red)
-                            localInfo.setIsInNetwork(false);
-                            localInfo.setIsNetworkOnly(false);
-                            localInfo.setNetworkId(null);
-                        }
-                    } else {
-                        // Archivo huérfano (historial pero no disco)
-                        localInfo.setIsInNetwork(false);
-                        localInfo.setIsNetworkOnly(false);
-                        localInfo.setNetworkId(null);
-                        // No lo eliminamos de resourcesList para mantener el historial.
+                // 1. Mapa de red (Normalizamos el nombre para evitar fallos por mayúsculas/espacios)
+                Map<String, com.gomez.model.Media> networkMap = new HashMap<>();
+                for (com.gomez.model.Media m : networkFiles) {
+                    if (m.mediaFileName != null) {
+                        networkMap.put(m.mediaFileName.trim().toLowerCase(), m);
                     }
                 }
 
-                for (Media networkMedia : networkMap.values()) {
-                    // Estado: SOLO RE
-                    // 🛑 CORRECCIÓN: Casteo de long primitiva (Media) a Long objeto (DownloadInfo)
-                    Long fileSize = Long.valueOf(networkMedia.mediaFileSize);
-
-                    DownloadInfo networkOnlyInfo = new DownloadInfo(
-                            networkMedia.id,
-                            networkMedia.mediaFileName,
-                            fileSize,
-                            networkMedia.mediaMimeType
-                    );
-                    this.resourcesList.add(networkOnlyInfo);
-                }
-
-                // 5. TERMINADO: Actualizar la UI
                 SwingUtilities.invokeLater(() -> {
-                    this.tableModel.fireTableDataChanged();
-                    JOptionPane.showMessageDialog(mainScreen,
-                            "Library updated! Found " + networkFiles.size() + " total network files.",
-                            "Sync Complete", JOptionPane.INFORMATION_MESSAGE);
-                });
+                    // 2. Usamos un Set para no añadir dos veces lo mismo por error
+                    java.util.Set<String> processedNames = new java.util.HashSet<>();
+                    java.util.List<DownloadInfo> mergedList = new ArrayList<>();
 
+                    // 3. PASO 1: Revisar lo que ya tenemos en local/historial
+                    for (DownloadInfo local : resourcesList) {
+                        String cleanName = local.getFileName().trim().toLowerCase();
+
+                        if (networkMap.containsKey(cleanName)) {
+                            // CASO: ESTÁ EN AMBOS (Synced)
+                            com.gomez.model.Media net = networkMap.get(cleanName);
+                            local.setNetworkId(net.id);
+                            local.setIsInNetwork(true);
+                            local.setIsNetworkOnly(false);
+                            networkMap.remove(cleanName); // Lo quitamos del mapa de red
+                        } else {
+                            // CASO: SOLO LOCAL
+                            local.setIsInNetwork(false);
+                            local.setNetworkId(null);
+                        }
+
+                        if (!processedNames.contains(cleanName)) {
+                            mergedList.add(local);
+                            processedNames.add(cleanName);
+                        }
+                    }
+
+                    // 4. PASO 2: Añadir lo que queda en la red que NO teníamos localmente
+                    for (com.gomez.model.Media net : networkMap.values()) {
+                        String cleanName = net.mediaFileName.trim().toLowerCase();
+                        if (!processedNames.contains(cleanName)) {
+                            DownloadInfo cloudOnly = new DownloadInfo(
+                                    net.id, net.mediaFileName, (long) net.mediaFileSize, net.mediaMimeType
+                            );
+                            mergedList.add(cloudOnly);
+                            processedNames.add(cleanName);
+                        }
+                    }
+
+                    // 5. ACTUALIZACIÓN FINAL: Sustituimos la lista vieja por la nueva limpia
+                    resourcesList.clear();
+                    resourcesList.addAll(mergedList);
+
+                    tableModel.fireTableDataChanged();
+
+                    // Re-ordenar por ID tras la limpieza
+                    if (jTableMedia.getRowSorter() instanceof javax.swing.DefaultRowSorter) {
+                        ((javax.swing.DefaultRowSorter<?, ?>) jTableMedia.getRowSorter()).sort();
+                    }
+                });
             } catch (Exception e) {
-                SwingUtilities.invokeLater(() -> {
-                    JOptionPane.showMessageDialog(mainScreen,
-                            "Error loading network media. Check token/connection: " + e.getMessage(),
-                            "API Error", JOptionPane.ERROR_MESSAGE);
-                    System.err.println("API Error in MediaLibrary: " + e.getMessage());
-                    e.printStackTrace();
-                });
+                e.printStackTrace();
             }
         }).start();
     }
@@ -284,7 +294,7 @@ public class MediaLibrary extends javax.swing.JPanel {
         }
         String selectedFilter = (String) jComboBoxFilter.getSelectedItem();
 
-        if (selectedFilter.equals("All Types")) {
+        if (!selectedFilter.equals("All Types")) {
             // CASO A: Mostrar todas las filas.
             sorter.setRowFilter(null);
         } else {
@@ -301,8 +311,7 @@ public class MediaLibrary extends javax.swing.JPanel {
 
             // Aplicar el filtro a la Columna 2 (MIME Type)
             javax.swing.RowFilter<Object, Object> rf
-                    = javax.swing.RowFilter.regexFilter("^" + mimeTypeFilter + "$", 2);
-
+                    = javax.swing.RowFilter.regexFilter("^" + mimeTypeFilter + "$", 3);
             sorter.setRowFilter(rf);
         }
     }//GEN-LAST:event_jComboBoxFilterActionPerformed
