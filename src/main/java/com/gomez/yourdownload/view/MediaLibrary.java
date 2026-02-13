@@ -35,6 +35,7 @@ public class MediaLibrary extends javax.swing.JPanel {
         this.originalPanel = originalPanel;
         this.resourcesList = resourcesList;
         this.mediaPoller = mediaPoller;
+        
 
         initComponents();
 
