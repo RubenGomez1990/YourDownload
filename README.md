@@ -100,3 +100,25 @@ try {
 5. I think that actually it's portable.
 
 6. The logout button it's in file --> Logout. For me it's logic and a good place to place it. 
+
+
+// UPDATES TASK 4
+
+1. loadAllMediaInfo: Se ha modificado para que descargue toda la información de la plataforma correctamente. Automaticamente, ordena los archivos por ID, muestra solo 1 versión de cada
+archivo (Si esta en net y local, muestra local y net). Actualiza y comprueba si hay archivos nuevos para añadirlos a la librería.
+
+2. Archivo JSON para el historial. Utiliza un hashmap para garantizar que no hayan duplicados.
+
+3. Se ha reducido el tamaño de la pantalla principal para que tenga más similitud a un reproductor y hacerlo más minimalista. 
+Se ha añadido un botón "Show Log" para mostrar el log del progreso de la descarga en caso de ser necesario por parte del cliente. 
+
+4. Se ha establecido el Login como parte del mismo JFrame que mainscreen. Se ha ordenado el botón en el JMenu para establecerlo encima de exit. 
+
+5. Se ha establecido un tema para la aplicacion FlatLaf más moderno añadiendo su dependencia y la referencia en el main de MainScreen. Mejora visual moderna.
+
+6. El recuadro de Polling ha desaparecido y en su lugar se ha puesto un icono que cambia de color dinámicamente. 
+
+7. Se ha arreglado el error por el cual desde MediaLibrary -> Edit -> Preferences al darle a go back, volvías a MainScreen. 
+
+
+

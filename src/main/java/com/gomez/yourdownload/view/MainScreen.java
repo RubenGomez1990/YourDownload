@@ -14,7 +14,6 @@ import java.util.prefs.Preferences;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.swing.JFileChooser;
-import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
@@ -26,15 +25,11 @@ import com.gomez.component.MediaPoller;
  */
 public class MainScreen extends javax.swing.JFrame {
 
-    private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(MainScreen.class.getName());
     private String destinyPath = "";
     private JPanel originalPanel;
-    private String binariesPath = "";
-    private PreferencesPanel preferencesPanel;
     private List<DownloadInfo> resourcesList;
     private String jwtToken;
     private String currentView = "MAIN";
-    private javax.swing.JPanel lastActivePanel = null;
 
     public MainScreen(String token, MediaPoller pollerInstance) {
         this.jwtToken = token;// Almacenamos el token JWT para usarlo en descargas, etc.
@@ -67,8 +62,7 @@ public class MainScreen extends javax.swing.JFrame {
         jButtonSavePath.setVisible(false);
         jButtonChange.setVisible(true);
 
-        this.setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
-
+ 
         if (token == null || token.isEmpty()) {
             // --- CASO LOGIN ---
             showLoginScreen(); // Este método ahora se encargará de encoger la ventana
@@ -447,8 +441,8 @@ public class MainScreen extends javax.swing.JFrame {
         JFileChooser pathSelector = new JFileChooser();
         pathSelector.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 
-        int resultado = pathSelector.showOpenDialog(this); // selecciona la ruta 
-        if (resultado == JFileChooser.APPROVE_OPTION) {
+        int result = pathSelector.showOpenDialog(this); // selecciona la ruta 
+        if (result == JFileChooser.APPROVE_OPTION) {
             File folder = pathSelector.getSelectedFile();
             destinyPath = folder.getAbsolutePath();
 
@@ -478,11 +472,11 @@ public class MainScreen extends javax.swing.JFrame {
     }//GEN-LAST:event_jMenuItemAboutActionPerformed
 
     private void jMenuItemPreferencesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemPreferencesActionPerformed
-    javax.swing.JPanel currentPanel = (javax.swing.JPanel) this.getContentPane();
-    setContentPane(new PreferencesPanel(this, currentPanel));
-    
-    revalidate();
-    repaint();
+        javax.swing.JPanel currentPanel = (javax.swing.JPanel) this.getContentPane();
+        setContentPane(new PreferencesPanel(this, currentPanel));
+
+        revalidate();
+        repaint();
     }//GEN-LAST:event_jMenuItemPreferencesActionPerformed
 
     private void jButtonDownloadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonDownloadActionPerformed
@@ -631,15 +625,14 @@ public class MainScreen extends javax.swing.JFrame {
                     File finalFile = downloadFile[0];
 
                     if (finalFile != null && finalFile.exists()) {
-                        // 1. Lógica de éxito
-                        System.out.println("DEBUG: Archivo encontrado: " + finalFile.getAbsolutePath());
+                        System.out.println("DEBUG: File found: " + finalFile.getAbsolutePath());
 
                         // Añadir al historial
-                        String rutaAbsoluta = finalFile.getAbsolutePath();
-                        long tamanyo = finalFile.length();
+                        String absolutePath = finalFile.getAbsolutePath();
+                        long size = finalFile.length();
                         String mimeType = obtainMimeSimple(finalFile.getName());
-                        DownloadInfo nuevaDescarga = new DownloadInfo(rutaAbsoluta, new Date(), tamanyo, mimeType);
-                        resourcesList.add(nuevaDescarga);
+                        DownloadInfo newDownload = new DownloadInfo(absolutePath, new Date(), size, mimeType);
+                        resourcesList.add(newDownload);
 
                         // Abrir diálogo
                         DownloadComplete dialog = new DownloadComplete(null, true, finalFile);
@@ -830,18 +823,6 @@ public class MainScreen extends javax.swing.JFrame {
         repaint();
     }
 
-    public void navigateBack() {
-        if (currentView.equals("LIBRARY")) {
-            showLibrary();
-        } else {
-            setContentPane(originalPanel);
-            this.setSize(1024, 330);
-            this.setLocationRelativeTo(null);
-            revalidate();
-            repaint();
-        }
-    }
-
     private void initMediaPoller(String token) {
         if (this.mediaPoller1 == null) {
             System.err.println("Mediapoller is null");
@@ -864,101 +845,102 @@ public class MainScreen extends javax.swing.JFrame {
     }
 
     private void handleNewFilesFound(final com.gomez.component.NewMediaEvent event) {
-    // 1. FILTRO DE SEGURIDAD: Solo archivos que no están en la biblioteca local
-    List<com.gomez.model.Media> trulyNewFiles = new ArrayList<>();
+        //Solo archivos que no están en la biblioteca local
+        List<com.gomez.model.Media> trulyNewFiles = new ArrayList<>();
 
-    for (com.gomez.model.Media remoteFile : event.getNewFiles()) {
-        // Comprobamos si el archivo ya existe en nuestra lista (evita duplicados del solapamiento)
-        boolean alreadyExists = resourcesList.stream().anyMatch(local ->
-            (local.getNetworkId() != null && local.getNetworkId().equals(remoteFile.id)) ||
-            (local.getFileName() != null && local.getFileName().equalsIgnoreCase(remoteFile.mediaFileName))
-        );
-
-        if (!alreadyExists) {
-            trulyNewFiles.add(remoteFile);
-        }
-    }
-
-    // Si después de filtrar no queda nada nuevo, salimos silenciosamente
-    if (trulyNewFiles.isEmpty()) {
-        return;
-    }
-
-    // 2. LOG DE DETECCIÓN REAL-TIME
-    int newCount = trulyNewFiles.size();
-    String firstFileName = trulyNewFiles.get(0).mediaFileName;
-    System.out.println("Poller (Real-time): detected [" + newCount + "] new files since last check.");
-
-    // 3. ALERTA DE INTERFAZ (Swing Thread)
-    javax.swing.SwingUtilities.invokeLater(new Runnable() {
-        @Override
-        public void run() {
-            Object[] options = {"Download", "Close"};
-            int result = javax.swing.JOptionPane.showOptionDialog(
-                    MainScreen.this,
-                    "New files detected on server!" 
-                    + "\nFile: " + firstFileName
-                    + "\nDo you want to download them now?",
-                    "Live Detection",
-                    javax.swing.JOptionPane.YES_NO_OPTION,
-                    javax.swing.JOptionPane.INFORMATION_MESSAGE,
-                    null, options, options[0]
+        for (com.gomez.model.Media remoteFile : event.getNewFiles()) {
+            // Comprobamos si el archivo ya existe en nuestra lista
+            boolean alreadyExists = resourcesList.stream().anyMatch(local
+                    -> (local.getNetworkId() != null && local.getNetworkId().equals(remoteFile.id))
+                    || (local.getFileName() != null && local.getFileName().equalsIgnoreCase(remoteFile.mediaFileName))
             );
 
-            if (result == 0) {
-                // 4. HILO DE DESCARGA
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        int successCount = 0;
-                        for (com.gomez.model.Media mediaFile : trulyNewFiles) {
-                            try {
-                                java.io.File destination = new java.io.File(destinyPath, mediaFile.mediaFileName);
-                                mediaPoller1.download(mediaFile.id, destination);
-
-                                com.gomez.yourdownload.model.DownloadInfo newDownload = new com.gomez.yourdownload.model.DownloadInfo(
-                                        destination.getAbsolutePath(),
-                                        new java.util.Date(),
-                                        destination.length(),
-                                        mediaFile.mediaMimeType
-                                );
-                                newDownload.setNetworkId(mediaFile.id);
-                                newDownload.setIsInNetwork(true);
-
-                                resourcesList.add(newDownload);
-                                successCount++;
-                            } catch (Exception e) {
-                                System.err.println("Download error: " + e.getMessage());
-                            }
-                        }
-
-                        if (successCount > 0) {
-                            com.gomez.yourdownload.service.DownloadService.saveHistory(resourcesList);
-                            final int finalSuccess = successCount;
-                            javax.swing.SwingUtilities.invokeLater(() -> {
-                                showLibrary();
-                                javax.swing.JOptionPane.showMessageDialog(MainScreen.this,
-                                        "Added " + finalSuccess + " files from server.");
-                            });
-                        }
-                    }
-                }).start();
-            } else {
-                /* * SOLUCIÓN AL SOLAPAMIENTO: Si el usuario cierra el aviso sin descargar, 
-                 * añadimos los archivos a la lista como "Cloud Only" para que el Poller 
-                 * no vuelva a avisar de ellos en la próxima vuelta de 30 segundos.
-                 */
-                for (com.gomez.model.Media m : trulyNewFiles) {
-                    com.gomez.yourdownload.model.DownloadInfo acknowledged = new com.gomez.yourdownload.model.DownloadInfo(
-                            m.id, m.mediaFileName, (long)m.mediaFileSize, m.mediaMimeType
-                    );
-                    resourcesList.add(acknowledged);
-                }
-                System.out.println("Poller: Files acknowledged but ignored by user.");
+            if (!alreadyExists) {
+                trulyNewFiles.add(remoteFile);
             }
         }
-    });
-}
+
+        // Si después de filtrar no queda nada nuevo, salimos silenciosamente
+        if (trulyNewFiles.isEmpty()) {
+            return;
+        }
+
+        //LOG DE DETECCIÓN REAL-TIME
+        int newCount = trulyNewFiles.size();
+        String firstFileName = trulyNewFiles.get(0).mediaFileName;
+        System.out.println("Poller (Real-time): detected [" + newCount + "] new files since last check.");
+
+        // 3. ALERTA DE INTERFAZ (Swing Thread)
+        javax.swing.SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                Object[] options = {"Download", "Close"};
+                int result = javax.swing.JOptionPane.showOptionDialog(
+                        MainScreen.this,
+                        "New files detected on server!"
+                        + "\nFile: " + firstFileName
+                        + "\nDo you want to download them now?",
+                        "Live Detection",
+                        javax.swing.JOptionPane.YES_NO_OPTION,
+                        javax.swing.JOptionPane.INFORMATION_MESSAGE,
+                        null, options, options[0]
+                );
+
+                if (result == 0) {
+                    // 4. HILO DE DESCARGA
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            int successCount = 0;
+                            for (com.gomez.model.Media mediaFile : trulyNewFiles) {
+                                try {
+                                    java.io.File destination = new java.io.File(destinyPath, mediaFile.mediaFileName);
+                                    mediaPoller1.download(mediaFile.id, destination);
+
+                                    com.gomez.yourdownload.model.DownloadInfo newDownload = new com.gomez.yourdownload.model.DownloadInfo(
+                                            destination.getAbsolutePath(),
+                                            new java.util.Date(),
+                                            destination.length(),
+                                            mediaFile.mediaMimeType
+                                    );
+                                    newDownload.setNetworkId(mediaFile.id);
+                                    newDownload.setIsInNetwork(true);
+
+                                    resourcesList.add(newDownload);
+                                    successCount++;
+                                } catch (Exception e) {
+                                    System.err.println("Download error: " + e.getMessage());
+                                }
+                            }
+
+                            if (successCount > 0) {
+                                com.gomez.yourdownload.service.DownloadService.saveHistory(resourcesList);
+                                final int finalSuccess = successCount;
+                                javax.swing.SwingUtilities.invokeLater(() -> {
+                                    showLibrary();
+                                    javax.swing.JOptionPane.showMessageDialog(MainScreen.this,
+                                            "Added " + finalSuccess + " files from server.");
+                                });
+                            }
+                        }
+                    }).start();
+                } else {
+                    /* * SOLUCIÓN AL SOLAPAMIENTO: Si el usuario cierra el aviso sin descargar, 
+                 * añadimos los archivos a la lista como "Cloud Only" para que el Poller 
+                 * no vuelva a avisar de ellos en la próxima vuelta de 30 segundos.
+                     */
+                    for (com.gomez.model.Media m : trulyNewFiles) {
+                        com.gomez.yourdownload.model.DownloadInfo acknowledged = new com.gomez.yourdownload.model.DownloadInfo(
+                                m.id, m.mediaFileName, (long) m.mediaFileSize, m.mediaMimeType
+                        );
+                        resourcesList.add(acknowledged);
+                    }
+                    System.out.println("Poller: Files acknowledged but ignored by user.");
+                }
+            }
+        });
+    }
+
     private void showLoginScreen() {
         this.setJMenuBar(null);
         this.setResizable(false);
@@ -985,18 +967,14 @@ public class MainScreen extends javax.swing.JFrame {
     }
 
     private void togglePolling() {
-        // 1. Consultamos el estado actual del componente que ya tienes
-        boolean estaCorriendo = this.mediaPoller1.isRunning();
+        boolean running = this.mediaPoller1.isRunning();
 
-        // 2. Invertimos el estado
-        boolean nuevoEstado = !estaCorriendo;
-        this.mediaPoller1.setRunning(nuevoEstado);
+        boolean newState = !running;
+        this.mediaPoller1.setRunning(newState);
 
-        // 3. Actualizamos el icono visualmente
-        updateIconState(nuevoEstado);
+        updateIconState(newState);
 
-        // Debug para que lo veas en consola (puedes quitarlo luego)
-        System.out.println("Poller changed to: " + (nuevoEstado ? "On" : "Off"));
+        System.out.println("Poller changed to: " + (newState ? "On" : "Off"));
     }
 
     private void updateIconState(boolean on) {
