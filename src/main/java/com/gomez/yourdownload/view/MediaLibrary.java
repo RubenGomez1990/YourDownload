@@ -35,7 +35,6 @@ public class MediaLibrary extends javax.swing.JPanel {
         this.originalPanel = originalPanel;
         this.resourcesList = resourcesList;
         this.mediaPoller = mediaPoller;
-        
 
         initComponents();
 
@@ -249,38 +248,50 @@ public class MediaLibrary extends javax.swing.JPanel {
     }//GEN-LAST:event_jButtonBackActionPerformed
 
     private void jButtonDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonDeleteActionPerformed
-        // Obtiene la fila seleccionada
-        Object[] options = {"Yes", "No"};
+        // 1. Get the selected row from the view
         int selectedRow = jTableMedia.getSelectedRow();
+        Object[] options = {"Yes", "No"};
 
-        // Asignamos una variable al recurso que vamos a eliminar.
         if (selectedRow >= 0) {
-            DownloadInfo resourceDelete = resourcesList.get(selectedRow);
+            // 2. CRITICAL: Convert the view index to model index (in case of sorting)
+            int modelRow = jTableMedia.convertRowIndexToModel(selectedRow);
+            DownloadInfo resourceDelete = resourcesList.get(modelRow);
 
-            // Pedimos confirmación
-            int confirmation = javax.swing.JOptionPane.showOptionDialog(this, "Are you sure you want to delete '"
-                    + resourceDelete.getFileName(), "Confirm Deletion",
-                    javax.swing.JOptionPane.YES_NO_OPTION, // Tipo de opción
-                    javax.swing.JOptionPane.QUESTION_MESSAGE, // Icono de pregunta
-                    null, // No usar icono custom
-                    options, // Array de Strings a mostrar en los botones
-                    options[0] // Opción por defecto ("Yes")
-            );
+            // 3. Request confirmation
+            int confirmation = javax.swing.JOptionPane.showOptionDialog(this,
+                    "Are you sure you want to delete '" + resourceDelete.getFileName() + "'?",
+                    "Confirm Deletion",
+                    javax.swing.JOptionPane.YES_NO_OPTION,
+                    javax.swing.JOptionPane.QUESTION_MESSAGE,
+                    null, options, options[0]);
 
             if (confirmation == javax.swing.JOptionPane.YES_OPTION) {
-                java.io.File file = new java.io.File(resourceDelete.getAbsolutePath());
+                String path = resourceDelete.getAbsolutePath();
+                boolean deletedFromDisk = true; // Default true for cloud-only files
 
-                if (file.delete()) {
-                    resourcesList.remove(selectedRow);
+                // 4. Check if there is a local file to delete
+                if (path != null && !path.isEmpty()) {
+                    java.io.File file = new java.io.File(path);
+                    if (file.exists()) {
+                        deletedFromDisk = file.delete();
+                    }
+                }
+
+                if (deletedFromDisk) {
+                    // 5. Remove from list and update table
+                    resourcesList.remove(modelRow);
                     tableModel.fireTableDataChanged();
-                    javax.swing.JOptionPane.showMessageDialog(this, "File deleted successfully.", "Success!", javax.swing.JOptionPane.INFORMATION_MESSAGE);
+
+                    // 6. Persist changes to history JSON
+                    com.gomez.yourdownload.service.DownloadService.saveHistory(resourcesList);
+
+                    javax.swing.JOptionPane.showMessageDialog(this, "Entry removed successfully.", "Success!", javax.swing.JOptionPane.INFORMATION_MESSAGE);
                 } else {
-                    // Error al eliminar del disco (ej: el archivo no existe o permisos insuficientes)
-                    javax.swing.JOptionPane.showMessageDialog(this, "Error: File could not have been deleted. Check the log.", "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+                    javax.swing.JOptionPane.showMessageDialog(this, "Error: Local file could not be deleted.", "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
                 }
             }
         } else {
-            javax.swing.JOptionPane.showMessageDialog(this, "Select a file to delete", "Warning", javax.swing.JOptionPane.WARNING_MESSAGE);
+            javax.swing.JOptionPane.showMessageDialog(this, "Please, select a file to delete", "Warning", javax.swing.JOptionPane.WARNING_MESSAGE);
         }
     }//GEN-LAST:event_jButtonDeleteActionPerformed
 
@@ -337,62 +348,85 @@ public class MediaLibrary extends javax.swing.JPanel {
     }//GEN-LAST:event_jButtonSearchActionPerformed
 
     private void jButtonDownloadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonDownloadActionPerformed
+// 1. Obtener la fila seleccionada de la vista
         int selectedRow = jTableMedia.getSelectedRow();
 
         if (selectedRow >= 0) {
+            // 2. CRÍTICO: Convertir el índice visual al índice del modelo para que funcione al ordenar
             int modelRow = jTableMedia.convertRowIndexToModel(selectedRow);
-            DownloadInfo fileToDownload = resourcesList.get(modelRow);
+            DownloadInfo resource = resourcesList.get(modelRow);
 
-            if (!fileToDownload.isNetworkOnly() || fileToDownload.getNetworkId() == null) {
-                JOptionPane.showMessageDialog(this, "The selected file is not available on the network or already downloaded.", "Error", JOptionPane.ERROR_MESSAGE);
+            // 3. VALIDACIÓN MEJORADA: ¿Tiene ID de red y NO tiene ruta local?
+            // Esto permite descargar cualquier archivo que esté en la nube pero no en tu PC.
+            if (resource.getNetworkId() == null || resource.getAbsolutePath() != null) {
+                javax.swing.JOptionPane.showMessageDialog(this,
+                        "The selected file is not available on the network or is already downloaded.",
+                        "Download Error", javax.swing.JOptionPane.ERROR_MESSAGE);
                 return;
             }
 
+            // 4. Preparar carpeta de descargas (Minimalista: usa la ruta configurada o la carpeta 'downloads')
             java.io.File downloadFolder = new java.io.File("downloads");
             if (!downloadFolder.exists()) {
-                downloadFolder.mkdirs(); // Crea la carpeta si no existe
+                downloadFolder.mkdirs();
             }
 
-            java.io.File destinationFile = new java.io.File(downloadFolder, fileToDownload.getFileName());
+            java.io.File destinationFile = new java.io.File(downloadFolder, resource.getFileName());
 
+            // 5. Evitar sobreescribir si el archivo ya existe físicamente
             if (destinationFile.exists()) {
-                JOptionPane.showMessageDialog(this, "A file with that name already exists in the download folder.", "Error", JOptionPane.ERROR_MESSAGE);
+                javax.swing.JOptionPane.showMessageDialog(this,
+                        "A file with that name already exists in the download folder.",
+                        "File Error", javax.swing.JOptionPane.ERROR_MESSAGE);
                 return;
             }
 
+            // 6. Hilo secundario para no congelar la interfaz
             new Thread(() -> {
                 try {
-                    this.mediaPoller.download(fileToDownload.getNetworkId(), destinationFile);
-                    DownloadInfo newLocalInfo = new DownloadInfo(
+                    // Descarga real a través del componente Poller
+                    this.mediaPoller.download(resource.getNetworkId(), destinationFile);
+
+                    // Crear el nuevo objeto de información local (Synced)
+                    DownloadInfo syncInfo = new DownloadInfo(
                             destinationFile.getAbsolutePath(),
-                            new java.util.Date(), // Fecha de descarga actual
+                            new java.util.Date(),
                             destinationFile.length(),
-                            fileToDownload.getMimeType()
+                            resource.getMimeType()
                     );
-                    newLocalInfo.setNetworkId(fileToDownload.getNetworkId());
-                    newLocalInfo.setIsInNetwork(true);
-                    newLocalInfo.setIsNetworkOnly(false);
+                    syncInfo.setNetworkId(resource.getNetworkId());
+                    syncInfo.setIsInNetwork(true);
+                    syncInfo.setIsNetworkOnly(false); // Ya no es solo red, ahora es local también
 
-                    SwingUtilities.invokeLater(() -> {
+                    // Actualizar la interfaz en el hilo de Swing
+                    javax.swing.SwingUtilities.invokeLater(() -> {
+                        // Reemplazamos el registro de "solo nube" por el nuevo "sincronizado"
                         resourcesList.remove(modelRow);
+                        resourcesList.add(syncInfo);
 
-                        resourcesList.add(newLocalInfo);
-
-                        JOptionPane.showMessageDialog(this, "Download successful and file saved to: " + destinationFile.getAbsolutePath(), "Success", JOptionPane.INFORMATION_MESSAGE);
+                        // Guardar historial para que el cambio persista en el JSON
+                        com.gomez.yourdownload.service.DownloadService.saveHistory(resourcesList);
 
                         this.tableModel.fireTableDataChanged();
+
+                        javax.swing.JOptionPane.showMessageDialog(this,
+                                "Download successful! " + destinationFile.getName(),
+                                "Success", javax.swing.JOptionPane.INFORMATION_MESSAGE);
                     });
 
                 } catch (Exception e) {
-                    SwingUtilities.invokeLater(() -> {
-                        JOptionPane.showMessageDialog(this, "Download failed for " + fileToDownload.getFileName() + ": " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-                        System.err.println("Download Error: " + e.getMessage());
+                    javax.swing.SwingUtilities.invokeLater(() -> {
+                        javax.swing.JOptionPane.showMessageDialog(this,
+                                "Download failed: " + e.getMessage(),
+                                "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
                         e.printStackTrace();
                     });
                 }
             }).start();
         } else {
-            JOptionPane.showMessageDialog(this, "Select a file to download.", "Warning", JOptionPane.WARNING_MESSAGE);
+            javax.swing.JOptionPane.showMessageDialog(this,
+                    "Please, select a file to download.",
+                    "Warning", javax.swing.JOptionPane.WARNING_MESSAGE);
         }
     }//GEN-LAST:event_jButtonDownloadActionPerformed
 
