@@ -20,22 +20,31 @@ public class PreferencesPanel extends javax.swing.JPanel {
     private JPanel originalPanel;
     private String destinyPath = "";
     private String binariesPath;
+    private String tempPath;
 
     /**
      *
      * @param mainScreen la ventana principal que contiene este panel
      */
-
     public PreferencesPanel(JFrame mainScreen, JPanel originalPanel) {
         initComponents();
         this.mainScreen = mainScreen;
         this.originalPanel = originalPanel;
 
+        // Cargar preferencias guardadas
         Preferences prefs = Preferences.userRoot().node("PreferencesPanel");
 
-        this.binariesPath = prefs.get("binariesPath", "");
-
+        // 1. Cargar Binarios
+        this.binariesPath = prefs.get("binariesPath", "Not set");
         jLabelBinaries.setText("Binaries path: " + binariesPath);
+
+        // 2. Cargar Archivos Temporales
+        this.tempPath = prefs.get("tempPath", "Not set");
+        jLabelTemporaly.setText("Temporary files path: " + tempPath);
+
+        // 3. Cargar Límite de Velocidad (por índice del ComboBox)
+        int speedIndex = prefs.getInt("speedLimitIndex", 0);
+        jComboBoxLimit.setSelectedIndex(speedIndex);
     }
 
     /**
@@ -149,22 +158,17 @@ public class PreferencesPanel extends javax.swing.JPanel {
         JFileChooser chooser = new JFileChooser();
         chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 
-        int result = chooser.showOpenDialog(this);
-        if (result == JFileChooser.APPROVE_OPTION) {
-            File selectedFolder = chooser.getSelectedFile();
-            String temporalPath = selectedFolder.getAbsolutePath();
+        if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
+            tempPath = chooser.getSelectedFile().getAbsolutePath();
+            jLabelTemporaly.setText("Temporary files path: " + tempPath);
 
-            // Guarda la ruta donde quieras
-            jLabelTemporaly.setText(temporalPath); // ejemplo visual
-            this.destinyPath = temporalPath;     // ejemplo funcional
+            Preferences prefs = Preferences.userRoot().node("PreferencesPanel");
+            prefs.put("tempPath", tempPath);
+            savePrefs(prefs);
         }
 
 
     }//GEN-LAST:event_jButtonTemporalyActionPerformed
-
-    private void jCheckBoxPlaylistsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBoxPlaylistsActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jCheckBoxPlaylistsActionPerformed
 
     private void jButtonBackActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonBackActionPerformed
 
@@ -178,27 +182,32 @@ public class PreferencesPanel extends javax.swing.JPanel {
         JFileChooser chooser = new JFileChooser();
         chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
 
-        int result = chooser.showOpenDialog(this);
-        if (result == JFileChooser.APPROVE_OPTION) {
-            File selectedFile = chooser.getSelectedFile();
-            binariesPath = selectedFile.getAbsolutePath();
+        if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
+            binariesPath = chooser.getSelectedFile().getAbsolutePath();
             jLabelBinaries.setText("Binaries path: " + binariesPath);
 
             Preferences prefs = Preferences.userRoot().node("PreferencesPanel");
             prefs.put("binariesPath", binariesPath);
-
-            try {
-                prefs.flush();
-            } catch (Exception e) {
-                System.err.println("Error saving preferences: " + e.getMessage());
-            }
+            savePrefs(prefs);
         }
     }//GEN-LAST:event_jButtonBinariesActionPerformed
 
     private void jComboBoxLimitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBoxLimitActionPerformed
-        // TODO add your handling code here:
+        Preferences prefs = Preferences.userRoot().node("PreferencesPanel");
+        prefs.putInt("speedLimitIndex", jComboBoxLimit.getSelectedIndex());
+        savePrefs(prefs);
     }//GEN-LAST:event_jComboBoxLimitActionPerformed
 
+    private void jCheckBoxPlaylistsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBoxPlaylistsActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jCheckBoxPlaylistsActionPerformed
+    private void savePrefs(Preferences prefs) {
+        try {
+            prefs.flush();
+        } catch (Exception e) {
+            System.err.println("Error saving: " + e.getMessage());
+        }
+    }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButtonBack;
     private javax.swing.JButton jButtonBinaries;

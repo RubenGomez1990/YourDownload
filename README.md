@@ -142,11 +142,8 @@ Se ha añadido un botón "Show Log" para mostrar el log del progreso de la desca
 También se pueden ordenar las columnas en el orden que quiera el cliente, cambiarlas de tamaño o aplicar filtros sobre cada columna. Se ha intentado establecer un icono para que avise de que se 
 puede redimensionar al pasar el ratón por encima pero no se ha conseguido y puede ser una limitación de FlatLaf
 
+9. Añadido doble click para facilitar descargar/reproducir un archivo. Por defecto se descargan en una carpeta downloads de la raíz del proyecto.
 
+10. Implementación botón upload medialibrary para poder añadir archivos a la API. Botón de refrescar la lista.
 
-
-
-
-
-
-
+11. Modificación de los path de guardado de preferencias para mantenerlos guardados tras reinicio aplicación. 

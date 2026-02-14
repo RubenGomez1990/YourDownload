@@ -3,7 +3,6 @@ package com.gomez.yourdownload.view;
 import com.gomez.component.MediaPoller;
 import com.gomez.yourdownload.model.DownloadInfoTableModel;
 import com.gomez.yourdownload.model.DownloadInfo;
-import com.gomez.model.Media;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -50,15 +49,64 @@ public class MediaLibrary extends javax.swing.JPanel {
         jScrollPaneMedia.setBorder(javax.swing.BorderFactory.createEmptyBorder());
 
         // 3. POSICIONAMIENTO DE BOTONES (Fila Y=630)
-        jLabelFilter.setBounds(10, 630, 70, 30);
-        jComboBoxFilter.setBounds(90, 630, 160, 30);
-        jButtonSearch.setBounds(260, 630, 150, 40);
+        jLabelFilter.setBounds(10, 630, 80, 30);
+        jComboBoxFilter.setBounds(100, 630, 160, 30);
 
         jButtonDelete.setBounds(450, 630, 120, 40);
         jButtonUpload1.setBounds(580, 630, 120, 40);
 
         jButtonDownload.setBounds(850, 630, 130, 40);
         jButtonBack.setBounds(1000, 630, 130, 40);
+
+        jLabelSearch = new javax.swing.JLabel("Search:");
+        jLabelSearch.setBounds(10, 670, 80, 30); // Misma X, Y aumentada
+        add(jLabelSearch);
+
+        jTextFieldSearch = new javax.swing.JTextField();
+        jTextFieldSearch.setBounds(100, 670, 250, 30); // Alineado con el combo
+        add(jTextFieldSearch);
+        
+        jButtonRefresh = new javax.swing.JButton("Refresh 🔄");
+jButtonRefresh.setBounds(360, 670, 120, 30); // Lo ponemos al lado del buscador
+add(jButtonRefresh);
+
+jButtonRefresh.addActionListener(new java.awt.event.ActionListener() {
+    @Override
+    public void actionPerformed(java.awt.event.ActionEvent evt) {
+        // Efecto visual de carga
+        jButtonRefresh.setEnabled(false);
+        jButtonRefresh.setText("Syncing...");
+        
+        // Ejecutamos tu método de carga que ya limpia formatos y borrados
+        loadAllMediaInfo();
+        
+        // Timer de 1 segundo para que el usuario vea que algo ha pasado
+        javax.swing.Timer timer = new javax.swing.Timer(1000, e -> {
+            jButtonRefresh.setEnabled(true);
+            jButtonRefresh.setText("Refresh 🔄");
+        });
+        timer.setRepeats(false);
+        timer.start();
+    }
+});
+
+        jTextFieldSearch.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
+            @Override
+            public void insertUpdate(javax.swing.event.DocumentEvent e) {
+                aplicarFiltroCombinado();
+            }
+
+            @Override
+            public void removeUpdate(javax.swing.event.DocumentEvent e) {
+                aplicarFiltroCombinado();
+            }
+
+            @Override
+            public void changedUpdate(javax.swing.event.DocumentEvent e) {
+                aplicarFiltroCombinado();
+            }
+
+        });
 
         // 4. MODELO Y SORTER
         tableModel = new DownloadInfoTableModel(resourcesList);
@@ -227,15 +275,19 @@ public class MediaLibrary extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jLabel1 = new javax.swing.JLabel();
         jScrollPaneMedia = new javax.swing.JScrollPane();
         jTableMedia = new javax.swing.JTable();
         jLabelFilter = new javax.swing.JLabel();
         jComboBoxFilter = new javax.swing.JComboBox<>();
         jButtonDelete = new javax.swing.JButton();
         jButtonBack = new javax.swing.JButton();
-        jButtonSearch = new javax.swing.JButton();
         jButtonDownload = new javax.swing.JButton();
         jButtonUpload1 = new javax.swing.JButton();
+        jLabelSearch = new javax.swing.JLabel();
+        jTextFieldSearch = new javax.swing.JTextField();
+
+        jLabel1.setText("jLabel1");
 
         setEnabled(false);
         setPreferredSize(new java.awt.Dimension(937, 371));
@@ -289,15 +341,6 @@ public class MediaLibrary extends javax.swing.JPanel {
         add(jButtonBack);
         jButtonBack.setBounds(690, 230, 120, 30);
 
-        jButtonSearch.setText("Search by text");
-        jButtonSearch.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButtonSearchActionPerformed(evt);
-            }
-        });
-        add(jButtonSearch);
-        jButtonSearch.setBounds(130, 280, 120, 30);
-
         jButtonDownload.setText("Download");
         jButtonDownload.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -315,6 +358,18 @@ public class MediaLibrary extends javax.swing.JPanel {
         });
         add(jButtonUpload1);
         jButtonUpload1.setBounds(400, 280, 120, 30);
+
+        jLabelSearch.setText("Search:");
+        add(jLabelSearch);
+        jLabelSearch.setBounds(10, 310, 50, 20);
+
+        jTextFieldSearch.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jTextFieldSearchActionPerformed(evt);
+            }
+        });
+        add(jTextFieldSearch);
+        jTextFieldSearch.setBounds(70, 310, 71, 22);
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButtonBackActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonBackActionPerformed
@@ -374,51 +429,10 @@ public class MediaLibrary extends javax.swing.JPanel {
 
     private void jComboBoxFilterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBoxFilterActionPerformed
 
-        if (sorter == null) {
-            return;
-        }
-
-        String selected = (String) jComboBoxFilter.getSelectedItem();
-
-        // Si es "All Types", quitamos cualquier filtro
-        if (selected.equals("All Types")) {
-            sorter.setRowFilter(null);
-        } else {
-            // Extraemos solo la extensión (ej: de "Video (MP4)" sacamos "MP4")
-            String extension = selected;
-            if (selected.contains("MP4")) {
-                extension = "MP4";
-            } else if (selected.contains("MP3")) {
-                extension = "MP3";
-            } else if (selected.contains("AVI")) {
-                extension = "AVI";
-            } else if (selected.contains("WAV")) {
-                extension = "WAV";
-            }
-
-            // Filtramos en la columna 3 (Format) ignorando mayúsculas
-            sorter.setRowFilter(javax.swing.RowFilter.regexFilter("(?i)" + extension, 3));
+        if (sorter != null) {
+            aplicarFiltroCombinado();
         }
     }//GEN-LAST:event_jComboBoxFilterActionPerformed
-
-    private void jButtonSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSearchActionPerformed
-        javax.swing.JFrame parentFrame = mainScreen;
-
-        try {
-            // La ejecución crítica que puede fallar:
-            SearchDialog search = new SearchDialog(parentFrame, resourcesList);
-            search.setVisible(true);
-
-        } catch (Exception e) {
-            // Capturamos la excepción (NPE, error de componente, etc.)
-            javax.swing.JOptionPane.showMessageDialog(mainScreen,
-                    "Error opening search: " + e.getMessage(),
-                    "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
-
-            // Esta línea es crucial para ver la traza de error completa en la consola
-            e.printStackTrace();
-        }
-    }//GEN-LAST:event_jButtonSearchActionPerformed
 
     private void jButtonDownloadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonDownloadActionPerformed
 // 1. Obtener la fila seleccionada de la vista
@@ -504,8 +518,54 @@ public class MediaLibrary extends javax.swing.JPanel {
     }//GEN-LAST:event_jButtonDownloadActionPerformed
 
     private void jButtonUpload1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonUpload1ActionPerformed
-        // TODO add your handling code here:
+        // 1. Creamos el selector de archivos
+        javax.swing.JFileChooser selector = new javax.swing.JFileChooser();
+        selector.setDialogTitle("Select a file to upload to the Cloud");
+
+        // 2. Abrimos la ventana y comprobamos si el usuario elige un archivo
+        int resultado = selector.showOpenDialog(this);
+
+        if (resultado == javax.swing.JFileChooser.APPROVE_OPTION) {
+            java.io.File archivoASubir = selector.getSelectedFile();
+
+            // Deshabilitamos el botón temporalmente para evitar doble clic
+            jButtonUpload1.setEnabled(false);
+
+            // 3. Hilo secundario para la subida (Network operation)
+            new Thread(() -> {
+                try {
+                    System.out.println("Starting upload: " + archivoASubir.getName());
+
+                    // Llamada al componente Poller para subir a la API
+                    // Nota: Asegúrate de que tu MediaPoller tenga implementado el método upload(File f)
+                    boolean exito = realizarUploadManual(archivoASubir);
+
+                    if (exito) {
+                        javax.swing.SwingUtilities.invokeLater(() -> {
+                            JOptionPane.showMessageDialog(this, "File uploaded successfully!");
+                            // Refrescamos la biblioteca para que aparezca el nuevo ID de red
+                            loadAllMediaInfo();
+                        });
+                    } else {
+                        throw new Exception("Server rejected the file.");
+                    }
+
+                } catch (Exception e) {
+                    javax.swing.SwingUtilities.invokeLater(() -> {
+                        JOptionPane.showMessageDialog(this, "Upload failed: " + e.getMessage(),
+                                "Error", JOptionPane.ERROR_MESSAGE);
+                    });
+                } finally {
+                    // Volvemos a habilitar el botón
+                    javax.swing.SwingUtilities.invokeLater(() -> jButtonUpload1.setEnabled(true));
+                }
+            }).start();
+        }
     }//GEN-LAST:event_jButtonUpload1ActionPerformed
+
+    private void jTextFieldSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextFieldSearchActionPerformed
+
+    }//GEN-LAST:event_jTextFieldSearchActionPerformed
 
     private void initFiltroComboBox() {
         String[] filterTypes = {
@@ -539,16 +599,110 @@ public class MediaLibrary extends javax.swing.JPanel {
         return "N/A";
     }
 
+    private void aplicarFiltroCombinado() {
+        String texto = jTextFieldSearch.getText().trim();
+        String seleccion = (String) jComboBoxFilter.getSelectedItem();
 
+        List<javax.swing.RowFilter<Object, Object>> filtros = new ArrayList<>();
+
+        // 1. Filtro de Texto (Columna 1: Name)
+        if (!texto.isEmpty()) {
+            filtros.add(javax.swing.RowFilter.regexFilter("(?i)" + texto, 1));
+        }
+
+        // 2. Filtro de Formato (Columna 3: Format)
+        if (seleccion != null && !seleccion.equals("All Types")) {
+            // Extraemos solo la extensión, ej: de "Video (MP4)" sacamos "MP4"
+            String extension = seleccion.contains("(") ? seleccion.substring(seleccion.indexOf("(") + 1, seleccion.indexOf(")")) : seleccion;
+            filtros.add(javax.swing.RowFilter.regexFilter("(?i)" + extension, 3));
+        }
+
+        if (filtros.isEmpty()) {
+            sorter.setRowFilter(null);
+        } else {
+            sorter.setRowFilter(javax.swing.RowFilter.andFilter(filtros));
+        }
+    }
+
+    private boolean realizarUploadManual(File archivo) throws Exception {
+        String base = this.mediaPoller.getApiUrl();
+        if (base == null || base.isEmpty() || base.equals("null")) {
+            base = "https://difreenet9.azurewebsites.net";
+        }
+        base = base.endsWith("/") ? base.substring(0, base.length() - 1) : base;
+
+        // URL exacta de tu captura de Postman
+        String urlApi = base + "/api/Files/upload";
+        String boundary = "---" + System.currentTimeMillis();
+
+        java.net.URL url = new java.net.URL(urlApi);
+        java.net.HttpURLConnection con = (java.net.HttpURLConnection) url.openConnection();
+
+        con.setDoOutput(true);
+        con.setRequestMethod("POST");
+        con.setRequestProperty("Content-Type", "multipart/form-data; boundary=" + boundary);
+
+        String token = this.mediaPoller.getToken();
+        if (token != null) {
+            con.setRequestProperty("Authorization", "Bearer " + token);
+        }
+
+        // Usamos el OutputStream directamente para tener control total
+        try (java.io.OutputStream out = con.getOutputStream()) {
+            // 1. Campo: File (Binario)
+            escribirTexto(out, "--" + boundary + "\r\n");
+            escribirTexto(out, "Content-Disposition: form-data; name=\"File\"; filename=\"" + archivo.getName() + "\"\r\n");
+            escribirTexto(out, "Content-Type: application/octet-stream\r\n\r\n");
+            out.flush();
+            java.nio.file.Files.copy(archivo.toPath(), out);
+            out.flush();
+            escribirTexto(out, "\r\n");
+
+            // 2. Campo: downloadedFromUrl (Texto)
+            escribirTexto(out, "--" + boundary + "\r\n");
+            escribirTexto(out, "Content-Disposition: form-data; name=\"downloadedFromUrl\"\r\n\r\n");
+            escribirTexto(out, "https://youtu.be/manual-upload\r\n"); // Simulamos una URL como en Postman
+
+            // 3. Campo: Container (Texto vacío)
+            escribirTexto(out, "--" + boundary + "\r\n");
+            escribirTexto(out, "Content-Disposition: form-data; name=\"Container\"\r\n\r\n");
+            escribirTexto(out, "\r\n"); // Vacío
+
+            // Cierre final (Importante: dos guiones al final)
+            escribirTexto(out, "--" + boundary + "--\r\n");
+            out.flush();
+        }
+
+        int responseCode = con.getResponseCode();
+        System.out.println("Respuesta del servidor: " + responseCode);
+
+        // Si hay error, intentamos leer por qué (el servidor suele mandar un JSON con el error)
+        if (responseCode >= 400) {
+            try (java.util.Scanner s = new java.util.Scanner(con.getErrorStream()).useDelimiter("\\A")) {
+                System.err.println("Detalle del error: " + (s.hasNext() ? s.next() : "Sin detalle"));
+            } catch (Exception e) {
+                /* no error detail */ }
+        }
+
+        return responseCode == 200 || responseCode == 201;
+    }
+
+// Método auxiliar para escribir texto en el Stream de red de forma segura
+    private void escribirTexto(java.io.OutputStream out, String texto) throws java.io.IOException {
+        out.write(texto.getBytes("UTF-8"));
+    }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButtonBack;
     private javax.swing.JButton jButtonDelete;
     private javax.swing.JButton jButtonDownload;
-    private javax.swing.JButton jButtonSearch;
     private javax.swing.JButton jButtonUpload1;
     private javax.swing.JComboBox<String> jComboBoxFilter;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabelFilter;
+    private javax.swing.JLabel jLabelSearch;
     private javax.swing.JScrollPane jScrollPaneMedia;
     private javax.swing.JTable jTableMedia;
+    private javax.swing.JTextField jTextFieldSearch;
     // End of variables declaration//GEN-END:variables
+private javax.swing.JButton jButtonRefresh;
 }
