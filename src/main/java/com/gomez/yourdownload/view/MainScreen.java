@@ -62,7 +62,6 @@ public class MainScreen extends javax.swing.JFrame {
         jButtonSavePath.setVisible(false);
         jButtonChange.setVisible(true);
 
- 
         if (token == null || token.isEmpty()) {
             // --- CASO LOGIN ---
             showLoginScreen(); // Este método ahora se encargará de encoger la ventana
@@ -480,10 +479,9 @@ public class MainScreen extends javax.swing.JFrame {
     }//GEN-LAST:event_jMenuItemPreferencesActionPerformed
 
     private void jButtonDownloadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonDownloadActionPerformed
-        final String url = jTextFieldUrl.getText().trim(); // Le indicamos que coja el texto del TextField
-
+        final String url = jTextFieldUrl.getText().trim();
         if (url.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Introduce una URL válida"); //En caso de que no se introduzca una URL correcta.
+            JOptionPane.showMessageDialog(this, "Introduce una URL válida");
             return;
         }
 
@@ -491,97 +489,61 @@ public class MainScreen extends javax.swing.JFrame {
         jTextAreaConsole.setText("");
         jProgressBar.setValue(0);
 
-        // Asignar calidad al video. Simple IF para escoger la calidad. 
-        String selectedFormat = "bestvideo+bestaudio"; // Default: la mejor calidad disponible
-
+        // 1. SOLUCIÓN AL ERROR DE COMPILACIÓN: Determinamos el formato ANTES de crear el Thread
+        final String selectedFormat;
         if (jRadioButton1080.isSelected()) {
-            // Busca el mejor video de 1080p o menos, más el mejor audio
-            selectedFormat = "bestvideo[height<=1080]+bestaudio";
+            selectedFormat = "bestvideo[height<=1080]+bestaudio/best";
         } else if (jRadioButton720.isSelected()) {
-            // Busca el mejor video de 720p o menos, más el mejor audio
-            selectedFormat = "bestvideo[height<=720]+bestaudio";
+            selectedFormat = "bestvideo[height<=720]+bestaudio/best";
         } else if (jRadioButton480.isSelected()) {
-            // Busca el mejor video de 480p o menos, más el mejor audio
-            selectedFormat = "bestvideo[height<=480]+bestaudio";
+            selectedFormat = "bestvideo[height<=480]+bestaudio/best";
+        } else {
+            selectedFormat = "bestvideo+bestaudio/best";
         }
 
-        // El resto del código que usa 'finalFormat' permanece igual
-        boolean downloadSubtitle = jCheckBoxSubtitlesYes.isSelected();
-        final String finalFormat = selectedFormat; // Igualamos a selectedFormat ya que el uso de Thread no permite el cambio de la variable que debe ser final.
+        final String targetExt = jComboBoxFormat.getSelectedItem().toString().toLowerCase().replace(".", "");
 
         new Thread(() -> {
+            // Variable para guardar la ruta final real capturada de la consola
+            final String[] finalFilePath = {null};
 
-            final File[] downloadFile = new File[1];
             try {
-
-                // 1. LLAMAR AL SERVICIO DE RUTAS (MVC)
                 String binariesPath = getBinariesPath();
+                File ytDlpExe = new File(binariesPath);
 
-                if (binariesPath.isEmpty() || !new File(binariesPath).exists()) {
-                    SwingUtilities.invokeLater(() -> {
-                        JOptionPane.showMessageDialog(this,
-                                "yt-dlp.exe not found at:\n" + binariesPath + "\nPlease check Preferences.",
-                                "Config error", JOptionPane.ERROR_MESSAGE);
-                    });
-                    return; // Detenemos el hilo aquí
-                }
-                String binariesPathNormalized = binariesPath.replace(File.separator, "/");
                 List<String> command = new ArrayList<>();
-                command.add(binariesPathNormalized);
-                command.add("--force-overwrites");
-                command.add("--restrict-filenames");
-                String outputFormat = jComboBoxFormat.getSelectedItem().toString();
+                command.add(ytDlpExe.getAbsolutePath());
+                command.add("--ffmpeg-location");
+                command.add(ytDlpExe.getParent());
+                command.add("--cookies-from-browser");
+                command.add("firefox");
+                command.add("--js-runtimes");
+                command.add("node");
+                command.add("--extractor-arg");
+                command.add("youtube:player_client=web");
 
-                if (outputFormat.contains(".mp3")) {
-                    // no se especifica -f para audio
+                if (targetExt.equals("mp3")) {
                     command.add("-x");
                     command.add("--audio-format");
                     command.add("mp3");
-
-                    String audioQuality = "best";
-
-                    if (jRadioButtonHQ.isSelected()) {
-                        audioQuality = "0";
-                    } else if (jRadioButtonHigh.isSelected()) {
-                        audioQuality = "5";
-                    }
-
-                    if (!audioQuality.equals("best")) {
-                        command.add("--audio-quality");
-                        command.add(audioQuality);
-                    }
-
                 } else {
-                    // se especifica -f 
                     command.add("-f");
-                    command.add(finalFormat);
-
-                    if (outputFormat.contains(".mp4")) {
-                        command.add("--recode-video");
-                        command.add("mp4");
-                    } else if (outputFormat.contains(".avi")) {
-                        command.add("--recode-video");
-                        command.add("avi");
-                    }
+                    command.add(selectedFormat); // Ahora compilara sin error
+                    command.add("--recode-video");
+                    command.add(targetExt.equals("avi") ? "avi" : "mp4");
                 }
+
+                command.add("--force-overwrites");
+                command.add("--restrict-filenames");
+
                 if (!destinyPath.isEmpty()) {
                     command.add("-o");
-                    String destinyPathNormalized = destinyPath.replace(File.separator, "/"); // Normalizar destino
-                    command.add(destinyPathNormalized + File.separator + "%(title)s - %(epoch)s.%(ext)s");
+                    command.add(new File(destinyPath, "%(title)s - %(epoch)s.%(ext)s").getAbsolutePath());
                 }
 
                 command.add(url);
 
-                if (downloadSubtitle) {
-                    command.add("--write-auto-sub");       // descarga subtítulos
-                    command.add("--sub-lang");
-                    command.add("en");                // idioma español
-                    command.add("--convert-subs");
-                    command.add("srt");               // formato .srt
-                }
-
-                System.out.println("Comando final: " + String.join(" ", command));
-                ProcessBuilder builder = new ProcessBuilder(command); // Añadimos -f para que seleccione formato.
+                ProcessBuilder builder = new ProcessBuilder(command);
                 builder.redirectErrorStream(true);
                 Process process = builder.start();
 
@@ -589,22 +551,18 @@ public class MainScreen extends javax.swing.JFrame {
                 String line;
                 while ((line = reader.readLine()) != null) {
                     final String outputLine = line;
-                    if (outputLine.contains("Destination:")) {
-                        String path = outputLine.substring(outputLine.indexOf("Destination:") + 12).trim();
-                        downloadFile[0] = new File(path);
-                        System.out.println("Archivo detectado (Destination): " + path);
-                    } else if (outputLine.contains("Merging formats into")) {
-                        String path = outputLine.substring(outputLine.indexOf("Merging formats into") + 22).trim().replaceAll("\"", "");
-                        downloadFile[0] = new File(path);
-                        System.out.println("Archivo detectado (Merge): " + path);
-                    } else if (outputLine.contains("Deleting original file") && downloadFile[0] == null) {
-                        // En caso de que se haya convertido y el original se haya eliminado
-                        int start = outputLine.indexOf("Deleting original file") + 25;
-                        int end = outputLine.lastIndexOf("\"");
-                        if (start < end) {
-                            String path = outputLine.substring(start, end).trim().replaceAll("\"", "");
-                            downloadFile[0] = new File(path);
-                            System.out.println("Archivo detectado (Deleted original): " + path);
+
+                    // 2. CAPTURA DE RUTA SIN CORTAR ESPACIOS (Doritos Dinamita)
+                    if (outputLine.contains("Destination:") || outputLine.contains("Merging formats into") || outputLine.contains("Converting video")) {
+                        String marker = outputLine.contains("Destination:") ? "Destination:"
+                                : (outputLine.contains("Merging formats into") ? "Merging formats into" : "Destination:");
+
+                        int startIndex = outputLine.indexOf(marker) + marker.length();
+                        String path = outputLine.substring(startIndex).trim().replaceAll("\"", "");
+
+                        // Si termina en la extensión final (.avi, .mp3, .mp4), es nuestra ruta real
+                        if (path.toLowerCase().endsWith(targetExt)) {
+                            finalFilePath[0] = path;
                         }
                     }
 
@@ -615,36 +573,30 @@ public class MainScreen extends javax.swing.JFrame {
                     });
                 }
                 process.waitFor();
-            } catch (IOException | InterruptedException e) {
-                SwingUtilities.invokeLater(() -> jTextAreaConsole.append("Error: " + e.getMessage() + "\n"));
+            } catch (Exception e) {
+                SwingUtilities.invokeLater(() -> jTextAreaConsole.append("Error: " + e.getMessage()));
             } finally {
                 SwingUtilities.invokeLater(() -> {
                     jButtonDownload.setEnabled(true);
 
-                    // CORRECCIÓN DEL NULL POINTER EXCEPTION
-                    File finalFile = downloadFile[0];
+                    // 3. REGISTRO EN MEDIA LIBRARY
+                    if (finalFilePath[0] != null) {
+                        File file = new File(finalFilePath[0]);
+                        if (file.exists()) {
+                            String absPath = file.getAbsolutePath();
 
-                    if (finalFile != null && finalFile.exists()) {
-                        System.out.println("DEBUG: File found: " + finalFile.getAbsolutePath());
+                            DownloadInfo info = new DownloadInfo(absPath, new Date(), file.length(), obtainMimeSimple(file.getName()));
 
-                        // Añadir al historial
-                        String absolutePath = finalFile.getAbsolutePath();
-                        long size = finalFile.length();
-                        String mimeType = obtainMimeSimple(finalFile.getName());
-                        DownloadInfo newDownload = new DownloadInfo(absolutePath, new Date(), size, mimeType);
-                        resourcesList.add(newDownload);
+                            // Limpiamos duplicados y añadimos
+                            resourcesList.removeIf(d -> d.getAbsolutePath() != null && d.getAbsolutePath().equalsIgnoreCase(absPath));
+                            resourcesList.add(info);
 
-                        // Abrir diálogo
-                        DownloadComplete dialog = new DownloadComplete(null, true, finalFile);
-                        dialog.setSize(300, 250);
-                        dialog.setLocationRelativeTo(null);
-                        dialog.setVisible(true);
-                    } else {
-                        // 2. Lógica de fallo (Evita el crash)
-                        // Si llegamos aquí, yt-dlp falló silenciosamente o no se parseó la salida.
-                        JOptionPane.showMessageDialog(this,
-                                "The download process finished, but the file was not detected.\nCheck the console for errors.",
-                                "Download Error", JOptionPane.WARNING_MESSAGE);
+                            // GUARDADO DE HISTORIAL (Para que la tabla lo lea al abrirse)
+                            com.gomez.yourdownload.service.DownloadService.saveHistory(resourcesList);
+
+                            new DownloadComplete(null, true, file).setVisible(true);
+                            System.out.println("Sincronización MediaLibrary OK: " + file.getName());
+                        }
                     }
                 });
             }
@@ -777,14 +729,12 @@ public class MainScreen extends javax.swing.JFrame {
      * "video/mp4").
      */
     private String obtainMimeSimple(String fileName) {
-        if (fileName.toLowerCase().endsWith(".mp4")) {
-            return "video/mp4";
-        } else if (fileName.toLowerCase().endsWith(".avi")) {
-            return "video/x-msvideo";
-        } else if (fileName.toLowerCase().endsWith(".mp3")) {
-            return "audio/mpeg";
+        if (fileName == null || !fileName.contains(".")) {
+            return "FILE";
         }
-        return "application/octet-stream";
+        // Extraemos lo que hay después del punto y lo pasamos a MAYÚSCULAS
+        // Esto asegura que si el archivo es .mp3, el formato sea "MP3"
+        return fileName.substring(fileName.lastIndexOf(".") + 1).toUpperCase();
     }
 
     private String getBinariesPath() {

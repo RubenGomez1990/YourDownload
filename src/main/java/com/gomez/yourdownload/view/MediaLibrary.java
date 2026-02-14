@@ -118,27 +118,39 @@ public class MediaLibrary extends javax.swing.JPanel {
                 // 2. Pasamos al hilo de la interfaz para actualizar los datos
                 SwingUtilities.invokeLater(() -> {
 
-                    // --- AQUÍ ES DONDE SE CREA CLEANEDLIST ---
-                    // Es una lista temporal para preparar los datos sin afectar a la tabla aún
+                    // Lista temporal para los datos limpios
                     List<DownloadInfo> cleanedList = new ArrayList<>();
 
-                    // Set para evitar duplicados por nombre durante el proceso
+                    // Set para evitar duplicados por nombre
                     java.util.Set<String> processedNames = new java.util.HashSet<>();
 
                     // A. Procesamos lo que ya tenemos en local (nuestro historial JSON)
                     for (DownloadInfo localFile : resourcesList) {
+
+                        // --- 1. VERIFICACIÓN DE EXISTENCIA FÍSICA ---
+                        // Si el archivo tiene ruta local, verificamos si el archivo existe de verdad
+                        if (localFile.getAbsolutePath() != null && !localFile.getAbsolutePath().isEmpty()) {
+                            File physicalFile = new File(localFile.getAbsolutePath());
+                            if (!physicalFile.exists()) {
+                                continue; // Si lo borraste del PC, NO lo añadimos a cleanedList (desaparece)
+                            }
+                        }
+
                         String name = localFile.getFileName().toLowerCase().trim();
 
-                        // Si este archivo local existe en la red, lo vinculamos (Merge)
+                        // --- 2. LOGICA DE SINCRONIZACIÓN Y FORMATO ---
                         if (networkMap.containsKey(name)) {
                             com.gomez.model.Media net = networkMap.get(name);
                             localFile.setNetworkId(net.id);
                             localFile.setIsInNetwork(true);
 
-                            // Usamos tu nuevo método para poner el formato real (MP3, MP4...)
+                            // AQUÍ FORZAMOS EL FORMATO LIMPIO (MP4, MP3, etc)
                             localFile.setMimeType(getCleanFormat(net.mediaMimeType, net.mediaFileName));
 
-                            networkMap.remove(name); // Lo quitamos del mapa para no duplicarlo luego
+                            networkMap.remove(name); // Lo quitamos del mapa para que no se repita en el paso B
+                        } else {
+                            // Si es un archivo local que no está en la red, también limpiamos su formato
+                            localFile.setMimeType(getCleanFormat(null, localFile.getFileName()));
                         }
 
                         if (!processedNames.contains(name)) {
@@ -151,20 +163,20 @@ public class MediaLibrary extends javax.swing.JPanel {
                     for (com.gomez.model.Media net : networkMap.values()) {
                         String name = net.mediaFileName.toLowerCase().trim();
                         if (!processedNames.contains(name)) {
+                            // Limpiamos formato para los de la nube
                             String format = getCleanFormat(net.mediaMimeType, net.mediaFileName);
 
-                            // Creamos el objeto "Network Only" con el formato correcto
                             DownloadInfo netInfo = new DownloadInfo(net.id, net.mediaFileName, (long) net.mediaFileSize, format);
                             cleanedList.add(netInfo);
                             processedNames.add(name);
                         }
                     }
 
-                    // 3. PASO FINAL: Sustituimos la lista vieja por la nueva ya limpia
+                    // 3. PASO FINAL: Sustituimos la lista vieja por la nueva ya filtrada y formateada
                     resourcesList.clear();
                     resourcesList.addAll(cleanedList);
 
-                    // Notificamos a la tabla para que se pinte con los nuevos datos y formatos
+                    // Notificamos a la tabla
                     tableModel.fireTableDataChanged();
                 });
 
@@ -475,31 +487,23 @@ public class MediaLibrary extends javax.swing.JPanel {
     }
 
     private String getCleanFormat(String mimeType, String fileName) {
-        // 1. Si el mimeType nos da una pista clara (ej: audio/mpeg)
+        // Si tenemos nombre de archivo, la extensión es lo más fiable
+        if (fileName != null && fileName.contains(".")) {
+            return fileName.substring(fileName.lastIndexOf(".") + 1).toUpperCase();
+        }
+
+        // Fallback por si no hay nombre
         if (mimeType != null) {
             if (mimeType.contains("mp4")) {
                 return "MP4";
             }
-            if (mimeType.contains("mpeg") || mimeType.contains("mp3")) {
+            if (mimeType.contains("mp3") || mimeType.contains("mpeg")) {
                 return "MP3";
             }
             if (mimeType.contains("avi")) {
                 return "AVI";
             }
-            if (mimeType.contains("jpeg") || mimeType.contains("jpg")) {
-                return "JPG";
-            }
-            if (mimeType.contains("png")) {
-                return "PNG";
-            }
         }
-
-        // 2. Si falla el MIME, intentamos extraer la extensión del nombre del archivo
-        if (fileName != null && fileName.contains(".")) {
-            String ext = fileName.substring(fileName.lastIndexOf(".") + 1).toUpperCase();
-            return ext.length() <= 4 ? ext : "FILE"; // Evita extensiones larguísimas por error
-        }
-
         return "N/A";
     }
 

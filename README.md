@@ -104,6 +104,24 @@ try {
 
 // UPDATES TASK 4
 
+¡IMPORTANTE!
+Problemas al descargar. Al parecer hay un problema con yt-dlp por el cual da error 403, he estado investigando y no he conseguido nada mas que descargar a una calidad de video 360 y poco más. 
+Para poder hacer eso, me ha exigido un programa que maneje javascript. En este caso he tenido que instalar node.js y configurar el codigo de la descarga para que me permita coger las cookies de mi navegador
+que en este caso es firefox. Para sus pruebas, deberia cambiarlo a chrome o edge e usar un programa como node.js para comprobarlo. No sé como solucionarlo de otra forma, necesitaría de su ayuda para ello.
+
+ESTAS SON LAS LINEAS:
+
+List<String> command = new ArrayList<>();
+                command.add(ytDlpExe.getAbsolutePath());
+                command.add("--ffmpeg-location");
+                command.add(ytDlpExe.getParent());
+                command.add("--cookies-from-browser");
+                command.add("firefox");
+                command.add("--js-runtimes");
+                command.add("node");
+                command.add("--extractor-arg");
+                command.add("youtube:player_client=web");
+
 1. loadAllMediaInfo: Se ha modificado para que descargue toda la información de la plataforma correctamente. Automaticamente, ordena los archivos por ID, muestra solo 1 versión de cada
 archivo (Si esta en net y local, muestra local y net). Actualiza y comprueba si hay archivos nuevos para añadirlos a la librería.
 
@@ -123,6 +141,8 @@ Se ha añadido un botón "Show Log" para mostrar el log del progreso de la desca
 8. Implementación de una tabla más grande, con orden automático por ID, mejora de la lista de filtrado por tipo de archivo añadiendo unos formatos basicos, mp3, mp4, .avi, .wav.
 También se pueden ordenar las columnas en el orden que quiera el cliente, cambiarlas de tamaño o aplicar filtros sobre cada columna. Se ha intentado establecer un icono para que avise de que se 
 puede redimensionar al pasar el ratón por encima pero no se ha conseguido y puede ser una limitación de FlatLaf
+
+
 
 
 
