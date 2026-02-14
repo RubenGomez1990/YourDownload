@@ -93,6 +93,38 @@ public class MediaLibrary extends javax.swing.JPanel {
         sorter.setSortKeys(sortKeys);
         sorter.sort();
 
+        jTableMedia.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                if (evt.getClickCount() == 2) { // Doble clic detectado
+                    int row = jTableMedia.getSelectedRow();
+                    if (row != -1) {
+                        int modelRow = jTableMedia.convertRowIndexToModel(row);
+                        DownloadInfo resource = resourcesList.get(modelRow);
+
+                        // Comprobamos si el archivo existe físicamente
+                        if (resource.getAbsolutePath() != null) {
+                            File file = new File(resource.getAbsolutePath());
+                            if (file.exists()) {
+                                try {
+                                    // REPRODUCIR: Abre el archivo con el reproductor del sistema
+                                    java.awt.Desktop.getDesktop().open(file);
+                                } catch (Exception ex) {
+                                    JOptionPane.showMessageDialog(null, "No se pudo abrir el archivo.");
+                                }
+                            } else {
+                                // Si la ruta existe en la lista pero no en el disco, descargamos
+                                jButtonDownloadActionPerformed(null);
+                            }
+                        } else {
+                            // Si no tiene ruta (es Network Only), descargamos
+                            jButtonDownloadActionPerformed(null);
+                        }
+                    }
+                }
+            }
+        });
+
         // Inicializar contenido
         initFiltroComboBox();
         loadAllMediaInfo();
