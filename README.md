@@ -120,5 +120,13 @@ Se ha añadido un botón "Show Log" para mostrar el log del progreso de la desca
 
 7. Se ha arreglado el error por el cual desde MediaLibrary -> Edit -> Preferences al darle a go back, volvías a MainScreen. 
 
+8. Implementación de una tabla más grande, con orden automático por ID, mejora de la lista de filtrado por tipo de archivo añadiendo unos formatos basicos, mp3, mp4, .avi, .wav.
+También se pueden ordenar las columnas en el orden que quiera el cliente, cambiarlas de tamaño o aplicar filtros sobre cada columna. Se ha intentado establecer un icono para que avise de que se 
+puede redimensionar al pasar el ratón por encima pero no se ha conseguido y puede ser una limitación de FlatLaf
+
+
+
+
+
 
 

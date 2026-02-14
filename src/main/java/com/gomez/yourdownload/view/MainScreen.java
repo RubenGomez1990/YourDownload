@@ -815,7 +815,8 @@ public class MainScreen extends javax.swing.JFrame {
 
     private void showLibrary() {
         this.currentView = "LIBRARY"; // Guardamos que estamos en la librería
-        this.setSize(1024, 600);
+        this.setSize(1200, 800);
+        this.setResizable(false);
         this.setLocationRelativeTo(null);
         MediaLibrary libraryPanel = new MediaLibrary(this, originalPanel, resourcesList, this.mediaPoller1);
         setContentPane(libraryPanel);

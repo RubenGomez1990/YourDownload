@@ -20,7 +20,7 @@ public class DownloadInfo {
     private final String absolutePath;
     private final Date downloadDate;
     private final Long size;
-    private final String mimeType;
+    private String mimeType;
     
    // Añadidos para poder almacenar otro tipos de datos de red
     private Integer networkId;
@@ -75,6 +75,10 @@ public class DownloadInfo {
     public String getMimeType() {
         return mimeType;
     }
+    
+    public void setMimeType(String mimeType) {
+    this.mimeType = mimeType;
+}
     
     public Integer getNetworkId() { 
         return networkId; 

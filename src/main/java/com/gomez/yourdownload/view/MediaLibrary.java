@@ -29,6 +29,7 @@ public class MediaLibrary extends javax.swing.JPanel {
     private final List<DownloadInfo> resourcesList;
     private DownloadInfoTableModel tableModel;
     private final MediaPoller mediaPoller;
+    private javax.swing.table.TableRowSorter<DownloadInfoTableModel> sorter;
 
     public MediaLibrary(MainScreen principal, JPanel originalPanel, List<DownloadInfo> resourcesList, MediaPoller mediaPoller) {
         this.mainScreen = principal;
@@ -38,105 +39,137 @@ public class MediaLibrary extends javax.swing.JPanel {
 
         initComponents();
 
-        // 1. Inicializamos el modelo
+        // 1. DIMENSIONES Y LAYOUT
+        this.setPreferredSize(new java.awt.Dimension(1200, 800));
+        this.setLayout(null);
+
+        // 2. ESTÉTICA Y POSICIÓN DE TABLA
+        jScrollPaneMedia.setBounds(10, 10, 1160, 600);
+        jTableMedia.setRowHeight(35);
+        jTableMedia.setShowVerticalLines(false);
+        jScrollPaneMedia.setBorder(javax.swing.BorderFactory.createEmptyBorder());
+
+        // 3. POSICIONAMIENTO DE BOTONES (Fila Y=630)
+        jLabelFilter.setBounds(10, 630, 70, 30);
+        jComboBoxFilter.setBounds(90, 630, 160, 30);
+        jButtonSearch.setBounds(260, 630, 150, 40);
+
+        jButtonDelete.setBounds(450, 630, 120, 40);
+        jButtonUpload1.setBounds(580, 630, 120, 40);
+
+        jButtonDownload.setBounds(850, 630, 130, 40);
+        jButtonBack.setBounds(1000, 630, 130, 40);
+
+        // 4. MODELO Y SORTER
         tableModel = new DownloadInfoTableModel(resourcesList);
         jTableMedia.setModel(tableModel);
 
-        // 2. CREACIÓN MANUAL DEL SORTER (Para que no sea null)
-        javax.swing.table.TableRowSorter<DownloadInfoTableModel> sorter
-                = new javax.swing.table.TableRowSorter<>(tableModel);
+        sorter = new javax.swing.table.TableRowSorter<>(tableModel);
+        javax.swing.table.TableColumnModel columnModel = jTableMedia.getColumnModel();
+        columnModel.getColumn(0).setPreferredWidth(50);   // ID: Pequeño
+        columnModel.getColumn(1).setPreferredWidth(500);  // Name: El más ancho para ver nombres largos
+        columnModel.getColumn(2).setPreferredWidth(100);  // Size
+        columnModel.getColumn(3).setPreferredWidth(80);   // Format
+        columnModel.getColumn(4).setPreferredWidth(180);  // Download Date
+        columnModel.getColumn(5).setPreferredWidth(150);
+        jTableMedia.getTableHeader().setResizingAllowed(true);
+        jTableMedia.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_OFF);
         jTableMedia.setRowSorter(sorter);
-        jTableMedia.getColumnModel().getColumn(0).setCellRenderer(new javax.swing.table.DefaultTableCellRenderer() {
+
+        javax.swing.table.DefaultTableCellRenderer idRenderer = new javax.swing.table.DefaultTableCellRenderer() {
             @Override
             protected void setValue(Object value) {
+                // Mantenemos tu lógica de "N/A" para IDs nulos
                 setText((value == null) ? "N/A" : value.toString());
             }
-        });
+        };
 
-        // 3. CONFIGURACIÓN DEL ORDEN INICIAL POR ID (Columna 0)
+        idRenderer.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        jTableMedia.getColumnModel().getColumn(0).setCellRenderer(idRenderer);
+
+        // 5. ORDEN INICIAL POR ID (Columna 0, Ascendente)
         java.util.List<javax.swing.RowSorter.SortKey> sortKeys = new java.util.ArrayList<>();
         sortKeys.add(new javax.swing.RowSorter.SortKey(0, javax.swing.SortOrder.ASCENDING));
         sorter.setSortKeys(sortKeys);
         sorter.sort();
 
-        // 4. Inits de filtros y carga
+        // Inicializar contenido
         initFiltroComboBox();
         loadAllMediaInfo();
     }
 
     private void loadAllMediaInfo() {
         new Thread(() -> {
-            if (this.mediaPoller == null) {
-                return;
-            }
-
             try {
+                // 1. Obtenemos todos los archivos que hay en la nube (Red)
                 List<com.gomez.model.Media> networkFiles = this.mediaPoller.getAllMedia();
                 if (networkFiles == null) {
                     return;
                 }
 
-                // 1. Mapa de red (Normalizamos el nombre para evitar fallos por mayúsculas/espacios)
+                // Creamos un mapa para buscar archivos por nombre rápidamente
                 Map<String, com.gomez.model.Media> networkMap = new HashMap<>();
                 for (com.gomez.model.Media m : networkFiles) {
                     if (m.mediaFileName != null) {
-                        networkMap.put(m.mediaFileName.trim().toLowerCase(), m);
+                        networkMap.put(m.mediaFileName.toLowerCase().trim(), m);
                     }
                 }
 
+                // 2. Pasamos al hilo de la interfaz para actualizar los datos
                 SwingUtilities.invokeLater(() -> {
-                    // 2. Usamos un Set para no añadir dos veces lo mismo por error
+
+                    // --- AQUÍ ES DONDE SE CREA CLEANEDLIST ---
+                    // Es una lista temporal para preparar los datos sin afectar a la tabla aún
+                    List<DownloadInfo> cleanedList = new ArrayList<>();
+
+                    // Set para evitar duplicados por nombre durante el proceso
                     java.util.Set<String> processedNames = new java.util.HashSet<>();
-                    java.util.List<DownloadInfo> mergedList = new ArrayList<>();
 
-                    // 3. PASO 1: Revisar lo que ya tenemos en local/historial
-                    for (DownloadInfo local : resourcesList) {
-                        String cleanName = local.getFileName().trim().toLowerCase();
+                    // A. Procesamos lo que ya tenemos en local (nuestro historial JSON)
+                    for (DownloadInfo localFile : resourcesList) {
+                        String name = localFile.getFileName().toLowerCase().trim();
 
-                        if (networkMap.containsKey(cleanName)) {
-                            // CASO: ESTÁ EN AMBOS (Synced)
-                            com.gomez.model.Media net = networkMap.get(cleanName);
-                            local.setNetworkId(net.id);
-                            local.setIsInNetwork(true);
-                            local.setIsNetworkOnly(false);
-                            networkMap.remove(cleanName); // Lo quitamos del mapa de red
-                        } else {
-                            // CASO: SOLO LOCAL
-                            local.setIsInNetwork(false);
-                            local.setNetworkId(null);
+                        // Si este archivo local existe en la red, lo vinculamos (Merge)
+                        if (networkMap.containsKey(name)) {
+                            com.gomez.model.Media net = networkMap.get(name);
+                            localFile.setNetworkId(net.id);
+                            localFile.setIsInNetwork(true);
+
+                            // Usamos tu nuevo método para poner el formato real (MP3, MP4...)
+                            localFile.setMimeType(getCleanFormat(net.mediaMimeType, net.mediaFileName));
+
+                            networkMap.remove(name); // Lo quitamos del mapa para no duplicarlo luego
                         }
 
-                        if (!processedNames.contains(cleanName)) {
-                            mergedList.add(local);
-                            processedNames.add(cleanName);
+                        if (!processedNames.contains(name)) {
+                            cleanedList.add(localFile);
+                            processedNames.add(name);
                         }
                     }
 
-                    // 4. PASO 2: Añadir lo que queda en la red que NO teníamos localmente
+                    // B. Añadimos lo que falta (lo que solo está en la red)
                     for (com.gomez.model.Media net : networkMap.values()) {
-                        String cleanName = net.mediaFileName.trim().toLowerCase();
-                        if (!processedNames.contains(cleanName)) {
-                            DownloadInfo cloudOnly = new DownloadInfo(
-                                    net.id, net.mediaFileName, (long) net.mediaFileSize, net.mediaMimeType
-                            );
-                            mergedList.add(cloudOnly);
-                            processedNames.add(cleanName);
+                        String name = net.mediaFileName.toLowerCase().trim();
+                        if (!processedNames.contains(name)) {
+                            String format = getCleanFormat(net.mediaMimeType, net.mediaFileName);
+
+                            // Creamos el objeto "Network Only" con el formato correcto
+                            DownloadInfo netInfo = new DownloadInfo(net.id, net.mediaFileName, (long) net.mediaFileSize, format);
+                            cleanedList.add(netInfo);
+                            processedNames.add(name);
                         }
                     }
 
-                    // 5. ACTUALIZACIÓN FINAL: Sustituimos la lista vieja por la nueva limpia
+                    // 3. PASO FINAL: Sustituimos la lista vieja por la nueva ya limpia
                     resourcesList.clear();
-                    resourcesList.addAll(mergedList);
+                    resourcesList.addAll(cleanedList);
 
+                    // Notificamos a la tabla para que se pinte con los nuevos datos y formatos
                     tableModel.fireTableDataChanged();
-
-                    // Re-ordenar por ID tras la limpieza
-                    if (jTableMedia.getRowSorter() instanceof javax.swing.DefaultRowSorter) {
-                        ((javax.swing.DefaultRowSorter<?, ?>) jTableMedia.getRowSorter()).sort();
-                    }
                 });
+
             } catch (Exception e) {
-                e.printStackTrace();
+                System.err.println("Error syncing media library: " + e.getMessage());
             }
         }).start();
     }
@@ -297,34 +330,30 @@ public class MediaLibrary extends javax.swing.JPanel {
 
     private void jComboBoxFilterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBoxFilterActionPerformed
 
-        @SuppressWarnings("unchecked")
-        javax.swing.table.TableRowSorter<DownloadInfoTableModel> sorter
-                = (javax.swing.table.TableRowSorter<DownloadInfoTableModel>) jTableMedia.getRowSorter();
-
         if (sorter == null) {
             return;
         }
-        String selectedFilter = (String) jComboBoxFilter.getSelectedItem();
 
-        if (!selectedFilter.equals("All Types")) {
-            // CASO A: Mostrar todas las filas.
+        String selected = (String) jComboBoxFilter.getSelectedItem();
+
+        // Si es "All Types", quitamos cualquier filtro
+        if (selected.equals("All Types")) {
             sorter.setRowFilter(null);
         } else {
-            // CASO B: Filtrar las filas (el caso que antes estaba en el 'else').
-            String mimeTypeFilter = "";
-            // Lógica de traducción
-            if (selectedFilter.contains("MP4")) {
-                mimeTypeFilter = "video/mp4";
-            } else if (selectedFilter.contains("AVI")) {
-                mimeTypeFilter = "video/x-msvideo";
-            } else if (selectedFilter.contains("MP3")) {
-                mimeTypeFilter = "audio/mpeg";
+            // Extraemos solo la extensión (ej: de "Video (MP4)" sacamos "MP4")
+            String extension = selected;
+            if (selected.contains("MP4")) {
+                extension = "MP4";
+            } else if (selected.contains("MP3")) {
+                extension = "MP3";
+            } else if (selected.contains("AVI")) {
+                extension = "AVI";
+            } else if (selected.contains("WAV")) {
+                extension = "WAV";
             }
 
-            // Aplicar el filtro a la Columna 2 (MIME Type)
-            javax.swing.RowFilter<Object, Object> rf
-                    = javax.swing.RowFilter.regexFilter("^" + mimeTypeFilter + "$", 3);
-            sorter.setRowFilter(rf);
+            // Filtramos en la columna 3 (Format) ignorando mayúsculas
+            sorter.setRowFilter(javax.swing.RowFilter.regexFilter("(?i)" + extension, 3));
         }
     }//GEN-LAST:event_jComboBoxFilterActionPerformed
 
@@ -435,25 +464,43 @@ public class MediaLibrary extends javax.swing.JPanel {
     }//GEN-LAST:event_jButtonUpload1ActionPerformed
 
     private void initFiltroComboBox() {
-        // 1. Definimos las opciones de filtro con nombres amigables para el usuario
         String[] filterTypes = {
-            "All Types", // Opción 0: Desactivar filtro
-            "Video (MP4)", // Opción para buscar "video/mp4"
-            "Audio (MP3)", // Opción para buscar "audio/mpeg"
-            "Video (AVI)" // Opción para buscar "video/x-msvideo"
+            "All Types",
+            "Video (MP4)",
+            "Audio (MP3)",
+            "Video (AVI)",
+            "Audio (WAV)"
         };
+        jComboBoxFilter.setModel(new javax.swing.DefaultComboBoxModel<>(filterTypes));
+    }
 
-        // 2. Asignamos las opciones al JComboBox
-        javax.swing.DefaultComboBoxModel<String> filterModel = new javax.swing.DefaultComboBoxModel<>(filterTypes);
-        jComboBoxFilter.setModel(filterModel);
-
-        // 3. Conectamos el JComboBox a la lógica de acción
-        jComboBoxFilter.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                // Llama al método que contiene la lógica del RowFilter
-                jComboBoxFilterActionPerformed(evt);
+    private String getCleanFormat(String mimeType, String fileName) {
+        // 1. Si el mimeType nos da una pista clara (ej: audio/mpeg)
+        if (mimeType != null) {
+            if (mimeType.contains("mp4")) {
+                return "MP4";
             }
-        });
+            if (mimeType.contains("mpeg") || mimeType.contains("mp3")) {
+                return "MP3";
+            }
+            if (mimeType.contains("avi")) {
+                return "AVI";
+            }
+            if (mimeType.contains("jpeg") || mimeType.contains("jpg")) {
+                return "JPG";
+            }
+            if (mimeType.contains("png")) {
+                return "PNG";
+            }
+        }
+
+        // 2. Si falla el MIME, intentamos extraer la extensión del nombre del archivo
+        if (fileName != null && fileName.contains(".")) {
+            String ext = fileName.substring(fileName.lastIndexOf(".") + 1).toUpperCase();
+            return ext.length() <= 4 ? ext : "FILE"; // Evita extensiones larguísimas por error
+        }
+
+        return "N/A";
     }
 
 
