@@ -158,3 +158,5 @@ puede redimensionar al pasar el ratón por encima pero no se ha conseguido y pue
 15. Añadidos pequeños iconos descriptivos y tooltip a los botones en MainScreen. 
 
 16. Modificado medialibrary, con iconos con tooltip. 
+
+17. Modificada progress bar por una más moderna.
