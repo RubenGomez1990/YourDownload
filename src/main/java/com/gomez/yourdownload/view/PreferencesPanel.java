@@ -4,12 +4,9 @@ import java.io.File;
 import java.util.prefs.Preferences;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JPanel.java to edit this template
- */
 /**
  *
  * @author LionKeriot
@@ -182,16 +179,24 @@ public class PreferencesPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_jButtonBackActionPerformed
 
     private void jButtonBinariesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonBinariesActionPerformed
-        JFileChooser chooser = new JFileChooser();
-        chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+        try {
+            JFileChooser chooser = new JFileChooser();
+            // ... (configuración selector) ...
+            if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
+                File selected = chooser.getSelectedFile();
+                if (!selected.exists()) {
+                    throw new Exception("Selected file does not exist.");
+                }
 
-        if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
-            binariesPath = chooser.getSelectedFile().getAbsolutePath();
-            jLabelBinaries.setText("Binaries path: " + binariesPath);
+                binariesPath = selected.getAbsolutePath();
+                jLabelBinaries.setText("Binaries path: " + binariesPath);
 
-            Preferences prefs = Preferences.userRoot().node("PreferencesPanel");
-            prefs.put("binariesPath", binariesPath);
-            savePrefs(prefs);
+                Preferences prefs = Preferences.userRoot().node("PreferencesPanel");
+                prefs.put("binariesPath", binariesPath);
+                savePrefs(prefs);
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Error selecting binary: " + e.getMessage(), "Input Error", JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_jButtonBinariesActionPerformed
 
@@ -208,10 +213,14 @@ public class PreferencesPanel extends javax.swing.JPanel {
         try {
             prefs.flush();
         } catch (Exception e) {
-            System.err.println("Error saving: " + e.getMessage());
+            System.err.println("Error guardando preferencias: " + e.getMessage());
+            JOptionPane.showMessageDialog(this,
+                    "No se pudieron guardar las preferencias en el sistema: " + e.getMessage(),
+                    "Error de Persistencia",
+                    JOptionPane.ERROR_MESSAGE);
         }
     }
-    
+
     private void applyCorporateStyles() {
         java.awt.Color corporateBlue = new java.awt.Color(74, 134, 173);
         this.setBackground(java.awt.Color.WHITE);
@@ -221,7 +230,9 @@ public class PreferencesPanel extends javax.swing.JPanel {
             jPanelTemporaly, jPanelPlaylists, jPanelLimit, jPanelBinaries
         };
         for (javax.swing.JPanel p : subPanels) {
-            if (p != null) p.setBackground(java.awt.Color.WHITE);
+            if (p != null) {
+                p.setBackground(java.awt.Color.WHITE);
+            }
         }
 
         // Style Action Buttons (Rectangular & Blue)
@@ -245,10 +256,12 @@ public class PreferencesPanel extends javax.swing.JPanel {
         makeIconOnlyButton(jButtonBack, "/icons/back_blue.png", "Go previous");
         jButtonBack.setBounds(10, 180, 40, 40); // Adjusted for square icon
     }
-    
+
     private void makeIconOnlyButton(javax.swing.JButton btn, String iconPath, String tooltip) {
-        if (btn == null) return;
-        btn.setText(""); 
+        if (btn == null) {
+            return;
+        }
+        btn.setText("");
         btn.setToolTipText(tooltip);
         btn.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         btn.setBorderPainted(false);

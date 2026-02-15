@@ -39,23 +39,26 @@ public class MainScreen extends javax.swing.JFrame {
         resourcesList = DownloadService.loadHistory();
         initComponents();
         originalPanel = (JPanel) getContentPane();
-
+        this.setResizable(false);
+        
+        
         // Style settings buttons
-        jButtonDownload.setBackground(azulLogin);
-        jButtonDownload.setForeground(java.awt.Color.WHITE);
-        jButtonDownload.putClientProperty("JButton.buttonType", "square");
-        jButtonDownload.putClientProperty("JComponent.arc", 0);
-
         jButtonDownload.setToolTipText("Start downloading the video/audio");
         jButtonDownload.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-// Para poner el icono (Asegúrate de tener la carpeta src/main/resources/icons/)
         try {
             jButtonDownload.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/download_white.png")));
-            jButtonDownload.setText("Download"); // Puedes dejar el texto o quitarlo si el icono es muy claro
+            jButtonDownload.setText("Download");
         } catch (Exception e) {
             System.err.println("Icon not found");
         }
 
+        jButtonDownload.setBackground(azulLogin);
+        jButtonDownload.setForeground(java.awt.Color.WHITE);
+        jButtonDownload.setContentAreaFilled(true);
+        jButtonDownload.setOpaque(true);
+        jButtonDownload.putClientProperty("JButton.buttonType", "square");
+        jButtonDownload.putClientProperty("JComponent.arc", 0);
+        
         jButtonLibrary.setBackground(azulLogin);
         jButtonLibrary.setForeground(java.awt.Color.WHITE);
         jButtonLibrary.putClientProperty("JButton.buttonType", "square");
@@ -88,26 +91,17 @@ public class MainScreen extends javax.swing.JFrame {
         jButtonChange.putClientProperty("JButton.buttonType", "square");
         jButtonChange.putClientProperty("JComponent.arc", 0);
 
-        // --- ESTILO DE BARRA DE PROGRESO (FlatLaf Modern) ---
         jProgressBar.setStringPainted(true);
         jProgressBar.setForeground(azulLogin);
-// Fondo gris claro para que sea visible cuando está vacía
         jProgressBar.setBackground(new java.awt.Color(235, 235, 235));
         jProgressBar.setFont(new java.awt.Font("Segoe UI", java.awt.Font.BOLD, 12));
 
-// Propiedades FlatLaf: Rectangular y sin bordes redondeados
         jProgressBar.putClientProperty("JComponent.arc", 0);
-// Añadimos un pequeño borde para definir el área cuando está al 0%
         jProgressBar.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(210, 210, 210), 1));
-
-// --- CORRECCIÓN DE DESCUADRE DE TEXTOS ---
-// Alineamos el label de estado exactamente debajo del inicio de la barra de progreso
-// La barra empieza en X=110 dentro del panel, el panel está en X=10 -> Total X = 120
         jLabelDownloadStatus.setBounds(120, 240, 670, 25);
         jLabelDownloadStatus.setVerticalAlignment(javax.swing.SwingConstants.TOP);
         jLabelDownloadStatus.setText(""); // Empezamos vacío
 
-        // Settings button radio
         jRadioMP4.setSelected(true);
         setPanelEnabled(jPanelQuality, true);  // Calidad vídeo activa
         jRadioButton1080.setSelected(true);
@@ -613,8 +607,11 @@ public class MainScreen extends javax.swing.JFrame {
         new Thread(() -> {
             try {
                 String binariesPath = getBinariesPath();
-                File ytDlpExe = new File(binariesPath);
+                if (binariesPath.isEmpty() || !new File(binariesPath).exists()) {
+                    throw new Exception("The path for 'yt-dlp' is invalid or not set in Preferences.");
+                }
 
+                File ytDlpExe = new File(binariesPath);
                 // Usamos un identificador único para esta descarga (epoch) para encontrar el archivo luego
                 String timestampId = String.valueOf(System.currentTimeMillis() / 1000);
 
@@ -643,14 +640,20 @@ public class MainScreen extends javax.swing.JFrame {
                 command.add(url);
 
                 Process process = new ProcessBuilder(command).redirectErrorStream(true).start();
-                BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    final String outputLine = line;
-                    SwingUtilities.invokeLater(() -> {
-                        jTextAreaConsole.append(outputLine + "\n");
-                        updateProgressBar(outputLine);
-                    });
+
+                try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
+                    String line;
+                    while ((line = reader.readLine()) != null) {
+                        final String outputLine = line;
+                        SwingUtilities.invokeLater(() -> {
+                            jTextAreaConsole.append(outputLine + "\n");
+                            updateProgressBar(outputLine);
+                        });
+                    }
+                }
+                int exitCode = process.waitFor();
+                if (exitCode != 0) {
+                    throw new Exception("Process finished with error code: " + exitCode);
                 }
                 process.waitFor();
 
@@ -676,16 +679,16 @@ public class MainScreen extends javax.swing.JFrame {
                     throw new Exception("File not found after download process.");
                 }
 
+            } catch (InterruptedException e) {
+                logErrorMain("Download interrupted: " + e.getMessage());
+                Thread.currentThread().interrupt();
             } catch (Exception e) {
-                SwingUtilities.invokeLater(() -> {
-                    jLabelDownloadStatus.setText("Error in download ");
-                    jLabelDownloadStatus.setForeground(java.awt.Color.RED);
-                    jTextAreaConsole.append("\nERROR: " + e.getMessage());
-                });
+                logErrorMain("Download Error: " + e.getMessage());
             } finally {
                 SwingUtilities.invokeLater(() -> jButtonDownload.setEnabled(true));
             }
-        }).start();
+        }
+        ).start();
     }//GEN-LAST:event_jButtonDownloadActionPerformed
 
     private void jButtonChangeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonChangeActionPerformed
@@ -1104,6 +1107,15 @@ public class MainScreen extends javax.swing.JFrame {
         } catch (Exception e) {
             System.err.println("Icon not found: " + iconPath);
         }
+    }
+
+    private void logErrorMain(String message) {
+        SwingUtilities.invokeLater(() -> {
+            jTextAreaConsole.append("\n[FATAL ERROR] " + message + "\n");
+            jLabelDownloadStatus.setText("Error. Check the Log.");
+            jLabelDownloadStatus.setForeground(java.awt.Color.RED);
+            JOptionPane.showMessageDialog(this, message, "System Error", JOptionPane.ERROR_MESSAGE);
+        });
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup buttonGroupAQ;

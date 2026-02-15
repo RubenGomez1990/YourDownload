@@ -160,3 +160,9 @@ puede redimensionar al pasar el ratón por encima pero no se ha conseguido y pue
 16. Modificado medialibrary, con iconos con tooltip. 
 
 17. Modificada progress bar por una más moderna.
+
+18. Implementadas excepciones y avisos al cliente.
+
+19. Modificaciones varias.
+
+20. Clean code. 

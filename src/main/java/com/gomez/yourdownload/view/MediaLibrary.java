@@ -91,7 +91,6 @@ public class MediaLibrary extends javax.swing.JPanel {
         jTextFieldSearch.putClientProperty("JComponent.arc", 0);
 
         //Icon buttons
-
         for (javax.swing.JButton btn : actionButtons) {
             if (btn != null) {
                 btn.setBackground(corporateBlue);
@@ -198,7 +197,7 @@ public class MediaLibrary extends javax.swing.JPanel {
                 // 1. Obtenemos todos los archivos que hay en la nube (Red)
                 List<com.gomez.model.Media> networkFiles = this.mediaPoller.getAllMedia();
                 if (networkFiles == null) {
-                    return;
+                    throw new Exception("Server unreachable.");
                 }
 
                 // Creamos un mapa para buscar archivos por nombre rápidamente
@@ -275,7 +274,10 @@ public class MediaLibrary extends javax.swing.JPanel {
                 });
 
             } catch (Exception e) {
-                System.err.println("Error syncing media library: " + e.getMessage());
+                System.err.println("Sync Error: " + e.getMessage());
+                SwingUtilities.invokeLater(() -> {
+                    jLabelSearch.setToolTipText("Sync Error: " + e.getMessage());
+                });
             }
         }).start();
     }
@@ -737,22 +739,41 @@ public class MediaLibrary extends javax.swing.JPanel {
         if (row != -1) {
             int modelRow = jTableMedia.convertRowIndexToModel(row);
             DownloadInfo resource = resourcesList.get(modelRow);
-            if (resource.getAbsolutePath() != null) {
-                File file = new File(resource.getAbsolutePath());
-                if (file.exists()) {
-                    try {
+
+            try {
+                // CASO 1: El archivo tiene una ruta grabada (ya se descargó alguna vez)
+                if (resource.getAbsolutePath() != null && !resource.getAbsolutePath().isEmpty()) {
+                    File file = new File(resource.getAbsolutePath());
+
+                    if (file.exists()) {
+                        // Si el archivo físico existe, lo abrimos con el reproductor del sistema
                         java.awt.Desktop.getDesktop().open(file);
-                    } catch (Exception ex) {
-                        JOptionPane.showMessageDialog(null, "Error opening file.");
+                    } else {
+                        // Si la ruta existe pero el archivo no está en el disco (borrado manual)
+                        int resp = JOptionPane.showConfirmDialog(this,
+                                "The file is missing from your disk. Do you want to download it again?",
+                                "File Missing", JOptionPane.YES_NO_OPTION);
+
+                        if (resp == JOptionPane.YES_OPTION) {
+                            jButtonDownloadActionPerformed(null);
+                        }
                     }
-                } else {
+                } // CASO 2: El archivo NO tiene ruta local (Es "Network Only")
+                // Esta es la parte que se nos había quedado fuera
+                else {
                     jButtonDownloadActionPerformed(null);
                 }
-            } else {
-                jButtonDownloadActionPerformed(null);
+
+            } catch (java.io.IOException ex) {
+                JOptionPane.showMessageDialog(this,
+                        "No compatible player found or access denied.",
+                        "Execution Error", JOptionPane.ERROR_MESSAGE);
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(this, "An unexpected error occurred: " + e.getMessage());
             }
         }
     }
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButtonBack;
     private javax.swing.JButton jButtonDelete;
