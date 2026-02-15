@@ -31,18 +31,21 @@ public class PreferencesPanel extends javax.swing.JPanel {
         this.mainScreen = mainScreen;
         this.originalPanel = originalPanel;
 
-        // Cargar preferencias guardadas
+        // 1. APPLY CORPORATE STYLING
+        applyCorporateStyles();
+
+        // 2. LOAD SAVED PREFERENCES
         Preferences prefs = Preferences.userRoot().node("PreferencesPanel");
 
-        // 1. Cargar Binarios
+        // Load Binaries
         this.binariesPath = prefs.get("binariesPath", "Not set");
         jLabelBinaries.setText("Binaries path: " + binariesPath);
 
-        // 2. Cargar Archivos Temporales
+        // Load Temporary Files
         this.tempPath = prefs.get("tempPath", "Not set");
         jLabelTemporaly.setText("Temporary files path: " + tempPath);
 
-        // 3. Cargar Límite de Velocidad (por índice del ComboBox)
+        // Load Speed Limit
         int speedIndex = prefs.getInt("speedLimitIndex", 0);
         jComboBoxLimit.setSelectedIndex(speedIndex);
     }
@@ -206,6 +209,62 @@ public class PreferencesPanel extends javax.swing.JPanel {
             prefs.flush();
         } catch (Exception e) {
             System.err.println("Error saving: " + e.getMessage());
+        }
+    }
+    
+    private void applyCorporateStyles() {
+        java.awt.Color corporateBlue = new java.awt.Color(74, 134, 173);
+        this.setBackground(java.awt.Color.WHITE);
+
+        // Set all internal panels to white background
+        javax.swing.JPanel[] subPanels = {
+            jPanelTemporaly, jPanelPlaylists, jPanelLimit, jPanelBinaries
+        };
+        for (javax.swing.JPanel p : subPanels) {
+            if (p != null) p.setBackground(java.awt.Color.WHITE);
+        }
+
+        // Style Action Buttons (Rectangular & Blue)
+        javax.swing.JButton[] actionButtons = {jButtonTemporaly, jButtonBinaries};
+        for (javax.swing.JButton btn : actionButtons) {
+            if (btn != null) {
+                btn.setBackground(corporateBlue);
+                btn.setForeground(java.awt.Color.WHITE);
+                btn.putClientProperty("JButton.buttonType", "square"); // Rectangular
+                btn.putClientProperty("JComponent.arc", 0);            // Zero rounding
+                btn.setFocusPainted(false);
+                btn.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+            }
+        }
+
+        // Style Checkbox and ComboBox
+        jCheckBoxPlaylists.setBackground(java.awt.Color.WHITE);
+        jComboBoxLimit.putClientProperty("JComponent.arc", 0);
+
+        // Convert "Go back" button to Icon
+        makeIconOnlyButton(jButtonBack, "/icons/back_blue.png", "Go previous");
+        jButtonBack.setBounds(10, 180, 40, 40); // Adjusted for square icon
+    }
+    
+    private void makeIconOnlyButton(javax.swing.JButton btn, String iconPath, String tooltip) {
+        if (btn == null) return;
+        btn.setText(""); 
+        btn.setToolTipText(tooltip);
+        btn.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btn.setBorderPainted(false);
+        btn.setContentAreaFilled(false);
+        btn.setFocusPainted(false);
+        btn.setOpaque(false);
+        try {
+            java.net.URL imgURL = getClass().getResource(iconPath);
+            if (imgURL != null) {
+                // High quality smooth scaling
+                javax.swing.ImageIcon icon = new javax.swing.ImageIcon(imgURL);
+                java.awt.Image scaled = icon.getImage().getScaledInstance(32, 32, java.awt.Image.SCALE_SMOOTH);
+                btn.setIcon(new javax.swing.ImageIcon(scaled));
+            }
+        } catch (Exception e) {
+            System.err.println("Icon error: " + iconPath);
         }
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables

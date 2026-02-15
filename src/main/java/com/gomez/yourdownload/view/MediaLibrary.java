@@ -91,6 +91,17 @@ public class MediaLibrary extends javax.swing.JPanel {
         jTextFieldSearch.putClientProperty("JComponent.arc", 0);
 
         //Icon buttons
+
+        for (javax.swing.JButton btn : actionButtons) {
+            if (btn != null) {
+                btn.setBackground(corporateBlue);
+                btn.setForeground(java.awt.Color.WHITE);
+                // ... resto de tu estilo ...
+
+                // --- ASEGÚRATE DE QUE ESTO ESTÉ AQUÍ ---
+                btn.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+            }
+        }
         makeIconOnlyButton(jButtonBack, "/icons/back_blue.png", "Go previous");
         jButtonBack.setBounds(1110, 630, 40, 40);
         makeIconOnlyButton(jButtonRefresh, "/icons/refresh_green.png", "Sync library with server");
@@ -695,7 +706,10 @@ public class MediaLibrary extends javax.swing.JPanel {
 
         btn.setText("");
         btn.setToolTipText(tooltip);
+
+        // --- LÍNEA CLAVE: Cambia el cursor a la "mano" al pasar por encima ---
         btn.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+
         btn.setBorderPainted(false);
         btn.setContentAreaFilled(false);
         btn.setFocusPainted(false);
@@ -704,31 +718,16 @@ public class MediaLibrary extends javax.swing.JPanel {
         try {
             java.net.URL imgURL = getClass().getResource(iconPath);
             if (imgURL != null) {
-                // 1. Cargamos el icono original
-                javax.swing.ImageIcon originalIcon = new javax.swing.ImageIcon(imgURL);
-
-                // --- SECCIÓN NUEVA PARA MEJORAR CALIDAD ---
-                // Definimos el tamaño objetivo. Tus botones son de 32x32, así que usamos 32.
-                // Si tienes botones de distintos tamaños, podrías pasar el tamaño como parámetro.
-                int targetSize = 32;
-
-                // 2. Creamos una versión reescalada usando SCALE_SMOOTH (el secreto de la calidad)
-                java.awt.Image scaledImage = originalIcon.getImage()
-                        .getScaledInstance(targetSize, targetSize, java.awt.Image.SCALE_SMOOTH);
-
-                // 3. Ponemos la imagen suavizada en el botón
-                btn.setIcon(new javax.swing.ImageIcon(scaledImage));
-                // ------------------------------------------
-
-            } else {
-                System.err.println("Icono no encontrado: " + iconPath);
+                javax.swing.ImageIcon icon = new javax.swing.ImageIcon(imgURL);
+                // Mantenemos el suavizado para que no se vea pixelado
+                java.awt.Image scaled = icon.getImage().getScaledInstance(32, 32, java.awt.Image.SCALE_SMOOTH);
+                btn.setIcon(new javax.swing.ImageIcon(scaled));
             }
         } catch (Exception e) {
-            System.err.println("Error cargando icono: " + e.getMessage());
+            System.err.println("Error cargando icono: " + iconPath);
         }
     }
 
-// Método auxiliar para escribir texto en el Stream de red de forma segura
     private void escribirTexto(java.io.OutputStream out, String texto) throws java.io.IOException {
         out.write(texto.getBytes("UTF-8"));
     }

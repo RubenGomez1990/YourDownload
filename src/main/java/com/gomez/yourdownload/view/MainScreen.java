@@ -88,6 +88,25 @@ public class MainScreen extends javax.swing.JFrame {
         jButtonChange.putClientProperty("JButton.buttonType", "square");
         jButtonChange.putClientProperty("JComponent.arc", 0);
 
+        // --- ESTILO DE BARRA DE PROGRESO (FlatLaf Modern) ---
+        jProgressBar.setStringPainted(true);
+        jProgressBar.setForeground(azulLogin);
+// Fondo gris claro para que sea visible cuando está vacía
+        jProgressBar.setBackground(new java.awt.Color(235, 235, 235));
+        jProgressBar.setFont(new java.awt.Font("Segoe UI", java.awt.Font.BOLD, 12));
+
+// Propiedades FlatLaf: Rectangular y sin bordes redondeados
+        jProgressBar.putClientProperty("JComponent.arc", 0);
+// Añadimos un pequeño borde para definir el área cuando está al 0%
+        jProgressBar.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(210, 210, 210), 1));
+
+// --- CORRECCIÓN DE DESCUADRE DE TEXTOS ---
+// Alineamos el label de estado exactamente debajo del inicio de la barra de progreso
+// La barra empieza en X=110 dentro del panel, el panel está en X=10 -> Total X = 120
+        jLabelDownloadStatus.setBounds(120, 240, 670, 25);
+        jLabelDownloadStatus.setVerticalAlignment(javax.swing.SwingConstants.TOP);
+        jLabelDownloadStatus.setText(""); // Empezamos vacío
+
         // Settings button radio
         jRadioMP4.setSelected(true);
         setPanelEnabled(jPanelQuality, true);  // Calidad vídeo activa
@@ -567,7 +586,9 @@ public class MainScreen extends javax.swing.JFrame {
         jButtonDownload.setEnabled(false);
         jTextAreaConsole.setText("");
         jProgressBar.setValue(0);
-        jLabelDownloadStatus.setText("Downloading... ");
+        jProgressBar.setString("0%"); // Forzamos el texto inicial
+        jLabelDownloadStatus.setText("Downloading and converting...");
+        jLabelDownloadStatus.setForeground(azulLogin);
         jLabelDownloadStatus.setVisible(true);
 
         // 1. Determinamos formato y calidad
@@ -815,8 +836,16 @@ public class MainScreen extends javax.swing.JFrame {
         Pattern pattern = Pattern.compile("\\[download\\]\\s+(\\d+\\.\\d+)%");
         Matcher matcher = pattern.matcher(line);
         if (matcher.find()) {
-            double percent = Double.parseDouble(matcher.group(1));
-            jProgressBar.setValue((int) percent);
+            try {
+                double percent = Double.parseDouble(matcher.group(1));
+                int intPercent = (int) percent;
+
+                jProgressBar.setValue(intPercent);
+                // Esto asegura que el texto dentro de la barra se actualice
+                jProgressBar.setString(intPercent + "%");
+
+            } catch (NumberFormatException e) {
+            }
         }
     }
 
@@ -1054,28 +1083,28 @@ public class MainScreen extends javax.swing.JFrame {
             comp.setEnabled(isEnabled);
         }
     }
-    
-    private void makeIconOnlyButton(javax.swing.JButton btn, String iconPath, String tooltip) {
-    btn.setText(""); // Quitamos el texto
-    btn.setToolTipText(tooltip); // Añadimos la ayuda visual
-    btn.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR)); // Gesto de la mano
-    
-    // Quitamos la estética de botón estándar
-    btn.setBorderPainted(false); 
-    btn.setContentAreaFilled(false); 
-    btn.setFocusPainted(false);
-    btn.setOpaque(false);
 
-    // Cargamos el icono
-    try {
-        java.net.URL imgURL = getClass().getResource(iconPath);
-        if (imgURL != null) {
-            btn.setIcon(new javax.swing.ImageIcon(imgURL));
+    private void makeIconOnlyButton(javax.swing.JButton btn, String iconPath, String tooltip) {
+        btn.setText(""); // Quitamos el texto
+        btn.setToolTipText(tooltip); // Añadimos la ayuda visual
+        btn.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR)); // Gesto de la mano
+
+        // Quitamos la estética de botón estándar
+        btn.setBorderPainted(false);
+        btn.setContentAreaFilled(false);
+        btn.setFocusPainted(false);
+        btn.setOpaque(false);
+
+        // Cargamos el icono
+        try {
+            java.net.URL imgURL = getClass().getResource(iconPath);
+            if (imgURL != null) {
+                btn.setIcon(new javax.swing.ImageIcon(imgURL));
+            }
+        } catch (Exception e) {
+            System.err.println("Icon not found: " + iconPath);
         }
-    } catch (Exception e) {
-        System.err.println("Icon not found: " + iconPath);
     }
-}
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup buttonGroupAQ;
     private javax.swing.ButtonGroup buttonGroupOutput;
