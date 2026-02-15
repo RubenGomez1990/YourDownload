@@ -38,90 +38,84 @@ public class MediaLibrary extends javax.swing.JPanel {
 
         initComponents();
 
-        // 1. DIMENSIONES Y LAYOUT
+        // 1. DIMENSIONES, LAYOUT Y FONDO
         this.setPreferredSize(new java.awt.Dimension(1200, 800));
         this.setLayout(null);
+        this.setBackground(java.awt.Color.WHITE);
 
-        // 2. ESTÉTICA Y POSICIÓN DE TABLA
+        if (jButtonRefresh == null) {
+            jButtonRefresh = new javax.swing.JButton("Refresh");
+            add(jButtonRefresh);
+        }
+
+        java.awt.Color corporateBlue = new java.awt.Color(74, 134, 173);
+
+        // 2. ESTÉTICA DE TABLA Y BORDE AZUL
         jScrollPaneMedia.setBounds(10, 10, 1160, 600);
+        // Borde azul para diferenciar la tabla del fondo blanco
+        jScrollPaneMedia.setBorder(javax.swing.BorderFactory.createLineBorder(corporateBlue, 1));
         jTableMedia.setRowHeight(35);
         jTableMedia.setShowVerticalLines(false);
-        jScrollPaneMedia.setBorder(javax.swing.BorderFactory.createEmptyBorder());
+        jTableMedia.setSelectionBackground(new java.awt.Color(74, 134, 173, 50));
+        jTableMedia.setSelectionForeground(java.awt.Color.BLACK);
+        jTableMedia.getTableHeader().setReorderingAllowed(false);
 
-        // 1. Definimos el color azul corporativo
-        java.awt.Color azulLogin = new java.awt.Color(74, 134, 173);
-
-// --- LISTA DE BOTONES A PERSONALIZAR ---
-        javax.swing.JButton[] botones = {
-            jButtonDelete,
-            jButtonUpload1,
-            jButtonDownload,
-            jButtonBack,
-            jButtonRefresh
+        // 3. PERSONALIZACIÓN DE BOTONES (Rectangulares)
+        javax.swing.JButton[] actionButtons = {
+            jButtonDelete, jButtonUpload1, jButtonDownload, jButtonRefresh
         };
-
-        for (javax.swing.JButton btn : botones) {
+        for (javax.swing.JButton btn : actionButtons) {
             if (btn != null) {
-                // Fondo azul y texto blanco
-                btn.setBackground(azulLogin);
+                btn.setBackground(corporateBlue);
                 btn.setForeground(java.awt.Color.WHITE);
-
-                // ELIMINAR REDONDEO (Rectangular puro)
+                btn.setFont(new java.awt.Font("Segoe UI", java.awt.Font.BOLD, 12));
                 btn.putClientProperty("JButton.buttonType", "square");
                 btn.putClientProperty("JComponent.arc", 0);
-
-                // Opcional: Quitar borde de foco para que se vea más limpio
                 btn.setFocusPainted(false);
+                btn.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
             }
         }
 
-// 2. Estilo extra para la Tabla (para que no desentone)
-        jTableMedia.setSelectionBackground(new java.awt.Color(74, 134, 173, 50)); // Azul suave al seleccionar
-        jTableMedia.setSelectionForeground(java.awt.Color.BLACK);
-        jTableMedia.getTableHeader().setReorderingAllowed(false);
-        
-        
+        // Lupa para la búsqueda
+        jLabelSearch.setText("");
+        jLabelSearch.setToolTipText("Search by text");
+        try {
+            jLabelSearch.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/search_blue.png")));
+        } catch (Exception e) {
+            System.err.println("Search icon missing");
+        }
+        jLabelSearch.setBounds(10, 680, 32, 32);
 
-        // 3. POSICIONAMIENTO DE BOTONES (Fila Y=630)
+        jTextFieldSearch.setBounds(100, 680, 160, 30);
+        jTextFieldSearch.putClientProperty("JTextField.placeholderText", "Search by name...");
+        jTextFieldSearch.putClientProperty("JComponent.arc", 0);
+
+        //Icon buttons
+        makeIconOnlyButton(jButtonBack, "/icons/back_blue.png", "Go previous");
+        jButtonBack.setBounds(1110, 630, 40, 40);
+        makeIconOnlyButton(jButtonRefresh, "/icons/refresh_green.png", "Sync library with server");
+        jButtonRefresh.setBounds(260, 630, 32, 32);
+        makeIconOnlyButton(jButtonUpload1, "/icons/upload_green.png", "Upload local file to cloud");
+        jButtonUpload1.setBounds(297, 630, 32, 32);
+        makeIconOnlyButton(jButtonDelete, "/icons/delete_Red.png", "Delete selected file");
+        jButtonDelete.setBounds(371, 630, 32, 32);
+        makeIconOnlyButton(jButtonDownload, "/icons/download_blue.png", "Download selected file");
+        jButtonDownload.setBounds(334, 630, 32, 32);
+
         jLabelFilter.setBounds(10, 630, 80, 30);
         jComboBoxFilter.setBounds(100, 630, 160, 30);
 
-        jButtonDelete.setBounds(450, 630, 120, 40);
-        jButtonUpload1.setBounds(580, 630, 120, 40);
-
-        jButtonDownload.setBounds(850, 630, 130, 40);
-        jButtonBack.setBounds(1000, 630, 130, 40);
-
-        jLabelSearch = new javax.swing.JLabel("Search:");
-        jLabelSearch.setBounds(10, 670, 80, 30); // Misma X, Y aumentada
-        add(jLabelSearch);
-
-        jTextFieldSearch = new javax.swing.JTextField();
-        jTextFieldSearch.setBounds(100, 670, 250, 30); // Alineado con el combo
-        add(jTextFieldSearch);
-
-        jButtonRefresh = new javax.swing.JButton("Refresh 🔄");
-        jButtonRefresh.setBounds(360, 670, 120, 30); // Lo ponemos al lado del buscador
-        add(jButtonRefresh);
-
-        jButtonRefresh.addActionListener(new java.awt.event.ActionListener() {
-            @Override
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                // Efecto visual de carga
-                jButtonRefresh.setEnabled(false);
-                jButtonRefresh.setText("Syncing...");
-
-                // Ejecutamos tu método de carga que ya limpia formatos y borrados
-                loadAllMediaInfo();
-
-                // Timer de 1 segundo para que el usuario vea que algo ha pasado
-                javax.swing.Timer timer = new javax.swing.Timer(1000, e -> {
-                    jButtonRefresh.setEnabled(true);
-                    jButtonRefresh.setText("Refresh 🔄");
-                });
-                timer.setRepeats(false);
-                timer.start();
-            }
+        // 6. LISTENERS (Implementados directamente en el constructor)
+        jButtonRefresh.addActionListener(evt -> {
+            jButtonRefresh.setEnabled(false);
+            jButtonRefresh.setText("Syncing...");
+            loadAllMediaInfo();
+            javax.swing.Timer timer = new javax.swing.Timer(1000, e -> {
+                jButtonRefresh.setEnabled(true);
+                jButtonRefresh.setText("Refresh 🔄");
+            });
+            timer.setRepeats(false);
+            timer.start();
         });
 
         jTextFieldSearch.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
@@ -139,75 +133,50 @@ public class MediaLibrary extends javax.swing.JPanel {
             public void changedUpdate(javax.swing.event.DocumentEvent e) {
                 aplicarFiltroCombinado();
             }
-
         });
 
-        // 4. MODELO Y SORTER
+        // 7. MODELO, SORTER Y ORDENACIÓN INICIAL (RESTABLECIDO)
         tableModel = new DownloadInfoTableModel(resourcesList);
         jTableMedia.setModel(tableModel);
 
         sorter = new javax.swing.table.TableRowSorter<>(tableModel);
         javax.swing.table.TableColumnModel columnModel = jTableMedia.getColumnModel();
-        columnModel.getColumn(0).setPreferredWidth(50);   // ID: Pequeño
-        columnModel.getColumn(1).setPreferredWidth(500);  // Name: El más ancho para ver nombres largos
-        columnModel.getColumn(2).setPreferredWidth(100);  // Size
-        columnModel.getColumn(3).setPreferredWidth(80);   // Format
-        columnModel.getColumn(4).setPreferredWidth(180);  // Download Date
+        columnModel.getColumn(0).setPreferredWidth(50);
+        columnModel.getColumn(1).setPreferredWidth(500);
+        columnModel.getColumn(2).setPreferredWidth(100);
+        columnModel.getColumn(3).setPreferredWidth(80);
+        columnModel.getColumn(4).setPreferredWidth(180);
         columnModel.getColumn(5).setPreferredWidth(150);
-        jTableMedia.getTableHeader().setResizingAllowed(true);
+
         jTableMedia.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_OFF);
         jTableMedia.setRowSorter(sorter);
 
+        // Renderer para mostrar "N/A" en IDs nulos
         javax.swing.table.DefaultTableCellRenderer idRenderer = new javax.swing.table.DefaultTableCellRenderer() {
             @Override
             protected void setValue(Object value) {
-                // Mantenemos tu lógica de "N/A" para IDs nulos
                 setText((value == null) ? "N/A" : value.toString());
             }
         };
-
         idRenderer.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         jTableMedia.getColumnModel().getColumn(0).setCellRenderer(idRenderer);
 
-        // 5. ORDEN INICIAL POR ID (Columna 0, Ascendente)
+        // --- ORDEN INICIAL POR ID (Lo que se había perdido) ---
         java.util.List<javax.swing.RowSorter.SortKey> sortKeys = new java.util.ArrayList<>();
         sortKeys.add(new javax.swing.RowSorter.SortKey(0, javax.swing.SortOrder.ASCENDING));
         sorter.setSortKeys(sortKeys);
         sorter.sort();
 
+        // Listener para doble clic en la tabla
         jTableMedia.addMouseListener(new java.awt.event.MouseAdapter() {
             @Override
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                if (evt.getClickCount() == 2) { // Doble clic detectado
-                    int row = jTableMedia.getSelectedRow();
-                    if (row != -1) {
-                        int modelRow = jTableMedia.convertRowIndexToModel(row);
-                        DownloadInfo resource = resourcesList.get(modelRow);
-
-                        // Comprobamos si el archivo existe físicamente
-                        if (resource.getAbsolutePath() != null) {
-                            File file = new File(resource.getAbsolutePath());
-                            if (file.exists()) {
-                                try {
-                                    // REPRODUCIR: Abre el archivo con el reproductor del sistema
-                                    java.awt.Desktop.getDesktop().open(file);
-                                } catch (Exception ex) {
-                                    JOptionPane.showMessageDialog(null, "No se pudo abrir el archivo.");
-                                }
-                            } else {
-                                // Si la ruta existe en la lista pero no en el disco, descargamos
-                                jButtonDownloadActionPerformed(null);
-                            }
-                        } else {
-                            // Si no tiene ruta (es Network Only), descargamos
-                            jButtonDownloadActionPerformed(null);
-                        }
-                    }
+                if (evt.getClickCount() == 2) {
+                    handleTableDoubleClick();
                 }
             }
         });
 
-        // Inicializar contenido
         initFiltroComboBox();
         loadAllMediaInfo();
     }
@@ -343,9 +312,9 @@ public class MediaLibrary extends javax.swing.JPanel {
         add(jScrollPaneMedia);
         jScrollPaneMedia.setBounds(0, 0, 930, 220);
 
-        jLabelFilter.setText("Filter by:");
+        jLabelFilter.setText("Filter:");
         add(jLabelFilter);
-        jLabelFilter.setBounds(10, 230, 70, 30);
+        jLabelFilter.setBounds(10, 230, 40, 30);
 
         jComboBoxFilter.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
         jComboBoxFilter.addActionListener(new java.awt.event.ActionListener() {
@@ -354,7 +323,7 @@ public class MediaLibrary extends javax.swing.JPanel {
             }
         });
         add(jComboBoxFilter);
-        jComboBoxFilter.setBounds(130, 230, 120, 30);
+        jComboBoxFilter.setBounds(50, 230, 120, 30);
 
         jButtonDelete.setText("Delete");
         jButtonDelete.addActionListener(new java.awt.event.ActionListener() {
@@ -392,8 +361,6 @@ public class MediaLibrary extends javax.swing.JPanel {
         });
         add(jButtonUpload1);
         jButtonUpload1.setBounds(400, 280, 120, 30);
-
-        jLabelSearch.setText("Search:");
         add(jLabelSearch);
         jLabelSearch.setBounds(10, 310, 50, 20);
 
@@ -721,9 +688,71 @@ public class MediaLibrary extends javax.swing.JPanel {
         return responseCode == 200 || responseCode == 201;
     }
 
+    private void makeIconOnlyButton(javax.swing.JButton btn, String iconPath, String tooltip) {
+        if (btn == null) {
+            return;
+        }
+
+        btn.setText("");
+        btn.setToolTipText(tooltip);
+        btn.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btn.setBorderPainted(false);
+        btn.setContentAreaFilled(false);
+        btn.setFocusPainted(false);
+        btn.setOpaque(false);
+
+        try {
+            java.net.URL imgURL = getClass().getResource(iconPath);
+            if (imgURL != null) {
+                // 1. Cargamos el icono original
+                javax.swing.ImageIcon originalIcon = new javax.swing.ImageIcon(imgURL);
+
+                // --- SECCIÓN NUEVA PARA MEJORAR CALIDAD ---
+                // Definimos el tamaño objetivo. Tus botones son de 32x32, así que usamos 32.
+                // Si tienes botones de distintos tamaños, podrías pasar el tamaño como parámetro.
+                int targetSize = 32;
+
+                // 2. Creamos una versión reescalada usando SCALE_SMOOTH (el secreto de la calidad)
+                java.awt.Image scaledImage = originalIcon.getImage()
+                        .getScaledInstance(targetSize, targetSize, java.awt.Image.SCALE_SMOOTH);
+
+                // 3. Ponemos la imagen suavizada en el botón
+                btn.setIcon(new javax.swing.ImageIcon(scaledImage));
+                // ------------------------------------------
+
+            } else {
+                System.err.println("Icono no encontrado: " + iconPath);
+            }
+        } catch (Exception e) {
+            System.err.println("Error cargando icono: " + e.getMessage());
+        }
+    }
+
 // Método auxiliar para escribir texto en el Stream de red de forma segura
     private void escribirTexto(java.io.OutputStream out, String texto) throws java.io.IOException {
         out.write(texto.getBytes("UTF-8"));
+    }
+
+    private void handleTableDoubleClick() {
+        int row = jTableMedia.getSelectedRow();
+        if (row != -1) {
+            int modelRow = jTableMedia.convertRowIndexToModel(row);
+            DownloadInfo resource = resourcesList.get(modelRow);
+            if (resource.getAbsolutePath() != null) {
+                File file = new File(resource.getAbsolutePath());
+                if (file.exists()) {
+                    try {
+                        java.awt.Desktop.getDesktop().open(file);
+                    } catch (Exception ex) {
+                        JOptionPane.showMessageDialog(null, "Error opening file.");
+                    }
+                } else {
+                    jButtonDownloadActionPerformed(null);
+                }
+            } else {
+                jButtonDownloadActionPerformed(null);
+            }
+        }
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButtonBack;
