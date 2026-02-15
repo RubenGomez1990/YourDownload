@@ -43,19 +43,39 @@ public class MainScreen extends javax.swing.JFrame {
         // Style settings buttons
         jButtonDownload.setBackground(azulLogin);
         jButtonDownload.setForeground(java.awt.Color.WHITE);
-
         jButtonDownload.putClientProperty("JButton.buttonType", "square");
         jButtonDownload.putClientProperty("JComponent.arc", 0);
+
+        jButtonDownload.setToolTipText("Start downloading the video/audio");
+        jButtonDownload.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+// Para poner el icono (Asegúrate de tener la carpeta src/main/resources/icons/)
+        try {
+            jButtonDownload.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/download_white.png")));
+            jButtonDownload.setText("Download"); // Puedes dejar el texto o quitarlo si el icono es muy claro
+        } catch (Exception e) {
+            System.err.println("Icon not found");
+        }
 
         jButtonLibrary.setBackground(azulLogin);
         jButtonLibrary.setForeground(java.awt.Color.WHITE);
         jButtonLibrary.putClientProperty("JButton.buttonType", "square");
         jButtonLibrary.putClientProperty("JComponent.arc", 0);
 
+        jButtonLibrary.setToolTipText("Open your saved files and network library");
+        jButtonLibrary.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        try {
+            jButtonLibrary.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/library_white.png")));
+            jButtonLibrary.setText("Library");
+        } catch (Exception e) {
+            System.err.println("Icon not found");
+        }
+
         jButtonShowLog.setBackground(azulLogin);
         jButtonShowLog.setForeground(java.awt.Color.WHITE);
         jButtonShowLog.putClientProperty("JButton.buttonType", "square");
         jButtonShowLog.putClientProperty("JComponent.arc", 0);
+        jButtonShowLog.setToolTipText("Toggle console visibility");
+        jButtonShowLog.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
 
         jButtonShowLog.setBackground(azulLogin);
         jButtonShowLog.setForeground(java.awt.Color.WHITE);
@@ -346,14 +366,14 @@ public class MainScreen extends javax.swing.JFrame {
         getContentPane().add(mediaPoller1);
         mediaPoller1.setBounds(310, 10, 150, 18);
 
-        jButtonShowLog.setText("Show Log");
+        jButtonShowLog.setText("Log");
         jButtonShowLog.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButtonShowLogActionPerformed(evt);
             }
         });
         getContentPane().add(jButtonShowLog);
-        jButtonShowLog.setBounds(10, 240, 100, 23);
+        jButtonShowLog.setBounds(10, 240, 70, 23);
 
         jLabelStatus.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         jLabelStatus.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -431,7 +451,7 @@ public class MainScreen extends javax.swing.JFrame {
         jLabelDownloadStatus.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jLabelDownloadStatus.setForeground(new java.awt.Color(0, 153, 51));
         getContentPane().add(jLabelDownloadStatus);
-        jLabelDownloadStatus.setBounds(120, 240, 670, 20);
+        jLabelDownloadStatus.setBounds(150, 240, 670, 20);
 
         jMenuFile.setText("File");
 
@@ -694,12 +714,12 @@ public class MainScreen extends javax.swing.JFrame {
             // MODO DETALLADO: Mostramos consola y agrandamos ventana
             jPanelConsole.setVisible(true);
             this.setSize(1024, 800);
-            jButtonShowLog.setText("Hide Details");
+            jButtonShowLog.setText("Hide");
         } else {
             // MODO COMPACTO: Ocultamos consola y encogemos ventana
             jPanelConsole.setVisible(false);
             this.setSize(1024, 330);
-            jButtonShowLog.setText("Show Details");
+            jButtonShowLog.setText("Log");
         }
 
         // Refrescamos la UI para que los cambios se apliquen visualmente
@@ -1034,6 +1054,28 @@ public class MainScreen extends javax.swing.JFrame {
             comp.setEnabled(isEnabled);
         }
     }
+    
+    private void makeIconOnlyButton(javax.swing.JButton btn, String iconPath, String tooltip) {
+    btn.setText(""); // Quitamos el texto
+    btn.setToolTipText(tooltip); // Añadimos la ayuda visual
+    btn.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR)); // Gesto de la mano
+    
+    // Quitamos la estética de botón estándar
+    btn.setBorderPainted(false); 
+    btn.setContentAreaFilled(false); 
+    btn.setFocusPainted(false);
+    btn.setOpaque(false);
+
+    // Cargamos el icono
+    try {
+        java.net.URL imgURL = getClass().getResource(iconPath);
+        if (imgURL != null) {
+            btn.setIcon(new javax.swing.ImageIcon(imgURL));
+        }
+    } catch (Exception e) {
+        System.err.println("Icon not found: " + iconPath);
+    }
+}
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup buttonGroupAQ;
     private javax.swing.ButtonGroup buttonGroupOutput;

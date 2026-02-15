@@ -154,3 +154,5 @@ puede redimensionar al pasar el ratón por encima pero no se ha conseguido y pue
 13. Se ha añadido un estado de descarga debajo de la barra de progreso. 
 
 14. Cambiado estilo de la aplicación para hacerla más clara en colores azules y blanco. Implementación de nueva fuente.
+
+15. Añadidos pequeños iconos descriptivos y tooltip a los botones en MainScreen. 
