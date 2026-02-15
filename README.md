@@ -120,7 +120,8 @@ List<String> command = new ArrayList<>();
                 command.add("--js-runtimes");
                 command.add("node");
                 command.add("--extractor-arg");
-                command.add("youtube:player_client=web");
+
+Actualización: 15/02/2026. Aparentemente parece que he podido arreglar el problema pero no sé muy bien como. Cualquier duda indiqueme en la correción.
 
 1. loadAllMediaInfo: Se ha modificado para que descargue toda la información de la plataforma correctamente. Automaticamente, ordena los archivos por ID, muestra solo 1 versión de cada
 archivo (Si esta en net y local, muestra local y net). Actualiza y comprueba si hay archivos nuevos para añadirlos a la librería.
@@ -147,3 +148,9 @@ puede redimensionar al pasar el ratón por encima pero no se ha conseguido y pue
 10. Implementación botón upload medialibrary para poder añadir archivos a la API. Botón de refrescar la lista.
 
 11. Modificación de los path de guardado de preferencias para mantenerlos guardados tras reinicio aplicación. 
+
+12. Modificación en los botones de output format /  audio. Ahora cuando se selecciona mp3, se desactiva las calidades de video y aparece el panel de audio. 
+
+13. Se ha añadido un estado de descarga debajo de la barra de progreso. 
+
+14. Cambiado estilo de la aplicación para hacerla más clara en colores azules y blanco. Implementación de nueva fuente.

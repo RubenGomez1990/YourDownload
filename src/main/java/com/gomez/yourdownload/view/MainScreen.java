@@ -6,7 +6,6 @@ import com.gomez.yourdownload.view.MediaLibrary;
 import java.util.List;
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Date;
@@ -30,20 +29,50 @@ public class MainScreen extends javax.swing.JFrame {
     private List<DownloadInfo> resourcesList;
     private String jwtToken;
     private String currentView = "MAIN";
+    java.awt.Color azulLogin = new java.awt.Color(74, 134, 173);
 
     public MainScreen(String token, MediaPoller pollerInstance) {
         this.jwtToken = token;// Almacenamos el token JWT para usarlo en descargas, etc.
         this.mediaPoller1 = pollerInstance;
 
-        // 1. Carga de Datos y Creación de UI
+        // UI creation
         resourcesList = DownloadService.loadHistory();
         initComponents();
         originalPanel = (JPanel) getContentPane();
 
+        // Style settings buttons
+        jButtonDownload.setBackground(azulLogin);
+        jButtonDownload.setForeground(java.awt.Color.WHITE);
+
+        jButtonDownload.putClientProperty("JButton.buttonType", "square");
+        jButtonDownload.putClientProperty("JComponent.arc", 0);
+
+        jButtonLibrary.setBackground(azulLogin);
+        jButtonLibrary.setForeground(java.awt.Color.WHITE);
+        jButtonLibrary.putClientProperty("JButton.buttonType", "square");
+        jButtonLibrary.putClientProperty("JComponent.arc", 0);
+
+        jButtonShowLog.setBackground(azulLogin);
+        jButtonShowLog.setForeground(java.awt.Color.WHITE);
+        jButtonShowLog.putClientProperty("JButton.buttonType", "square");
+        jButtonShowLog.putClientProperty("JComponent.arc", 0);
+
+        jButtonShowLog.setBackground(azulLogin);
+        jButtonShowLog.setForeground(java.awt.Color.WHITE);
+        jButtonShowLog.putClientProperty("JButton.buttonType", "square");
+        jButtonShowLog.putClientProperty("JComponent.arc", 0);
+        jLabelDownloadStatus.setForeground(azulLogin);
+
+        jButtonChange.setBackground(azulLogin);
+        jButtonChange.setForeground(java.awt.Color.WHITE);
+        jButtonChange.putClientProperty("JButton.buttonType", "square");
+        jButtonChange.putClientProperty("JComponent.arc", 0);
+
+        // Settings button radio
+        jRadioMP4.setSelected(true);
+        setPanelEnabled(jPanelQuality, true);  // Calidad vídeo activa
+        jRadioButton1080.setSelected(true);
         jPanelAudioQuality.setVisible(false);
-        jPanelQuality.setVisible(true);
-        jRadioButton480.setSelected(true);
-        jRadioButtonHQ.setSelected(true);
         jPanelConsole.setVisible(false);
 
         String userHome = System.getProperty("user.home");
@@ -104,21 +133,16 @@ public class MainScreen extends javax.swing.JFrame {
 
         buttonGroupQuality = new javax.swing.ButtonGroup();
         buttonGroupAQ = new javax.swing.ButtonGroup();
+        buttonGroupOutput = new javax.swing.ButtonGroup();
         jLabelWelcome = new javax.swing.JLabel();
         jPanelWeb = new javax.swing.JPanel();
         jLabelUrl = new javax.swing.JLabel();
         jTextFieldUrl = new javax.swing.JTextField();
-        jPanelQuality = new javax.swing.JPanel();
-        jLabelQuality = new javax.swing.JLabel();
-        jRadioButton1080 = new javax.swing.JRadioButton();
-        jRadioButton720 = new javax.swing.JRadioButton();
-        jRadioButton480 = new javax.swing.JRadioButton();
         jPanelSubtitle = new javax.swing.JPanel();
         jLabelSubtitles = new javax.swing.JLabel();
         jCheckBoxSubtitlesYes = new javax.swing.JCheckBox();
         jPanelFormat = new javax.swing.JPanel();
         jLabelFormat = new javax.swing.JLabel();
-        jComboBoxFormat = new javax.swing.JComboBox<>();
         jPanelSave = new javax.swing.JPanel();
         jLabelSave = new javax.swing.JLabel();
         jButtonSavePath = new javax.swing.JButton();
@@ -140,6 +164,15 @@ public class MainScreen extends javax.swing.JFrame {
         mediaPoller1 = new com.gomez.component.MediaPoller();
         jButtonShowLog = new javax.swing.JButton();
         jLabelStatus = new javax.swing.JLabel();
+        jRadioMP4 = new javax.swing.JRadioButton();
+        jRadioButtonAVI = new javax.swing.JRadioButton();
+        jRadioButtonMP3 = new javax.swing.JRadioButton();
+        jPanelQuality = new javax.swing.JPanel();
+        jLabelQuality = new javax.swing.JLabel();
+        jRadioButton1080 = new javax.swing.JRadioButton();
+        jRadioButton720 = new javax.swing.JRadioButton();
+        jRadioButton480 = new javax.swing.JRadioButton();
+        jLabelDownloadStatus = new javax.swing.JLabel();
         jMenuBar = new javax.swing.JMenuBar();
         jMenuFile = new javax.swing.JMenu();
         jMenuItemLogout = new javax.swing.JMenuItem();
@@ -174,40 +207,6 @@ public class MainScreen extends javax.swing.JFrame {
         getContentPane().add(jPanelWeb);
         jPanelWeb.setBounds(10, 50, 780, 30);
 
-        jPanelQuality.setLayout(null);
-
-        jLabelQuality.setText("Output Resolution:");
-        jPanelQuality.add(jLabelQuality);
-        jLabelQuality.setBounds(0, 0, 100, 20);
-
-        buttonGroupQuality.add(jRadioButton1080);
-        jRadioButton1080.setText("1080p");
-        jRadioButton1080.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jRadioButton1080ActionPerformed(evt);
-            }
-        });
-        jPanelQuality.add(jRadioButton1080);
-        jRadioButton1080.setBounds(110, 0, 60, 21);
-
-        buttonGroupQuality.add(jRadioButton720);
-        jRadioButton720.setText("720p");
-        jRadioButton720.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jRadioButton720ActionPerformed(evt);
-            }
-        });
-        jPanelQuality.add(jRadioButton720);
-        jRadioButton720.setBounds(170, 0, 50, 21);
-
-        buttonGroupQuality.add(jRadioButton480);
-        jRadioButton480.setText("480p");
-        jPanelQuality.add(jRadioButton480);
-        jRadioButton480.setBounds(220, 0, 50, 21);
-
-        getContentPane().add(jPanelQuality);
-        jPanelQuality.setBounds(10, 90, 270, 20);
-
         jPanelSubtitle.setLayout(null);
 
         jLabelSubtitles.setText("Download Subtitles:");
@@ -224,7 +223,7 @@ public class MainScreen extends javax.swing.JFrame {
         jCheckBoxSubtitlesYes.setBounds(120, 0, 84, 20);
 
         getContentPane().add(jPanelSubtitle);
-        jPanelSubtitle.setBounds(320, 90, 170, 30);
+        jPanelSubtitle.setBounds(370, 90, 170, 30);
 
         jPanelFormat.setLayout(null);
 
@@ -232,17 +231,8 @@ public class MainScreen extends javax.swing.JFrame {
         jPanelFormat.add(jLabelFormat);
         jLabelFormat.setBounds(0, 0, 90, 20);
 
-        jComboBoxFormat.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { ".mp4", ".avi", ".mp3" }));
-        jComboBoxFormat.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jComboBoxFormatActionPerformed(evt);
-            }
-        });
-        jPanelFormat.add(jComboBoxFormat);
-        jComboBoxFormat.setBounds(110, 0, 72, 22);
-
         getContentPane().add(jPanelFormat);
-        jPanelFormat.setBounds(10, 130, 190, 30);
+        jPanelFormat.setBounds(10, 130, 90, 30);
 
         jPanelSave.setLayout(null);
 
@@ -250,14 +240,14 @@ public class MainScreen extends javax.swing.JFrame {
         jPanelSave.add(jLabelSave);
         jLabelSave.setBounds(0, 0, 260, 20);
 
-        jButtonSavePath.setText("Choose save location");
+        jButtonSavePath.setText("Choose");
         jButtonSavePath.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButtonSavePathActionPerformed(evt);
             }
         });
         jPanelSave.add(jButtonSavePath);
-        jButtonSavePath.setBounds(110, 0, 150, 20);
+        jButtonSavePath.setBounds(110, 0, 80, 20);
 
         jButtonChange.setText("Change");
         jButtonChange.addActionListener(new java.awt.event.ActionListener() {
@@ -266,7 +256,7 @@ public class MainScreen extends javax.swing.JFrame {
             }
         });
         jPanelSave.add(jButtonChange);
-        jButtonChange.setBounds(270, 0, 72, 20);
+        jButtonChange.setBounds(220, 0, 72, 20);
 
         getContentPane().add(jPanelSave);
         jPanelSave.setBounds(10, 170, 440, 20);
@@ -343,27 +333,27 @@ public class MainScreen extends javax.swing.JFrame {
             }
         });
         jPanelAudioQuality.add(jRadioButtonHigh);
-        jRadioButtonHigh.setBounds(140, 0, 120, 21);
+        jRadioButtonHigh.setBounds(130, 0, 130, 21);
 
         jLabelAQ.setText("Audio:");
         jPanelAudioQuality.add(jLabelAQ);
         jLabelAQ.setBounds(0, 0, 80, 20);
 
         getContentPane().add(jPanelAudioQuality);
-        jPanelAudioQuality.setBounds(10, 90, 270, 20);
+        jPanelAudioQuality.setBounds(370, 130, 270, 20);
 
         mediaPoller1.setApiUrl("https://difreenet9.azurewebsites.net");
         getContentPane().add(mediaPoller1);
         mediaPoller1.setBounds(310, 10, 150, 18);
 
-        jButtonShowLog.setText("Show Log Details");
+        jButtonShowLog.setText("Show Log");
         jButtonShowLog.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButtonShowLogActionPerformed(evt);
             }
         });
         getContentPane().add(jButtonShowLog);
-        jButtonShowLog.setBounds(10, 240, 130, 23);
+        jButtonShowLog.setBounds(10, 240, 100, 23);
 
         jLabelStatus.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         jLabelStatus.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -373,6 +363,75 @@ public class MainScreen extends javax.swing.JFrame {
         });
         getContentPane().add(jLabelStatus);
         jLabelStatus.setBounds(980, 10, 0, 0);
+
+        buttonGroupOutput.add(jRadioMP4);
+        jRadioMP4.setText("mp4");
+        jRadioMP4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jRadioMP4ActionPerformed(evt);
+            }
+        });
+        getContentPane().add(jRadioMP4);
+        jRadioMP4.setBounds(120, 130, 47, 21);
+
+        buttonGroupOutput.add(jRadioButtonAVI);
+        jRadioButtonAVI.setText("avi");
+        jRadioButtonAVI.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jRadioButtonAVIActionPerformed(evt);
+            }
+        });
+        getContentPane().add(jRadioButtonAVI);
+        jRadioButtonAVI.setBounds(180, 130, 38, 21);
+
+        buttonGroupOutput.add(jRadioButtonMP3);
+        jRadioButtonMP3.setText("mp3 (audio only)");
+        jRadioButtonMP3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jRadioButtonMP3ActionPerformed(evt);
+            }
+        });
+        getContentPane().add(jRadioButtonMP3);
+        jRadioButtonMP3.setBounds(230, 130, 120, 21);
+
+        jPanelQuality.setLayout(null);
+
+        jLabelQuality.setText("Output Resolution:");
+        jPanelQuality.add(jLabelQuality);
+        jLabelQuality.setBounds(0, 0, 100, 20);
+
+        buttonGroupQuality.add(jRadioButton1080);
+        jRadioButton1080.setText("1080p");
+        jRadioButton1080.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jRadioButton1080ActionPerformed(evt);
+            }
+        });
+        jPanelQuality.add(jRadioButton1080);
+        jRadioButton1080.setBounds(110, 0, 60, 21);
+
+        buttonGroupQuality.add(jRadioButton720);
+        jRadioButton720.setText("720p");
+        jRadioButton720.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jRadioButton720ActionPerformed(evt);
+            }
+        });
+        jPanelQuality.add(jRadioButton720);
+        jRadioButton720.setBounds(170, 0, 50, 21);
+
+        buttonGroupQuality.add(jRadioButton480);
+        jRadioButton480.setText("480p");
+        jPanelQuality.add(jRadioButton480);
+        jRadioButton480.setBounds(220, 0, 50, 21);
+
+        getContentPane().add(jPanelQuality);
+        jPanelQuality.setBounds(10, 90, 270, 20);
+
+        jLabelDownloadStatus.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        jLabelDownloadStatus.setForeground(new java.awt.Color(0, 153, 51));
+        getContentPane().add(jLabelDownloadStatus);
+        jLabelDownloadStatus.setBounds(120, 240, 670, 20);
 
         jMenuFile.setText("File");
 
@@ -481,46 +540,48 @@ public class MainScreen extends javax.swing.JFrame {
     private void jButtonDownloadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonDownloadActionPerformed
         final String url = jTextFieldUrl.getText().trim();
         if (url.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Introduce una URL válida");
+            JOptionPane.showMessageDialog(this, "Please enter a valid URL");
             return;
         }
 
         jButtonDownload.setEnabled(false);
         jTextAreaConsole.setText("");
         jProgressBar.setValue(0);
+        jLabelDownloadStatus.setText("Downloading... ");
+        jLabelDownloadStatus.setVisible(true);
 
-        // 1. SOLUCIÓN AL ERROR DE COMPILACIÓN: Determinamos el formato ANTES de crear el Thread
+        // 1. Determinamos formato y calidad
         final String selectedFormat;
         if (jRadioButton1080.isSelected()) {
             selectedFormat = "bestvideo[height<=1080]+bestaudio/best";
         } else if (jRadioButton720.isSelected()) {
             selectedFormat = "bestvideo[height<=720]+bestaudio/best";
-        } else if (jRadioButton480.isSelected()) {
-            selectedFormat = "bestvideo[height<=480]+bestaudio/best";
         } else {
-            selectedFormat = "bestvideo+bestaudio/best";
+            selectedFormat = "bestvideo[height<=480]+bestaudio/best";
         }
 
-        final String targetExt = jComboBoxFormat.getSelectedItem().toString().toLowerCase().replace(".", "");
+        final String targetExt;
+        if (jRadioButtonMP3.isSelected()) {
+            targetExt = "mp3";
+        } else if (jRadioButtonAVI.isSelected()) {
+            targetExt = "avi";
+        } else {
+            targetExt = "mp4";
+        }
 
         new Thread(() -> {
-            // Variable para guardar la ruta final real capturada de la consola
-            final String[] finalFilePath = {null};
-
             try {
                 String binariesPath = getBinariesPath();
                 File ytDlpExe = new File(binariesPath);
+
+                // Usamos un identificador único para esta descarga (epoch) para encontrar el archivo luego
+                String timestampId = String.valueOf(System.currentTimeMillis() / 1000);
 
                 List<String> command = new ArrayList<>();
                 command.add(ytDlpExe.getAbsolutePath());
                 command.add("--ffmpeg-location");
                 command.add(ytDlpExe.getParent());
-                command.add("--cookies-from-browser");
-                command.add("firefox");
-                command.add("--js-runtimes");
-                command.add("node");
-                command.add("--extractor-arg");
-                command.add("youtube:player_client=web");
+                // ... (tus otros argumentos: cookies, js-runtimes, etc)
 
                 if (targetExt.equals("mp3")) {
                     command.add("-x");
@@ -528,97 +589,63 @@ public class MainScreen extends javax.swing.JFrame {
                     command.add("mp3");
                 } else {
                     command.add("-f");
-                    command.add(selectedFormat); // Ahora compilara sin error
+                    command.add(selectedFormat);
                     command.add("--recode-video");
-                    command.add(targetExt.equals("avi") ? "avi" : "mp4");
+                    command.add(targetExt);
                 }
 
-                command.add("--force-overwrites");
-                command.add("--restrict-filenames");
-
-                if (!destinyPath.isEmpty()) {
-                    command.add("-o");
-                    command.add(new File(destinyPath, "%(title)s - %(epoch)s.%(ext)s").getAbsolutePath());
-                }
-
+                // Plantilla de nombre: Título + ID temporal
+                String nameTemplate = "%(title)s_" + timestampId + ".%(ext)s";
+                File outputFileTemplate = new File(destinyPath, nameTemplate);
+                command.add("-o");
+                command.add(outputFileTemplate.getAbsolutePath());
                 command.add(url);
 
-                ProcessBuilder builder = new ProcessBuilder(command);
-                builder.redirectErrorStream(true);
-                Process process = builder.start();
-
+                Process process = new ProcessBuilder(command).redirectErrorStream(true).start();
                 BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
                 String line;
                 while ((line = reader.readLine()) != null) {
                     final String outputLine = line;
-
-                    // 2. CAPTURA DE RUTA SIN CORTAR ESPACIOS (Doritos Dinamita)
-                    if (outputLine.contains("Destination:") || outputLine.contains("Merging formats into") || outputLine.contains("Converting video")) {
-                        String marker = outputLine.contains("Destination:") ? "Destination:"
-                                : (outputLine.contains("Merging formats into") ? "Merging formats into" : "Destination:");
-
-                        int startIndex = outputLine.indexOf(marker) + marker.length();
-                        String path = outputLine.substring(startIndex).trim().replaceAll("\"", "");
-
-                        // Si termina en la extensión final (.avi, .mp3, .mp4), es nuestra ruta real
-                        if (path.toLowerCase().endsWith(targetExt)) {
-                            finalFilePath[0] = path;
-                        }
-                    }
-
                     SwingUtilities.invokeLater(() -> {
                         jTextAreaConsole.append(outputLine + "\n");
-                        jTextAreaConsole.setCaretPosition(jTextAreaConsole.getDocument().getLength());
                         updateProgressBar(outputLine);
                     });
                 }
                 process.waitFor();
+
+                // --- LA CLAVE: BUSQUEDA DEL ARCHIVO FINAL ---
+                // Buscamos en la carpeta cualquier archivo que contenga nuestro ID único y la extensión deseada
+                File folder = new File(destinyPath);
+                File[] matches = folder.listFiles((dir, name) -> name.contains(timestampId) && name.toLowerCase().endsWith("." + targetExt));
+
+                if (matches != null && matches.length > 0) {
+                    File finalFile = matches[0];
+
+                    // Registro en la lista
+                    DownloadInfo info = new DownloadInfo(finalFile.getAbsolutePath(), new Date(), finalFile.length(), targetExt.toUpperCase());
+                    resourcesList.add(info);
+                    DownloadService.saveHistory(resourcesList);
+
+                    SwingUtilities.invokeLater(() -> {
+                        jLabelDownloadStatus.setText("Download Complete!  (" + finalFile.getName() + ")");
+                        jLabelDownloadStatus.setForeground(azulLogin); // Usamos el azul corporativo para el texto
+                        jLabelDownloadStatus.setText("Successfully saved to your library");
+                    });
+                } else {
+                    throw new Exception("File not found after download process.");
+                }
+
             } catch (Exception e) {
-                SwingUtilities.invokeLater(() -> jTextAreaConsole.append("Error: " + e.getMessage()));
-            } finally {
                 SwingUtilities.invokeLater(() -> {
-                    jButtonDownload.setEnabled(true);
-
-                    // 3. REGISTRO EN MEDIA LIBRARY
-                    if (finalFilePath[0] != null) {
-                        File file = new File(finalFilePath[0]);
-                        if (file.exists()) {
-                            String absPath = file.getAbsolutePath();
-
-                            DownloadInfo info = new DownloadInfo(absPath, new Date(), file.length(), obtainMimeSimple(file.getName()));
-
-                            // Limpiamos duplicados y añadimos
-                            resourcesList.removeIf(d -> d.getAbsolutePath() != null && d.getAbsolutePath().equalsIgnoreCase(absPath));
-                            resourcesList.add(info);
-
-                            // GUARDADO DE HISTORIAL (Para que la tabla lo lea al abrirse)
-                            com.gomez.yourdownload.service.DownloadService.saveHistory(resourcesList);
-
-                            new DownloadComplete(null, true, file).setVisible(true);
-                            System.out.println("Sincronización MediaLibrary OK: " + file.getName());
-                        }
-                    }
+                    jLabelDownloadStatus.setText("Error in download ");
+                    jLabelDownloadStatus.setForeground(java.awt.Color.RED);
+                    jTextAreaConsole.append("\nERROR: " + e.getMessage());
                 });
+            } finally {
+                SwingUtilities.invokeLater(() -> jButtonDownload.setEnabled(true));
             }
         }).start();
     }//GEN-LAST:event_jButtonDownloadActionPerformed
-
-    private void jComboBoxFormatActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBoxFormatActionPerformed
-        // 1. Obtener el formato seleccionado (ej: ".mp3" o ".mp4")
-        String outputFormat = jComboBoxFormat.getSelectedItem().toString();
-
-        // 2. Comprobar si es audio
-        boolean isAudio = outputFormat.contains(".mp3");
-        jPanelAudioQuality.setVisible(isAudio);
-        jPanelQuality.setVisible(!isAudio);
-
-        if (isAudio) {
-            buttonGroupQuality.clearSelection();
-        } else {
-            buttonGroupAQ.clearSelection();
-        }
-
-    }//GEN-LAST:event_jComboBoxFormatActionPerformed
 
     private void jButtonChangeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonChangeActionPerformed
         JFileChooser pathSelector = new JFileChooser();
@@ -684,15 +711,69 @@ public class MainScreen extends javax.swing.JFrame {
         togglePolling();// TODO add your handling code here:
     }//GEN-LAST:event_jLabelStatusMouseClicked
 
+    private void jRadioMP4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioMP4ActionPerformed
+        // Re-activamos el panel de calidad de vídeo
+        setPanelEnabled(jPanelQuality, true);
+
+        // Ocultamos el panel de audio
+        jPanelAudioQuality.setVisible(false);
+
+        revalidate();
+        repaint();
+    }//GEN-LAST:event_jRadioMP4ActionPerformed
+
+    private void jRadioButtonMP3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButtonMP3ActionPerformed
+        setPanelEnabled(jPanelQuality, false);
+
+        // Mostramos el panel de audio (que ahora está al lado)
+        jPanelAudioQuality.setVisible(true);
+
+        revalidate();
+        repaint();
+    }//GEN-LAST:event_jRadioButtonMP3ActionPerformed
+
+    private void jRadioButtonAVIActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButtonAVIActionPerformed
+        // Re-activamos el panel de calidad de vídeo
+        setPanelEnabled(jPanelQuality, true);
+
+        // Ocultamos el panel de audio
+        jPanelAudioQuality.setVisible(false);
+
+        revalidate();
+        repaint();
+    }//GEN-LAST:event_jRadioButtonAVIActionPerformed
+
     /**
      * @param args the command line arguments
      */
     public static void main(String args[]) {
         try {
-            // Al quitar el 'scope' del pom.xml, esto ya no saldrá en rojo
-            com.formdev.flatlaf.FlatLightLaf.setup();
+            // 1. Forzamos Segoe UI (La fuente de Windows 11/Azure)
+            java.awt.Font globalFont = new java.awt.Font("Segoe UI", java.awt.Font.PLAIN, 12);
+
+            // 2. Personalización profunda antes del Setup
+            javax.swing.UIManager.put("Component.focusWidth", 1); // Bordes de enfoque más finos
+            javax.swing.UIManager.put("Component.innerFocusWidth", 0);
+            javax.swing.UIManager.put("Button.innerFocusWidth", 0);
+
+            // El azul corporativo que definimos antes
+            javax.swing.UIManager.put("Component.accentColor", new java.awt.Color(74, 134, 173));
+
+            // 3. Aplicamos la fuente a TODO
+            java.util.Enumeration<Object> keys = javax.swing.UIManager.getDefaults().keys();
+            while (keys.hasMoreElements()) {
+                Object key = keys.nextElement();
+                Object value = javax.swing.UIManager.get(key);
+                if (value instanceof javax.swing.plaf.FontUIResource) {
+                    javax.swing.UIManager.put(key, new javax.swing.plaf.FontUIResource(globalFont));
+                }
+            }
+
+            // 4. USAMOS INTELLIJ LAF (Es más bonito y profesional que el Light normal)
+            com.formdev.flatlaf.FlatIntelliJLaf.setup();
+
         } catch (Exception ex) {
-            System.err.println("Error al cargar el tema moderno");
+            System.err.println("Theme Error: " + ex.getMessage());
         }
 
         // 2. Ejecución de la aplicación
@@ -946,8 +1027,16 @@ public class MainScreen extends javax.swing.JFrame {
             jLabelStatus.setText(on ? "V" : "X");
         }
     }
+
+    private void setPanelEnabled(javax.swing.JPanel panel, boolean isEnabled) {
+        panel.setEnabled(isEnabled);
+        for (java.awt.Component comp : panel.getComponents()) {
+            comp.setEnabled(isEnabled);
+        }
+    }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup buttonGroupAQ;
+    private javax.swing.ButtonGroup buttonGroupOutput;
     private javax.swing.ButtonGroup buttonGroupQuality;
     private javax.swing.JButton jButtonChange;
     private javax.swing.JButton jButtonDownload;
@@ -955,8 +1044,8 @@ public class MainScreen extends javax.swing.JFrame {
     private javax.swing.JButton jButtonSavePath;
     private javax.swing.JButton jButtonShowLog;
     private javax.swing.JCheckBox jCheckBoxSubtitlesYes;
-    private javax.swing.JComboBox<String> jComboBoxFormat;
     private javax.swing.JLabel jLabelAQ;
+    private javax.swing.JLabel jLabelDownloadStatus;
     private javax.swing.JLabel jLabelFormat;
     private javax.swing.JLabel jLabelProgress;
     private javax.swing.JLabel jLabelQuality;
@@ -987,8 +1076,11 @@ public class MainScreen extends javax.swing.JFrame {
     private javax.swing.JRadioButton jRadioButton1080;
     private javax.swing.JRadioButton jRadioButton480;
     private javax.swing.JRadioButton jRadioButton720;
+    private javax.swing.JRadioButton jRadioButtonAVI;
     private javax.swing.JRadioButton jRadioButtonHQ;
     private javax.swing.JRadioButton jRadioButtonHigh;
+    private javax.swing.JRadioButton jRadioButtonMP3;
+    private javax.swing.JRadioButton jRadioMP4;
     private javax.swing.JScrollPane jScrollPaneConsole;
     private javax.swing.JTextArea jTextAreaConsole;
     private javax.swing.JTextField jTextFieldUrl;

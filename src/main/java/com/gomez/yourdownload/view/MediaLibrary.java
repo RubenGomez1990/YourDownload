@@ -48,6 +48,40 @@ public class MediaLibrary extends javax.swing.JPanel {
         jTableMedia.setShowVerticalLines(false);
         jScrollPaneMedia.setBorder(javax.swing.BorderFactory.createEmptyBorder());
 
+        // 1. Definimos el color azul corporativo
+        java.awt.Color azulLogin = new java.awt.Color(74, 134, 173);
+
+// --- LISTA DE BOTONES A PERSONALIZAR ---
+        javax.swing.JButton[] botones = {
+            jButtonDelete,
+            jButtonUpload1,
+            jButtonDownload,
+            jButtonBack,
+            jButtonRefresh
+        };
+
+        for (javax.swing.JButton btn : botones) {
+            if (btn != null) {
+                // Fondo azul y texto blanco
+                btn.setBackground(azulLogin);
+                btn.setForeground(java.awt.Color.WHITE);
+
+                // ELIMINAR REDONDEO (Rectangular puro)
+                btn.putClientProperty("JButton.buttonType", "square");
+                btn.putClientProperty("JComponent.arc", 0);
+
+                // Opcional: Quitar borde de foco para que se vea más limpio
+                btn.setFocusPainted(false);
+            }
+        }
+
+// 2. Estilo extra para la Tabla (para que no desentone)
+        jTableMedia.setSelectionBackground(new java.awt.Color(74, 134, 173, 50)); // Azul suave al seleccionar
+        jTableMedia.setSelectionForeground(java.awt.Color.BLACK);
+        jTableMedia.getTableHeader().setReorderingAllowed(false);
+        
+        
+
         // 3. POSICIONAMIENTO DE BOTONES (Fila Y=630)
         jLabelFilter.setBounds(10, 630, 80, 30);
         jComboBoxFilter.setBounds(100, 630, 160, 30);
@@ -65,30 +99,30 @@ public class MediaLibrary extends javax.swing.JPanel {
         jTextFieldSearch = new javax.swing.JTextField();
         jTextFieldSearch.setBounds(100, 670, 250, 30); // Alineado con el combo
         add(jTextFieldSearch);
-        
-        jButtonRefresh = new javax.swing.JButton("Refresh 🔄");
-jButtonRefresh.setBounds(360, 670, 120, 30); // Lo ponemos al lado del buscador
-add(jButtonRefresh);
 
-jButtonRefresh.addActionListener(new java.awt.event.ActionListener() {
-    @Override
-    public void actionPerformed(java.awt.event.ActionEvent evt) {
-        // Efecto visual de carga
-        jButtonRefresh.setEnabled(false);
-        jButtonRefresh.setText("Syncing...");
-        
-        // Ejecutamos tu método de carga que ya limpia formatos y borrados
-        loadAllMediaInfo();
-        
-        // Timer de 1 segundo para que el usuario vea que algo ha pasado
-        javax.swing.Timer timer = new javax.swing.Timer(1000, e -> {
-            jButtonRefresh.setEnabled(true);
-            jButtonRefresh.setText("Refresh 🔄");
+        jButtonRefresh = new javax.swing.JButton("Refresh 🔄");
+        jButtonRefresh.setBounds(360, 670, 120, 30); // Lo ponemos al lado del buscador
+        add(jButtonRefresh);
+
+        jButtonRefresh.addActionListener(new java.awt.event.ActionListener() {
+            @Override
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                // Efecto visual de carga
+                jButtonRefresh.setEnabled(false);
+                jButtonRefresh.setText("Syncing...");
+
+                // Ejecutamos tu método de carga que ya limpia formatos y borrados
+                loadAllMediaInfo();
+
+                // Timer de 1 segundo para que el usuario vea que algo ha pasado
+                javax.swing.Timer timer = new javax.swing.Timer(1000, e -> {
+                    jButtonRefresh.setEnabled(true);
+                    jButtonRefresh.setText("Refresh 🔄");
+                });
+                timer.setRepeats(false);
+                timer.start();
+            }
         });
-        timer.setRepeats(false);
-        timer.start();
-    }
-});
 
         jTextFieldSearch.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
             @Override
