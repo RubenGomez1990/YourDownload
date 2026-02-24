@@ -162,6 +162,9 @@ Implementar la gestión de errores y excepciones necesaria, informando y dando f
 23. Añadido log para fallo en descarga directa desde youtube
 24. Añadido log para fallo en descarga con doble click desde la media library. 
 
+Otros:
+25. Modificado .gitignore y arreglado github para que no ocupe 300 mbs. 
+
 
 
 
