@@ -30,3 +30,10 @@ replay_pid*
 # --- Config ---
 nbproject/private/
 
+# Ignorar archivos multimedia descargados
+*.mp4
+*.mkv
+*.mp3
+*.webm
+*.avi
+
