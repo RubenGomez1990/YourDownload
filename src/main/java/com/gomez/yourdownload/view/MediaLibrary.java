@@ -516,14 +516,34 @@ public class MediaLibrary extends javax.swing.JPanel {
                     });
 
                 } catch (Exception e) {
-                    javax.swing.SwingUtilities.invokeLater(() -> {
-                        javax.swing.JOptionPane.showMessageDialog(this,
-                                "Download failed: " + e.getMessage(),
-                                "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
-                        e.printStackTrace();
-                    });
-                }
-            }).start();
+                    // Check the error message for specific HTTP codes
+                    String errorMessage = e.getMessage() != null ? e.getMessage() : "Unknown error";
+                    
+                    if (errorMessage.contains("404") || errorMessage.contains("Not Found")) {
+                        writeLog("ERROR 404", "File '" + resource.getFileName() + "' is no longer on the server.");
+                        javax.swing.SwingUtilities.invokeLater(() -> {
+                            javax.swing.JOptionPane.showMessageDialog(this,
+                                    "Error 404: The file was not found on the server.\nIt might have been deleted.",
+                                    "File Not Found", javax.swing.JOptionPane.ERROR_MESSAGE);
+                        });
+                    } else if (errorMessage.contains("403") || errorMessage.contains("Forbidden")) {
+                        writeLog("ERROR 403", "Access denied when trying to download '" + resource.getFileName() + "'.");
+                        javax.swing.SwingUtilities.invokeLater(() -> {
+                            javax.swing.JOptionPane.showMessageDialog(this,
+                                    "Error 403: Access Denied.\nYou don't have permission to download this file.",
+                                    "Forbidden", javax.swing.JOptionPane.ERROR_MESSAGE);
+                        });
+                    } else {
+                        // Any other general download error
+                        writeLog("DOWNLOAD ERROR", "Failed to download '" + resource.getFileName() + "': " + errorMessage);
+                        javax.swing.SwingUtilities.invokeLater(() -> {
+                            javax.swing.JOptionPane.showMessageDialog(this,
+                                    "Download failed: " + errorMessage,
+                                    "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+                            e.printStackTrace(); // Keep your original stack trace print
+                        });
+                    }
+                }}).start();
         } else {
             javax.swing.JOptionPane.showMessageDialog(this,
                     "Please, select a file to download.",
@@ -765,12 +785,32 @@ public class MediaLibrary extends javax.swing.JPanel {
                 }
 
             } catch (java.io.IOException ex) {
+                writeLog("PLAYER ERROR", "No compatible player found or access denied for: " + resource.getFileName());
                 JOptionPane.showMessageDialog(this,
                         "No compatible player found or access denied.",
                         "Execution Error", JOptionPane.ERROR_MESSAGE);
             } catch (Exception e) {
+                writeLog("UNEXPECTED ERROR", "Double click execution failed: " + e.getMessage());
                 JOptionPane.showMessageDialog(this, "An unexpected error occurred: " + e.getMessage());
             }
+        }
+    }
+    
+    private void writeLog(String errorType, String details) {
+        try {
+            java.io.File logFile = new java.io.File("yourdownload_errors.log"); 
+            java.io.FileWriter fw = new java.io.FileWriter(logFile, true); 
+            java.io.BufferedWriter bw = new java.io.BufferedWriter(fw);
+            java.io.PrintWriter out = new java.io.PrintWriter(bw);
+            
+            // Format: YYYY/MM/DD HH:mm:ss
+            String timeStamp = new java.text.SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(new java.util.Date());
+            
+            out.println("[" + timeStamp + "] [" + errorType + "] " + details);
+            out.close();
+            
+        } catch (Exception e) {
+            System.err.println("Critical Error: Could not write to log file. " + e.getMessage());
         }
     }
 

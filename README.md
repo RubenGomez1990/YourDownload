@@ -123,46 +123,49 @@ List<String> command = new ArrayList<>();
 
 Actualización: 15/02/2026. Aparentemente parece que he podido arreglar el problema pero no sé muy bien como. Cualquier duda indiqueme en la correción.
 
-1. loadAllMediaInfo: Se ha modificado para que descargue toda la información de la plataforma correctamente. Automaticamente, ordena los archivos por ID, muestra solo 1 versión de cada
+Aspecto, color, iconos, texto, distribución de los componentes. 
+1. Se ha reducido el tamaño de la pantalla principal para que tenga más similitud a un reproductor y hacerlo más minimalista. 
+2. Se ha añadido un botón "Show Log" para mostrar el log del progreso de la descarga en caso de ser necesario por parte del cliente.
+3. Se ha establecido un tema para la aplicacion FlatLaf más moderno añadiendo su dependencia y la referencia en el main de MainScreen. Mejora visual moderna.
+4. El recuadro de Polling ha desaparecido y en su lugar se ha puesto un icono que cambia de color dinámicamente. 
+5. Se ha añadido un estado de descarga debajo de la barra de progreso. 
+6. Cambiado estilo de la aplicación para hacerla más clara en colores azules y blanco. Implementación de nueva fuente.
+7. Añadidos pequeños iconos descriptivos y tooltip a los botones en MainScreen. 
+8. Modificada progress bar por una más moderna.
+
+
+
+Affordance. Feedback. Restricciones. 
+9. Implementadas excepciones y avisos al cliente. Ahora el programa avisa cuando hay errores, se crean sus excepciones correspondientes y avisa al cliente de que algo no funcionó.
+
+
+
+Other usability improvements.
+10. loadAllMediaInfo: Se ha modificado para que descargue toda la información de la plataforma correctamente. Automaticamente, ordena los archivos por ID, muestra solo 1 versión de cada
 archivo (Si esta en net y local, muestra local y net). Actualiza y comprueba si hay archivos nuevos para añadirlos a la librería.
-
-2. Archivo JSON para el historial. Utiliza un hashmap para garantizar que no hayan duplicados.
-
-3. Se ha reducido el tamaño de la pantalla principal para que tenga más similitud a un reproductor y hacerlo más minimalista. 
-Se ha añadido un botón "Show Log" para mostrar el log del progreso de la descarga en caso de ser necesario por parte del cliente. 
-
-4. Se ha establecido el Login como parte del mismo JFrame que mainscreen. Se ha ordenado el botón en el JMenu para establecerlo encima de exit. 
-
-5. Se ha establecido un tema para la aplicacion FlatLaf más moderno añadiendo su dependencia y la referencia en el main de MainScreen. Mejora visual moderna.
-
-6. El recuadro de Polling ha desaparecido y en su lugar se ha puesto un icono que cambia de color dinámicamente. 
-
-7. Se ha arreglado el error por el cual desde MediaLibrary -> Edit -> Preferences al darle a go back, volvías a MainScreen. 
-
-8. Implementación de una tabla más grande, con orden automático por ID, mejora de la lista de filtrado por tipo de archivo añadiendo unos formatos basicos, mp3, mp4, .avi, .wav.
+12. Archivo JSON para el historial. Utiliza un hashmap para garantizar que no hayan duplicados.
+13. Se ha establecido el Login como parte del mismo JFrame que mainscreen. Se ha ordenado el botón en el JMenu para establecerlo encima de exit. 
+14. Se ha arreglado el error por el cual desde MediaLibrary -> Edit -> Preferences al darle a go back, volvías a MainScreen. 
+15. Implementación de una tabla más grande, con orden automático por ID, mejora de la lista de filtrado por tipo de archivo añadiendo unos formatos basicos, mp3, mp4, .avi, .wav.
 También se pueden ordenar las columnas en el orden que quiera el cliente, cambiarlas de tamaño o aplicar filtros sobre cada columna. Se ha intentado establecer un icono para que avise de que se 
 puede redimensionar al pasar el ratón por encima pero no se ha conseguido y puede ser una limitación de FlatLaf
+16.Añadido doble click para facilitar descargar/reproducir un archivo. Por defecto se descargan en una carpeta downloads de la raíz del proyecto.
+17. Implementación botón upload medialibrary para poder añadir archivos a la API. Botón de refrescar la lista.
+18. Modificación de los path de guardado de preferencias para mantenerlos guardados tras reinicio aplicación. 
+19. Modificación en los botones de output format /  audio. Ahora cuando se selecciona mp3, se desactiva las calidades de video y aparece el panel de audio. 
+20. Modificado medialibrary, con iconos con tooltip. 
+21. Modificaciones varias de comments, nombres de métodos, etcétera.
+22. Clean code. 
 
-9. Añadido doble click para facilitar descargar/reproducir un archivo. Por defecto se descargan en una carpeta downloads de la raíz del proyecto.
 
-10. Implementación botón upload medialibrary para poder añadir archivos a la API. Botón de refrescar la lista.
+Implementar la gestión de errores y excepciones necesaria, informando y dando feedback al usuario cuando sea necesario (no es necesario utilizar ninguna API de validación). Logs on application crash
+23. Añadido log para fallo en descarga directa desde youtube
+24. Añadido log para fallo en descarga con doble click desde la media library. 
 
-11. Modificación de los path de guardado de preferencias para mantenerlos guardados tras reinicio aplicación. 
 
-12. Modificación en los botones de output format /  audio. Ahora cuando se selecciona mp3, se desactiva las calidades de video y aparece el panel de audio. 
 
-13. Se ha añadido un estado de descarga debajo de la barra de progreso. 
 
-14. Cambiado estilo de la aplicación para hacerla más clara en colores azules y blanco. Implementación de nueva fuente.
 
-15. Añadidos pequeños iconos descriptivos y tooltip a los botones en MainScreen. 
 
-16. Modificado medialibrary, con iconos con tooltip. 
 
-17. Modificada progress bar por una más moderna.
 
-18. Implementadas excepciones y avisos al cliente.
-
-19. Modificaciones varias.
-
-20. Clean code. 

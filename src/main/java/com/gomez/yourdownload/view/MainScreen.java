@@ -680,10 +680,10 @@ public class MainScreen extends javax.swing.JFrame {
                 }
 
             } catch (InterruptedException e) {
-                logErrorMain("Download interrupted: " + e.getMessage());
+                logErrorMain("Download interrupted for URL [" + url + "]: " + e.getMessage());
                 Thread.currentThread().interrupt();
             } catch (Exception e) {
-                logErrorMain("Download Error: " + e.getMessage());
+                logErrorMain("Download Error for URL [" + url + "]: " + e.getMessage());
             } finally {
                 SwingUtilities.invokeLater(() -> jButtonDownload.setEnabled(true));
             }
@@ -1110,12 +1110,34 @@ public class MainScreen extends javax.swing.JFrame {
     }
 
     private void logErrorMain(String message) {
+        // 1. Guardamos el error físicamente en el archivo .log
+        writeLog("YT-DLP ERROR", message);
+
+        // 2. Mantenemos tu código original para la interfaz visual
         SwingUtilities.invokeLater(() -> {
             jTextAreaConsole.append("\n[FATAL ERROR] " + message + "\n");
             jLabelDownloadStatus.setText("Error. Check the Log.");
             jLabelDownloadStatus.setForeground(java.awt.Color.RED);
             JOptionPane.showMessageDialog(this, message, "System Error", JOptionPane.ERROR_MESSAGE);
         });
+    }
+    
+    private void writeLog(String errorType, String details) {
+        try {
+            // Usamos el mismo archivo para tener todos los errores juntos
+            java.io.File logFile = new java.io.File("yourdownload_errors.log"); 
+            java.io.FileWriter fw = new java.io.FileWriter(logFile, true); 
+            java.io.BufferedWriter bw = new java.io.BufferedWriter(fw);
+            java.io.PrintWriter out = new java.io.PrintWriter(bw);
+            
+            String timeStamp = new java.text.SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(new java.util.Date());
+            
+            out.println("[" + timeStamp + "] [" + errorType + "] " + details);
+            out.close();
+            
+        } catch (Exception e) {
+            System.err.println("Critical Error: Could not write to log file. " + e.getMessage());
+        }
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup buttonGroupAQ;
