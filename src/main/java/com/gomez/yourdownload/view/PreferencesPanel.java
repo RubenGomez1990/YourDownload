@@ -186,7 +186,6 @@ public class PreferencesPanel extends javax.swing.JPanel {
     /**
      * Opens a file chooser to locate and save the path for external binaries.
      * @param evt The action event triggered by the binaries button.
-     * @throws Exception If the selected file is invalid or does not exist.
      */
     private void jButtonBinariesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonBinariesActionPerformed
         try {

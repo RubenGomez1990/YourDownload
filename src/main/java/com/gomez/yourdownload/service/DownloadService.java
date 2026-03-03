@@ -15,14 +15,34 @@ import java.util.prefs.Preferences;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * Service class responsible for data persistence and system configuration.
+ * Manages the serialization of download history to JSON format and handles
+ * the resolution of portable paths for external binaries.
+ * @author Rubén Gómez Hernández
+ * @version 1.0
+ */
 public class DownloadService {
     
+    /** 
+     * Logger for tracking service-level events and errors. 
+     */
     private static final Logger logger = Logger.getLogger(DownloadService.class.getName());
+    /** 
+     * Preferences node name used for storing application settings. 
+     */
     private static final String PREFS_NODE = "PreferencesPanel"; 
+    /** 
+     * Filename for the JSON history storage. 
+     */
     private static final String HISTORY_FILE_NAME = "downloads_history.json";
 
-    // --- LÓGICA DE PERSISTENCIA JSON ---
-    
+    /**
+     * Serializes the list of media resources to a local JSON file.
+     * Implements a de-duplication filter using a Map to ensure each resource
+     * is unique by its ID or filename before saving.
+     * @param historyList The list of DownloadInfo objects to persist.
+     */
     public static void saveHistory(List<DownloadInfo> historyList) {
     Gson gson = new GsonBuilder().setPrettyPrinting().create();
     File historyFile = new File(System.getProperty("user.home"), HISTORY_FILE_NAME);
@@ -43,7 +63,10 @@ public class DownloadService {
         logger.log(Level.SEVERE, "Error saving the JSON historial.", e);
     }
 }
-
+    /**
+     * Deserializes the download history from the local JSON file.
+     * @return A list of DownloadInfo objects, or an empty list if the file is missing or corrupted.
+     */
     public static List<DownloadInfo> loadHistory() {
         File historyFile = new File(System.getProperty("user.home"), HISTORY_FILE_NAME);
         
@@ -63,8 +86,13 @@ public class DownloadService {
         }
     }
 
-    // --- LÓGICA DE RUTAS PORTABLES (Refactorización) ---
-    
+    /**
+     * Resolves the path to the yt-dlp executable.
+     * Checks user preferences first, then searches common system directories 
+     * like LOCALAPPDATA or the user's home folder.
+     * @return The absolute path to the binary as a String, or an empty string if not found.
+     * @throws SecurityException If system environment variables are inaccessible.
+     */
     public static String getBinariesPath() {
         Preferences prefs = Preferences.userRoot().node(PREFS_NODE);
         String binariesPath = prefs.get("binariesPath", ""); 
