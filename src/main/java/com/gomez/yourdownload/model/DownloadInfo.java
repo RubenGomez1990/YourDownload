@@ -8,47 +8,47 @@ import java.util.Date;
  * information about local files (path, download date) and network resources
  * (network ID, sync status).
  *
- * * @author Rubén Gómez Hernández
+ *  @author Rubén Gómez Hernández
  * @version 1.0
  */
 public class DownloadInfo {
 
     /**
-     * * The name of the media file.
+     * The name of the media file.
      */
     private final String fileName;
     /**
-     * * The local absolute path on the disk. Null if resource is network-only.
+     *The local absolute path on the disk. Null if resource is network-only.
      */
     private final String absolutePath;
     /**
-     * * The date when the file was downloaded. Null if resource is
+     * The date when the file was downloaded. Null if resource is
      * network-only.
      */
     private final Date downloadDate;
     /**
-     * * The size of the file in bytes.
+     * The size of the file in bytes.
      */
     private final Long size;
     /**
-     * * The media MIME type or file format extension.
+     * The media MIME type or file format extension.
      */
     private String mimeType;
 
     /**
-     * * Unique identifier assigned by the server API.
+     * Unique identifier assigned by the server API.
      */
     private Integer networkId;
     /**
-     * * Flag indicating if the file exists on the server.
+     * Flag indicating if the file exists on the server.
      */
     private boolean isInNetwork;
     /**
-     * * Flag indicating if the local file has been successfully uploaded.
+     * Flag indicating if the local file has been successfully uploaded.
      */
     private boolean isUploaded;
     /**
-     * * Flag indicating if the resource has not been downloaded yet.
+     * Flag indicating if the resource has not been downloaded yet.
      */
     private boolean isNetworkOnly;
 
@@ -97,6 +97,7 @@ public class DownloadInfo {
     }
 
     /**
+     * Returns the file name
      * @return The file name.
      */
     public String getFileName() {
@@ -104,6 +105,7 @@ public class DownloadInfo {
     }
 
     /**
+     * Returns the absolute path
      * @return The system absolute path.
      */
     public String getAbsolutePath() {
@@ -111,6 +113,7 @@ public class DownloadInfo {
     }
 
     /**
+     * Returns the download date
      * @return The download date.
      */
     public Date getDownloadDate() {
@@ -118,6 +121,7 @@ public class DownloadInfo {
     }
 
     /**
+     * Returns the size in bytes
      * @return The size in bytes.
      */
     public Long getSize() {
@@ -125,6 +129,7 @@ public class DownloadInfo {
     }
 
     /**
+     * Returns the MIME type
      * @return The MIME type or extension.
      */
     public String getMimeType() {
@@ -132,6 +137,7 @@ public class DownloadInfo {
     }
 
     /**
+     * Sets the mimeType
      * @param mimeType The new MIME type to set.
      */
     public void setMimeType(String mimeType) {
@@ -139,6 +145,7 @@ public class DownloadInfo {
     }
 
     /**
+     * Returns the network ID
      * @return The server-side network ID.
      */
     public Integer getNetworkId() {
@@ -146,6 +153,7 @@ public class DownloadInfo {
     }
 
     /**
+     * Returns true
      * @return True if the file only exists on the server.
      */
     public boolean isNetworkOnly() {
@@ -153,6 +161,7 @@ public class DownloadInfo {
     }
 
     /**
+     * Returns if is in network
      * @return True if the file is available in the network.
      */
     public boolean isInNetwork() {
@@ -160,6 +169,7 @@ public class DownloadInfo {
     }
 
     /**
+     * Returns true if it is uploaded
      * @return True if the file has been uploaded.
      */
     public boolean isUploaded() {
@@ -167,6 +177,7 @@ public class DownloadInfo {
     }
 
     /**
+     * Sets the networkID
      * @param networkId Sets the network ID.
      */
     public void setNetworkId(Integer networkId) {
@@ -174,6 +185,7 @@ public class DownloadInfo {
     }
 
     /**
+     * Update the networkstatus
      * @param isInNetwork Updates the network availability status.
      */
     public void setIsInNetwork(boolean isInNetwork) {
@@ -181,6 +193,7 @@ public class DownloadInfo {
     }
 
     /**
+     * Update the network only status
      * @param isNetworkOnly Updates the network-only status.
      */
     public void setIsNetworkOnly(boolean isNetworkOnly) {
@@ -188,6 +201,7 @@ public class DownloadInfo {
     }
 
     /**
+     * Updates the upload status
      * @param isUploaded Updates the upload status.
      */
     public void setIsUploaded(boolean isUploaded) {

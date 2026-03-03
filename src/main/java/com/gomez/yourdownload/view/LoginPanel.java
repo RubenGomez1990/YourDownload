@@ -41,7 +41,7 @@ public class LoginPanel extends JPanel {
      * Manually initializes the UI components and layout settings. Uses a null
      * layout to match the project's design requirements.
      */
-    private void initComponentsManual() {
+    public void initComponentsManual() {
         //  Null layout for the entire project
         this.setLayout(null);
         this.setBackground(Color.WHITE);
@@ -92,7 +92,7 @@ public class LoginPanel extends JPanel {
     /**
      * Retrieves the remembered email address from user preferences if available.
      */
-    private void loadRememberedEmail() {
+    public void loadRememberedEmail() {
         Preferences prefs = Preferences.userRoot().node("YourDownloadApp");
         String rememberedEmail = prefs.get("remembered_email", "");
         if (!rememberedEmail.isEmpty()) {
@@ -105,7 +105,7 @@ public class LoginPanel extends JPanel {
      * Executes the authentication logic in a background thread.
      * Validates credentials, updates visual feedback, and notifies the parent frame on success.
      */
-    private void performLogin() {
+    public void performLogin() {
         String email = txtEmail.getText().trim();
         String password = new String(txtPassword.getPassword());
 

@@ -230,7 +230,7 @@ public class PreferencesPanel extends javax.swing.JPanel {
      * @param prefs The preferences node to be saved.
      * @throws SecurityException If system permissions deny writing to the preferences node.
      */
-    private void savePrefs(Preferences prefs) {
+    public void savePrefs(Preferences prefs) {
         try {
             prefs.flush();
         } catch (Exception e) {
@@ -244,7 +244,7 @@ public class PreferencesPanel extends javax.swing.JPanel {
     /**
      * Applies uniform colors, backgrounds, and custom UI properties to all components.
      */
-    private void applyCorporateStyles() {
+    public void applyCorporateStyles() {
         java.awt.Color corporateBlue = new java.awt.Color(74, 134, 173);
         this.setBackground(java.awt.Color.WHITE);
 
@@ -286,7 +286,7 @@ public class PreferencesPanel extends javax.swing.JPanel {
      * @param iconPath Resource path for the graphic icon.
      * @param tooltip Informational text for mouse hover.
      */
-    private void makeIconOnlyButton(javax.swing.JButton btn, String iconPath, String tooltip) {
+    public void makeIconOnlyButton(javax.swing.JButton btn, String iconPath, String tooltip) {
         if (btn == null) {
             return;
         }

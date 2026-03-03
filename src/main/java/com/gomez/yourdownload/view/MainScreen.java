@@ -943,7 +943,7 @@ public class MainScreen extends javax.swing.JFrame {
      * @param line A single line of standard output from the download process.
      * @throws NumberFormatException If the regex successfully finds a pattern but parsing as Double fails.
      */
-    private void updateProgressBar(String line) {
+    public void updateProgressBar(String line) {
         Pattern pattern = Pattern.compile("\\[download\\]\\s+(\\d+\\.\\d+)%");
         Matcher matcher = pattern.matcher(line);
         if (matcher.find()) {
@@ -966,7 +966,7 @@ public class MainScreen extends javax.swing.JFrame {
      * @return The uppercase extension (e.g., "MP3"), or "FILE" if no extension exists.
      * @throws NullPointerException If operations attempt to process a null string improperly (handled implicitly).
      */
-    private String obtainMimeSimple(String fileName) {
+    public String obtainMimeSimple(String fileName) {
         if (fileName == null || !fileName.contains(".")) {
             return "FILE";
         }
@@ -980,7 +980,7 @@ public class MainScreen extends javax.swing.JFrame {
      * @return The path string pointing to the executable, or an empty string if not found.
      * @throws SecurityException If the environment restricts reading local app data or system environment variables.
      */
-    private String getBinariesPath() {
+    public String getBinariesPath() {
         Preferences prefs = Preferences.userRoot().node("PreferencesPanel");
         final String PREFS_KEY = "binariesPath";
 
@@ -1009,7 +1009,7 @@ public class MainScreen extends javax.swing.JFrame {
      * Swaps the interface content pane from the main downloader view to the Media Library view.
      * @throws RuntimeException If instantiating the MediaLibrary panel encounters an error.
      */
-    private void showLibrary() {
+    public void showLibrary() {
         this.currentView = "LIBRARY"; // We save the library position
         this.setSize(1200, 800);
         this.setResizable(false);
@@ -1025,7 +1025,7 @@ public class MainScreen extends javax.swing.JFrame {
      * @param token The session JWT token to authenticate polling requests.
      * @throws NullPointerException If the component instance is null, printing an error to the console.
      */
-    private void initMediaPoller(String token) {
+    public void initMediaPoller(String token) {
         if (this.mediaPoller1 == null) {
             System.err.println("Mediapoller is null");
             return;
@@ -1051,7 +1051,7 @@ public class MainScreen extends javax.swing.JFrame {
      * @param event The polling event containing the collection of newly found media models.
      * @throws SecurityException If local writing permissions prevent downloading the actual files.
      */
-    private void handleNewFilesFound(final com.gomez.component.NewMediaEvent event) {
+    public void handleNewFilesFound(final com.gomez.component.NewMediaEvent event) {
         //Only files that aren't at local library
         List<com.gomez.model.Media> trulyNewFiles = new ArrayList<>();
 
@@ -1146,7 +1146,7 @@ public class MainScreen extends javax.swing.JFrame {
      * Renders the login screen interface by clearing menu bars and replacing the content pane.
      * @throws IllegalStateException If the JFrame state prevents updating the content pane.
      */
-    private void showLoginScreen() {
+    public void showLoginScreen() {
         this.setJMenuBar(null);
         this.setResizable(false);
         LoginPanel login = new LoginPanel(this, this.mediaPoller1);
@@ -1179,7 +1179,7 @@ public class MainScreen extends javax.swing.JFrame {
      * Pauses or resumes the MediaPoller checking thread.
      * @throws NullPointerException If the component reference is inaccessible during the toggle.
      */
-    private void togglePolling() {
+    public void togglePolling() {
         boolean running = this.mediaPoller1.isRunning();
 
         boolean newState = !running;
@@ -1194,7 +1194,7 @@ public class MainScreen extends javax.swing.JFrame {
      * @param on true if polling is actively running, false otherwise.
      * @throws IllegalArgumentException If the resource path provided for the icons is structurally invalid.
      */
-    private void updateIconState(boolean on) {
+    public void updateIconState(boolean on) {
         String iconPath = on ? "/icons/status_on.png" : "/icons/status_off.png";
         try {
             java.net.URL imgURL = getClass().getResource(iconPath);
@@ -1218,7 +1218,7 @@ public class MainScreen extends javax.swing.JFrame {
      * @param isEnabled State flag to dictate boolean enabled status.
      * @throws NullPointerException If the provided panel argument is null.
      */
-    private void setPanelEnabled(javax.swing.JPanel panel, boolean isEnabled) {
+    public void setPanelEnabled(javax.swing.JPanel panel, boolean isEnabled) {
         panel.setEnabled(isEnabled);
         for (java.awt.Component comp : panel.getComponents()) {
             comp.setEnabled(isEnabled);
@@ -1231,7 +1231,7 @@ public class MainScreen extends javax.swing.JFrame {
      * @param tooltip Informational text shown on mouse hover.
      * @throws NullPointerException If the button parameter provided is missing.
      */
-    private void makeIconOnlyButton(javax.swing.JButton btn, String iconPath, String tooltip) {
+    public void makeIconOnlyButton(javax.swing.JButton btn, String iconPath, String tooltip) {
         btn.setText("");
         btn.setToolTipText(tooltip);
         btn.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
@@ -1257,7 +1257,7 @@ public class MainScreen extends javax.swing.JFrame {
      * @param message Detailed description of the error event.
      * @throws IllegalStateException If attempting to execute GUI updates from a detached thread fails.
      */
-    private void logErrorMain(String message) {
+    public void logErrorMain(String message) {
         // 1. Guardamos el error físicamente en el archivo .log
         writeLog("YT-DLP ERROR", message);
 
@@ -1275,7 +1275,7 @@ public class MainScreen extends javax.swing.JFrame {
      * @param details Full text describing what caused the malfunction.
      * @throws SecurityException If the local JVM policy blocks the creation or editing of text files.
      */
-    private void writeLog(String errorType, String details) {
+    public void writeLog(String errorType, String details) {
         try {
             // Usamos el mismo archivo para tener todos los errores juntos
             java.io.File logFile = new java.io.File("yourdownload_errors.log"); 

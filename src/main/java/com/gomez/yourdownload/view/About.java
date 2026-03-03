@@ -9,7 +9,7 @@ public class About extends javax.swing.JDialog {
     /** 
     * Logger instance for event tracking in this dialog. 
     */
-    private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(About.class.getName());
+    public static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(About.class.getName());
 
     /**
      * Creates a new instance of the About dialog.

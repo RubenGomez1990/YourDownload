@@ -220,7 +220,7 @@ public class MediaLibrary extends javax.swing.JPanel {
      * Synchronizes the local media list with the server's database.
      * Checks for physical existence of local files and merges them with cloud-only entries.
      */
-    private void loadAllMediaInfo() {
+    public void loadAllMediaInfo() {
         new Thread(() -> {
             try {
                 // 1. Obtenemos todos los archivos que hay en la nube (Red)
@@ -644,7 +644,7 @@ public class MediaLibrary extends javax.swing.JPanel {
     /**
      * Initializes the filter combo box with predefined media types.
      */
-    private void initFiltroComboBox() {
+    public void initFiltroComboBox() {
         String[] filterTypes = {
             "All Types",
             "Video (MP4)",
@@ -660,7 +660,7 @@ public class MediaLibrary extends javax.swing.JPanel {
      * @param fileName The name of the file to inspect.
      * @return A clean uppercase string representing the format (e.g., "MP3").
      */
-    private String getCleanFormat(String mimeType, String fileName) {
+    public String getCleanFormat(String mimeType, String fileName) {
         // Si tenemos nombre de archivo, la extensión es lo más fiable
         if (fileName != null && fileName.contains(".")) {
             return fileName.substring(fileName.lastIndexOf(".") + 1).toUpperCase();
@@ -683,7 +683,7 @@ public class MediaLibrary extends javax.swing.JPanel {
     /**
      * Applies combined text and format filters to the table view.
      */
-    private void aplicarFiltroCombinado() {
+    public void aplicarFiltroCombinado() {
         String texto = jTextFieldSearch.getText().trim();
         String seleccion = (String) jComboBoxFilter.getSelectedItem();
 
@@ -713,7 +713,7 @@ public class MediaLibrary extends javax.swing.JPanel {
      * @return True if the server returns a successful status code.
      * @throws Exception On network failure.
      */
-    private boolean realizarUploadManual(File archivo) throws Exception {
+    public boolean realizarUploadManual(File archivo) throws Exception {
         String base = this.mediaPoller.getApiUrl();
         if (base == null || base.isEmpty() || base.equals("null")) {
             base = "https://difreenet9.azurewebsites.net";
@@ -775,8 +775,18 @@ public class MediaLibrary extends javax.swing.JPanel {
 
         return responseCode == 200 || responseCode == 201;
     }
-
-    private void makeIconOnlyButton(javax.swing.JButton btn, String iconPath, String tooltip) {
+    
+    /**
+     * Configures a JButton to display only an icon, removing text and borders.
+     * This method applies corporate styling by setting a hand cursor, removing the 
+     * border and content area fill, and scaling the provided icon resource for 
+     * a consistent UI appearance.
+     *
+     * @param btn      The {@code JButton} instance to be styled.
+     * @param iconPath The resource path to the image file (e.g., "/icons/search.png").
+     * @param tooltip  The descriptive text to be shown when the user hovers over the button.
+     */
+    public void makeIconOnlyButton(javax.swing.JButton btn, String iconPath, String tooltip) {
         if (btn == null) {
             return;
         }
@@ -804,12 +814,25 @@ public class MediaLibrary extends javax.swing.JPanel {
             System.err.println("Error cargando icono: " + iconPath);
         }
     }
-
-    private void escribirTexto(java.io.OutputStream out, String texto) throws java.io.IOException {
+    
+    
+    /**
+     * Writes a string to the provided output stream using UTF-8 encoding.
+     * This helper method converts the string into bytes before writing it to the stream.
+     *
+     * @param out   The {@code OutputStream} where the text will be written.
+     * @param texto The {@code String} containing the text to write.
+     * @throws java.io.IOException If an I/O error occurs during the writing process or 
+     * if the encoding is not supported.
+     */
+    public void escribirTexto(java.io.OutputStream out, String texto) throws java.io.IOException {
         out.write(texto.getBytes("UTF-8"));
     }
-
-    private void handleTableDoubleClick() {
+    
+    /**
+     * Handles the double-click event on a table row to open or download media.
+     */
+    public void handleTableDoubleClick() {
         int row = jTableMedia.getSelectedRow();
         if (row != -1) {
             int modelRow = jTableMedia.convertRowIndexToModel(row);
@@ -850,8 +873,17 @@ public class MediaLibrary extends javax.swing.JPanel {
             }
         }
     }
-
-    private void writeLog(String errorType, String details) {
+    
+    /**
+     * Appends a new entry to the application's error log file.
+     * This method records specific error types and their details along with a 
+     * synchronized timestamp to {@code yourdownload_errors.log}. If the file 
+     * does not exist, it will be created automatically.
+     *
+     * @param errorType A short string identifying the category of the error (e.g., "API ERROR").
+     * @param details   A detailed description of what caused the error or the exception message.
+     */
+    public void writeLog(String errorType, String details) {
         try {
             java.io.File logFile = new java.io.File("yourdownload_errors.log");
             java.io.FileWriter fw = new java.io.FileWriter(logFile, true);
@@ -882,5 +914,5 @@ public class MediaLibrary extends javax.swing.JPanel {
     private javax.swing.JTable jTableMedia;
     private javax.swing.JTextField jTextFieldSearch;
     // End of variables declaration//GEN-END:variables
-private javax.swing.JButton jButtonRefresh;
+    private javax.swing.JButton jButtonRefresh;
 }

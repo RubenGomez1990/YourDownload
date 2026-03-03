@@ -36,6 +36,15 @@ public class DownloadService {
      * Filename for the JSON history storage. 
      */
     private static final String HISTORY_FILE_NAME = "downloads_history.json";
+    
+    /**
+     * Private constructor to prevent instantiation of this utility class.
+     * This class only provides static service methods.
+     * @throws IllegalStateException If called, as this class should not be instantiated.
+     */
+    private DownloadService() {
+        throw new IllegalStateException("Utility class");
+    }
 
     /**
      * Serializes the list of media resources to a local JSON file.

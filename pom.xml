@@ -75,7 +75,6 @@
                 <version>3.11.2</version>
                 <configuration>
                     <outputDirectory>${project.basedir}/doc</outputDirectory>
-                    <show>private</show>
                     <failOnError>false</failOnError>
                 </configuration>
                 <executions>

@@ -18,7 +18,10 @@ import javax.swing.event.DocumentListener;
  */
 public class SearchDialog extends javax.swing.JDialog {
     
-    private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(SearchDialog.class.getName());
+    /** 
+     * Logger for tracking service-level events and errors. 
+     */
+    public static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(SearchDialog.class.getName());
     private final List<DownloadInfo> resourcesList;
     
     /**
@@ -194,10 +197,10 @@ public class SearchDialog extends javax.swing.JDialog {
     /**
      * Configures the document listener for the search field to provide real-time results.
      */
-    private void initSearching() {
+    public void initSearching() {
         jTextFieldIntroduce.getDocument().addDocumentListener(new DocumentListener(){
            
-            private void handleUpdate(){
+            public void handleUpdate(){
                 String text = jTextFieldIntroduce.getText();
                 applySearchingFilter(text);
             }
@@ -221,7 +224,7 @@ public class SearchDialog extends javax.swing.JDialog {
      * Filters the resources list based on the user's input and updates the JList display.
      * @param searchingText The text string to search for in the filenames.
      */
-    private void applySearchingFilter(String searchingText) {
+    public void applySearchingFilter(String searchingText) {
     
         String lowerSearchingText = searchingText.toLowerCase();
         DefaultListModel<DownloadInfo> resultsModel = new DefaultListModel<>();
