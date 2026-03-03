@@ -1,20 +1,20 @@
 package com.gomez.yourdownload.view;
-
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JDialog.java to edit this template
- */
-
 /**
- *
- * @author LionKeriot
+ * Dialog window that displays information about the application, 
+ * the developer, and the sources used.
+ * @author Rubén Gómez Hernández
+ * @version 1.0
  */
 public class About extends javax.swing.JDialog {
-    
+    /** 
+    * Logger instance for event tracking in this dialog. 
+    */
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(About.class.getName());
 
     /**
-     * Creates new form About
+     * Creates a new instance of the About dialog.
+     * @param parent The main application window (Frame).
+     * @param modal True if this window should block interaction with the parent window.
      */
     public About(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
@@ -69,14 +69,13 @@ public class About extends javax.swing.JDialog {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
-    private void jButtonExitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonExitActionPerformed
-        dispose(); // Cierra el diálogo
-    }//GEN-LAST:event_jButtonExitActionPerformed
-
     /**
-     * @param args the command line arguments
+     * Closes and disposes of the dialog window.
+     * @param evt The action event triggered by the exit button.
      */
+    private void jButtonExitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonExitActionPerformed
+        dispose(); // close the dialog
+    }//GEN-LAST:event_jButtonExitActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

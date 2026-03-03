@@ -1,54 +1,62 @@
 package com.gomez.yourdownload.view;
 
-import com.gomez.component.MediaPoller; // IMPORTANTE: Importamos el componente
+import com.gomez.component.MediaPoller;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.util.prefs.Preferences;
 import javax.swing.*;
 import java.io.IOException;
 
+/**
+ * Provides the login interface for the application. Handles user authentication
+ * via the MediaPoller component and manages session persistence.
+ *
+ * @author Rubén Gómez Hernández
+ * @version 1.0
+ */
 public class LoginPanel extends JPanel {
 
-    // Componentes del formulario
+    // Form elements
     private JTextField txtEmail;
     private JPasswordField txtPassword;
     private JCheckBox chkRemember;
     private JButton btnLogin;
-
     private JFrame parentFrame;
-
-    // VARIABLE PARA EL POLLER
+    // Poller variable
     private MediaPoller mediaPoller;
 
-    // CONSTRUCTOR MODIFICADO (Aquí es donde daba el error)
-    // Ahora acepta (JFrame frame, MediaPoller poller)
+    /**
+     * Constructs a new LoginPanel.
+     *
+     * @param frame The parent JFrame used for centering and screen management.
+     * @param poller The MediaPoller instance used for authentication.
+     */
     public LoginPanel(JFrame frame, MediaPoller poller) {
         this.parentFrame = frame;
-        this.mediaPoller = poller; // Guardamos la referencia que nos pasa MainScreen
+        this.mediaPoller = poller;
         initComponentsManual();
     }
 
+    /**
+     * Manually initializes the UI components and layout settings. Uses a null
+     * layout to match the project's design requirements.
+     */
     private void initComponentsManual() {
-        // Mantenemos el Layout Nulo que usas en todo el proyecto
+        //  Null layout for the entire project
         this.setLayout(null);
-        this.setBackground(Color.WHITE); // Un tono gris azulado profesional
+        this.setBackground(Color.WHITE);
 
-        // 1. Definimos las dimensiones de nuestro "cuadro de login"
         int loginWidth = 400;
         int loginHeight = 300;
 
-        // 2. Creamos un panel contenedor para el formulario (el cuadrito blanco)
+        // Container panel for the form
         JPanel whiteBox = new JPanel();
-        whiteBox.setLayout(null); // También nulo para posicionar etiquetas y campos
+        whiteBox.setLayout(null);
         whiteBox.setBackground(Color.WHITE);
         whiteBox.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 200)));
 
-        // IMPORTANTE: Lo centramos respecto a la ventana de 1024x800
-        // x = (1024 / 2) - (450 / 2) = 287
-        // y = (800 / 2) - (300 / 2) = 250
         whiteBox.setBounds(50, 50, loginWidth, loginHeight);
 
-        // 3. Posicionamos los componentes DENTRO del cuadro blanco (Coordenadas relativas al cuadro)
         JLabel lblEmail = new JLabel("Email:");
         lblEmail.setBounds(30, 40, 80, 25);
         txtEmail = new JTextField();
@@ -70,17 +78,20 @@ public class LoginPanel extends JPanel {
         btnLogin.setFont(new java.awt.Font("Arial", java.awt.Font.BOLD, 14));
 
         this.add(lblEmail);
-    this.add(txtEmail);
-    this.add(lblPass);
-    this.add(txtPassword);
-    this.add(chkRemember);
-    this.add(btnLogin);
+        this.add(txtEmail);
+        this.add(lblPass);
+        this.add(txtPassword);
+        this.add(chkRemember);
+        this.add(btnLogin);
 
         btnLogin.addActionListener(e -> performLogin());
         loadRememberedEmail();
         this.setPreferredSize(new Dimension(500, 400));
     }
-
+   
+    /**
+     * Retrieves the remembered email address from user preferences if available.
+     */
     private void loadRememberedEmail() {
         Preferences prefs = Preferences.userRoot().node("YourDownloadApp");
         String rememberedEmail = prefs.get("remembered_email", "");
@@ -89,7 +100,11 @@ public class LoginPanel extends JPanel {
             chkRemember.setSelected(true);
         }
     }
-
+    
+    /**
+     * Executes the authentication logic in a background thread.
+     * Validates credentials, updates visual feedback, and notifies the parent frame on success.
+     */
     private void performLogin() {
         String email = txtEmail.getText().trim();
         String password = new String(txtPassword.getPassword());
@@ -104,15 +119,15 @@ public class LoginPanel extends JPanel {
 
         new Thread(() -> {
             try {
-                // USAMOS EL COMPONENTE (mediaPoller.login) EN VEZ DE ApiClient
+                // we use the component instead of ApiClient
                 String token = this.mediaPoller.login(email, password);
 
                 if (token != null && !token.isEmpty()) {
 
-                    // Configuramos el token en el componente único
+                    // we configurate the token
                     this.mediaPoller.setToken(token);
 
-                    // Guardar preferencias
+                    // save preferences
                     Preferences prefs = Preferences.userRoot().node("YourDownloadApp");
                     prefs.put("jwt_token", token);
 
@@ -124,10 +139,10 @@ public class LoginPanel extends JPanel {
 
                     SwingUtilities.invokeLater(() -> {
                         if (parentFrame instanceof MainScreen) {
-                            // Opción A: Es la ventana principal, le decimos que cambie de panel
+                            // Option A: main window, we tell it to change the panel
                             ((MainScreen) parentFrame).loginSuccessful(token);
                         } else {
-                            // Opción B: Si por error se abrió fuera, lo integramos
+                            // Option B: if is opened outside, we integrate it
                             MainScreen ms = new MainScreen(token, this.mediaPoller);
                             ms.setVisible(true);
                             if (parentFrame != null) {
