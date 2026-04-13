@@ -241,6 +241,8 @@ public class MainScreen extends javax.swing.JFrame {
         jMenuItemPreferences = new javax.swing.JMenuItem();
         jMenuHelp = new javax.swing.JMenu();
         jMenuItemAbout = new javax.swing.JMenuItem();
+        jMenuItemAPI = new javax.swing.JMenuItem();
+        jMenuItemUserManual = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("YourDownload");
@@ -534,6 +536,22 @@ public class MainScreen extends javax.swing.JFrame {
             }
         });
         jMenuHelp.add(jMenuItemAbout);
+
+        jMenuItemAPI.setText("API Docs");
+        jMenuItemAPI.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItemAPIActionPerformed(evt);
+            }
+        });
+        jMenuHelp.add(jMenuItemAPI);
+
+        jMenuItemUserManual.setText("User Manual");
+        jMenuItemUserManual.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItemUserManualActionPerformed(evt);
+            }
+        });
+        jMenuHelp.add(jMenuItemUserManual);
 
         jMenuBar.add(jMenuHelp);
 
@@ -889,6 +907,33 @@ public class MainScreen extends javax.swing.JFrame {
         revalidate();
         repaint();
     }//GEN-LAST:event_jRadioButtonAVIActionPerformed
+
+    private void jMenuItemAPIActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemAPIActionPerformed
+        try {
+            java.io.File apiFile = new java.io.File("doc/index.html"); 
+        if (apiFile.exists()) {
+            java.awt.Desktop.getDesktop().open(apiFile);
+        } else {
+            javax.swing.JOptionPane.showMessageDialog(this, "Couldn't find API docs.");
+        }
+        } catch (java.io.IOException ex) {
+            ex.printStackTrace();
+        }
+    }//GEN-LAST:event_jMenuItemAPIActionPerformed
+
+    private void jMenuItemUserManualActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemUserManualActionPerformed
+try {
+    // La ruta relativa para el manual en PDF
+    java.io.File manualFile = new java.io.File("manual/UserManual.pdf"); 
+    if (manualFile.exists()) {
+        java.awt.Desktop.getDesktop().open(manualFile);
+    } else {
+        javax.swing.JOptionPane.showMessageDialog(this, "No se encuentra el manual de usuario.");
+    }
+} catch (java.io.IOException ex) {
+    ex.printStackTrace();
+}
+    }//GEN-LAST:event_jMenuItemUserManualActionPerformed
 
     /**
      * The main entry point of the application. Configures the UI theme and instantiates the application.
@@ -1316,10 +1361,12 @@ public class MainScreen extends javax.swing.JFrame {
     private javax.swing.JMenu jMenuEdit;
     private javax.swing.JMenu jMenuFile;
     private javax.swing.JMenu jMenuHelp;
+    private javax.swing.JMenuItem jMenuItemAPI;
     private javax.swing.JMenuItem jMenuItemAbout;
     private javax.swing.JMenuItem jMenuItemExit;
     private javax.swing.JMenuItem jMenuItemLogout;
     private javax.swing.JMenuItem jMenuItemPreferences;
+    private javax.swing.JMenuItem jMenuItemUserManual;
     private javax.swing.JPanel jPanelAudioQuality;
     private javax.swing.JPanel jPanelConsole;
     private javax.swing.JPanel jPanelDownload;
