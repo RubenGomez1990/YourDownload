@@ -923,16 +923,18 @@ public class MainScreen extends javax.swing.JFrame {
 
     private void jMenuItemUserManualActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemUserManualActionPerformed
 try {
-    // La ruta relativa para el manual en PDF
-    java.io.File manualFile = new java.io.File("manual/UserManual.pdf"); 
-    if (manualFile.exists()) {
-        java.awt.Desktop.getDesktop().open(manualFile);
-    } else {
-        javax.swing.JOptionPane.showMessageDialog(this, "No se encuentra el manual de usuario.");
+        // La URL de tu Wiki en GitHub
+        String url = "https://github.com/RubenGomez1990/YourDownload/wiki"; 
+        
+        if (java.awt.Desktop.isDesktopSupported()) {
+            java.awt.Desktop desktop = java.awt.Desktop.getDesktop();
+            if (desktop.isSupported(java.awt.Desktop.Action.BROWSE)) {
+                desktop.browse(new java.net.URI(url));
+            }
+        }
+    } catch (Exception ex) {
+        javax.swing.JOptionPane.showMessageDialog(this, "No se pudo abrir el manual: " + ex.getMessage());
     }
-} catch (java.io.IOException ex) {
-    ex.printStackTrace();
-}
     }//GEN-LAST:event_jMenuItemUserManualActionPerformed
 
     /**
@@ -1026,6 +1028,10 @@ try {
      * @throws SecurityException If the environment restricts reading local app data or system environment variables.
      */
     public String getBinariesPath() {
+        String currentDir = System.getProperty("user.dir") + File.separator + "yt-dlp.exe";
+    if (new File(currentDir).exists()) {
+        return currentDir;
+    }
         Preferences prefs = Preferences.userRoot().node("PreferencesPanel");
         final String PREFS_KEY = "binariesPath";
 
